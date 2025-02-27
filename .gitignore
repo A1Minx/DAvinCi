@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# qmake
+*.stash
+
+# IDE files
+/src/.kdev4
+*.kdev4
+

@@ -1,6 +1,6 @@
 #include "mainWindow.h"
-#include "Controller/Controller.h"
-#include "Model/Model.h"
+#include "Controller.h"
+#include "Model.h"
 #include "DrawingOpenGLWidget.h"
 #include <QPushButton>
 #include <QApplication>

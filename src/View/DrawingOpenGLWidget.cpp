@@ -1,7 +1,7 @@
 // DrawingOpenGLWidget.cpp
 #include "DrawingOpenGLWidget.h"
 #include <QOpenGLFunctions>
-#include <Model/Model.h>
+#include <Model.h>
 #include <QDebug>
 
 DrawingOpenGLWidget::DrawingOpenGLWidget(Model *model, QWidget *parent)

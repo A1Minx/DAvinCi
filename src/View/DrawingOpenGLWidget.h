@@ -3,10 +3,8 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include <Model/Model.h>
+#include <Model.h>
 #include <ModeController.h>
-
-#include "Controller/ModeController.h"
 
 class DrawingOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT

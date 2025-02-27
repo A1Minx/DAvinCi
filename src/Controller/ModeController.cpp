@@ -4,8 +4,8 @@
 ModeController::ModeController(Controller *controller, DrawingOpenGLWidget *view)
     :controller(controller), view(view)
 {
-    this->drawLine = new M_DrawLine(controller, view);
-    this->drawPoint = new M_DrawPoint(controller, view);
+    this->drawLine = new M_DrawLine(controller);
+    this->drawPoint = new M_DrawPoint(controller);
 }
 
 void ModeController::changeMode(Modes mode)

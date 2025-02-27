@@ -4,18 +4,18 @@
 #include "M_ModeInterface.h"
 
 class Controller;
-class DrawingOpenGLWidget;
+
 
 
 class M_DrawPoint : public M_ModeInterface {
 public:
-    M_DrawPoint(Controller *controller, DrawingOpenGLWidget *view);
+    M_DrawPoint(Controller *controller);
 
     void onMouseClick(QMouseEvent *event) override;
 
 private:
     Controller *controller;
-    DrawingOpenGLWidget *view;
+
 };
 
 #endif
