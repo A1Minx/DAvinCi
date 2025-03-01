@@ -21,6 +21,9 @@ DrawingOpenGLWidget::~DrawingOpenGLWidget() {
 
 void DrawingOpenGLWidget::initializeGL() {
     initializeOpenGLFunctions();
+
+
+
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // White background
 }
 
@@ -29,25 +32,23 @@ void DrawingOpenGLWidget::resizeGL(int w, int h) {
 }
 
 void DrawingOpenGLWidget::paintGL() {
-    glClear(GL_COLOR_BUFFER_BIT);
 
-    // Draw red line
-    glColor3f(1.0f, 0.0f, 0.0f); // Red color
 
-    glBegin(GL_LINES);
-    for (const auto &line : model->getLines()) {
-        glVertex2f(line.first.first, line.first.second);   // Start point
-        glVertex2f(line.second.first, line.second.second); // End point
-    }
+    // Example: Drawing a simple cube
+
+
     glEnd();
+    //view experiment
 
     glFlush();
 }
 
-void DrawingOpenGLWidget::mousePressEvent(QMouseEvent *event) {
 
+
+
+
+void DrawingOpenGLWidget::mousePressEvent(QMouseEvent *event) {
     qDebug() << "MouseClicked";
     qDebug() << modeController->getCurrentMode();
     modeController->getCurrentMode()->onMouseClick(event);
-
 }

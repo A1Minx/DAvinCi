@@ -6,6 +6,7 @@
 #include "M_ModeInterface.h"
 #include "M_DrawLine.h"
 #include "M_DrawPoint.h"
+#include "M_Selection.h"
 
 
 //forward declarations
@@ -20,6 +21,7 @@ public:
     ModeController(Controller *controller, DrawingOpenGLWidget *view);
 
     enum class Modes {
+        Selection,
         DrawLine,
         DrawPoint
     };
@@ -37,6 +39,7 @@ private:
     //available Modes. All get initialized once during startup when the ModeController gets constructed to avoid reoccuring heap allocations
     M_DrawLine *drawLine;
     M_DrawPoint *drawPoint;
+    M_Selection *selection;
 
 
 };

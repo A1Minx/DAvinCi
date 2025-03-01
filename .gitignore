@@ -34,6 +34,9 @@
 # qmake
 *.stash
 
+# ENV
+*.env
+
 # IDE files
 /src/.kdev4
 *.kdev4
