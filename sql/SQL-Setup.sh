@@ -1,28 +1,28 @@
 #!/bin/bash
 
-if [ -z "$DB_PASSWORD" ]; then
+if [ -z "$PGPASSWORD" ]; then
     echo "Error: DB_PASSWORD environment variable is not set."
     exit 1
 fi
 
-export PGPASSWORD="$DB_PASSWORD"
+export PGPASSWORD="$PGPASSWORD"
 
 
-sudo -u postgres psql -d postgres -c "DROP DATABASE IF EXISTS \"$DB_NAME\";"
+sudo -u postgres psql -d postgres -c "DROP DATABASE IF EXISTS \"$PGDATABASE\";"
 
 
 ## Create DB ##
-echo "Creating database '$DB_NAME'..."
-createdb -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" "$DB_NAME"
+echo "Creating database '$PGDATABASE'..."
+createdb -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" "$PGDATABASE"
 if [[ $? -ne 0 ]]; then
-    echo "Error: Failed to create database '$DB_NAME'."
+    echo "Error: Failed to create database '$PGDATABASE'."
     exit 1
 fi
-echo "Database '$DB_NAME' created successfully."
+echo "Database '$PGDATABASE' created successfully."
 
 ## Execute SQL script ##
 echo "Executing SQL script 'SQL-Setup.sql'..."
-psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f ./SQL-Setup.sql
+psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -f ./SQL-Setup.sql
 if [[ $? -ne 0 ]]; then
     echo "Error: Failed to execute SQL script 'SQL-Setup.sql'."
     exit 1

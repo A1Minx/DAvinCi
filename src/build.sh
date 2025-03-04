@@ -1,9 +1,11 @@
 #!/bin/bash
 
+
 source ../.Userdata.env
 
 echo "Executing table creation script..."
 cd ../sql
+
 ./SQL-Setup.sh
 
 echo "Compiling..."
@@ -15,3 +17,8 @@ make
 
 
 echo "Setup completed successfully!"
+
+
+echo "Starting Program"
+
+./DAvinCi

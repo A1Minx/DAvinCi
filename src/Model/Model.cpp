@@ -2,7 +2,9 @@
 #include "Model.h"
 #include <QDebug>
 
-Model::Model() {
+Model::Model()
+{
+    this->sqlServer = new SQLServer();
 }
 
 void Model::addLine(float x1, float y1, float x2, float y2) {

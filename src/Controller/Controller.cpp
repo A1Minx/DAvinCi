@@ -2,6 +2,7 @@
 #include "ModeController.h"
 #include <QDebug>
 
+
 Controller::Controller(Model *model, DrawingOpenGLWidget *view)
     : model(model), view(view)
 {
@@ -79,5 +80,17 @@ void Controller::addShape()
 }
 
 
-// ----- View Interactions -----
+// ----- SQL Test -----
+void Controller::readSQL()
+{
+    model->sqlServer->readSQL();
+}
+
+void Controller::writeSQL()
+{
+    const char *dummyParam[2] = {"10", "20"};
+    model->sqlServer->writeSQL(dummyParam);
+}
+
+
 

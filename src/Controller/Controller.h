@@ -6,6 +6,8 @@
 #include <DrawingOpenGLWidget.h>
 
 
+
+
 class Controller : public QObject
 {
     Q_OBJECT
@@ -22,6 +24,9 @@ public slots:
     void setModeDrawPoint();
     void setModeDrawLine();
     void dummyDraw();
+
+    void writeSQL();
+    void readSQL();
 
 public:
     Model* getModel();
