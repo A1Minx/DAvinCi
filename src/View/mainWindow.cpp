@@ -1,6 +1,6 @@
 #include "mainWindow.h"
-#include "Controller/Controller.h"
-#include "Model/Model.h"
+#include "Controller.h"
+#include "Model.h"
 #include "DrawingOpenGLWidget.h"
 #include <QPushButton>
 #include <QApplication>
@@ -82,26 +82,26 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
 
 
- //----- basic functionality buttons -----
+ //----- test buttons -----
  //-- load
- QPushButton *loadButton = new QPushButton("DummyDraw",  this);
- loadButton->setText("DummyDraw");
- loadButton->setToolTip("DummyDraw");
- loadButton->show();
- loadButton->setIcon(QIcon::fromTheme("face-smile"));
+ QPushButton *writeSQL = new QPushButton("DummyDraw",  this);
+ writeSQL->setText("DummyDraw");
+ writeSQL->setToolTip("DummyDraw");
+ writeSQL->show();
+ writeSQL->setIcon(QIcon::fromTheme("face-smile"));
 
- QObject::connect(loadButton, SIGNAL(clicked()), controller, SLOT(dummyDraw()));
+ QObject::connect(writeSQL, SIGNAL(clicked()), controller, SLOT(writeSQL()));
 
- buttonLayout->addWidget(loadButton);
+ buttonLayout->addWidget(writeSQL);
 
  //-- save
-  QPushButton *saveButton = new QPushButton("Save",  this);
- saveButton->setText("Save");
- saveButton->setToolTip("Save File");
- saveButton->show();
- saveButton->setIcon(QIcon::fromTheme("face-smile"));
+  QPushButton *readSQL = new QPushButton("Save",  this);
+ readSQL->setText("Save");
+ readSQL->setToolTip("Save File");
+ readSQL->show();
+ readSQL->setIcon(QIcon::fromTheme("face-smile"));
 
- QObject::connect(saveButton, SIGNAL(clicked()), controller, SLOT(save()));
+ QObject::connect(readSQL, SIGNAL(clicked()), controller, SLOT(readSQL()));
 
- buttonLayout->addWidget(saveButton);
+ buttonLayout->addWidget(readSQL);
 }

@@ -1,0 +1,7 @@
+export PGDATABASE="DB_NAME"
+export PGUSER="DB_USER"
+export PGPASSWORD="YourPassword"
+export PGHOST="127.0.0.1" #Localhost, change for Remote Server
+export PGPORT="5432" #Postgresql Port
+
+#ToDo: Look for different Connection Types, Like Unix Sockets for Use with the Client

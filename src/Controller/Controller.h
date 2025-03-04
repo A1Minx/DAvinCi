@@ -4,7 +4,9 @@
 #include <QObject>
 #include <iostream>
 #include <DrawingOpenGLWidget.h>
-#include <View/DrawingOpenGLWidget.h>
+
+
+
 
 class Controller : public QObject
 {
@@ -23,9 +25,13 @@ public slots:
     void setModeDrawLine();
     void dummyDraw();
 
+    void writeSQL();
+    void readSQL();
+
 public:
     Model* getModel();
     void addLine(float x1, float y1, float x2, float y2);
+    void addShape();
 
 private:
     Model *model;

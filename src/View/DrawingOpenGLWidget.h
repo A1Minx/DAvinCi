@@ -3,10 +3,9 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include <Model/Model.h>
+#include <QMatrix4x4>
+#include <Model.h>
 #include <ModeController.h>
-
-#include "Controller/ModeController.h"
 
 class DrawingOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -21,9 +20,11 @@ protected:
     void resizeGL(int w, int h) override;
     void paintGL() override;
     void mousePressEvent(QMouseEvent *event) override;
+
 private:
     Model *model;
     ModeController *modeController;
+
 };
 
 #endif // DRAWINGOPENGLWIDGET_H

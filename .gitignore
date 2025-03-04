@@ -30,3 +30,18 @@
 *.exe
 *.out
 *.app
+
+# qmake
+*.stash
+
+# ENV
+*.env
+
+# Dont upload Dependencies
+
+/src/dependencies/libpq
+
+# IDE files
+/src/.kdev4
+*.kdev4
+
