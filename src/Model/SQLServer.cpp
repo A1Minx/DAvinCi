@@ -2,26 +2,30 @@
 
 #include <QDebug>
 #include <iostream>
+#include <cstdio>
 
 #include <postgresql/libpq-fe.h>
 
 SQLServer::SQLServer()
 {
-
     connection = PQconnectdb("");
-
-    if (PQstatus(connection) != CONNECTION_OK) {
-
+    if (!connection || PQstatus(connection) != CONNECTION_OK) {
+        if (connection) {
             PQfinish(connection);
-            throw std::runtime_error("Database Connection not successful!");
         }
+        throw std::runtime_error("Database Connection not successful!");
+    }
     qDebug() << "init SQL Server Connection";
 
     // -- Prepared Statements
     // -- InsertPoint
     const char *InsertPointQuery = "INSERT INTO Points (Points_x, Points_y) Values ($1, $2)";
-    PGresult *insertPoint = PQprepare(connection, "insertPoint", InsertPointQuery, 2, NULL);
+    PGresult *insertPoint = PQprepare(connection, "insertPointTest", InsertPointQuery, 2, NULL);
     checkResult(insertPoint);
+
+    const char *InsertPoint3DQuery = "INSERT INTO Points (Points_x, Points_y, Points_z) Values ($1, $2, $3)";
+    PGresult *insertPoint3D = PQprepare(connection, "insertPoint3D", InsertPoint3DQuery, 3, NULL);
+    checkResult(insertPoint3D);
 
     // -- readPoints
     const char *readPointsQuery = "SELECT * FROM Points";
@@ -89,11 +93,10 @@ void SQLServer::readSQL()
 
 void SQLServer::writeSQL(const char *parVal[2])
 {
-
     try {
             qDebug() << "writing SQL";
 
-            PGresult *result = PQexecPrepared(connection, "insertPoint", 2, parVal, NULL, NULL, 0);
+            PGresult *result = PQexecPrepared(connection, "insertPointTest", 2, parVal, NULL, NULL, 0);
             checkResult(result);
 
             PQclear(result);
@@ -102,6 +105,31 @@ void SQLServer::writeSQL(const char *parVal[2])
             qDebug() << "SQL write Error";
         }
 }
+
+
+void SQLServer::newPoint(float x, float y, float z)
+{
+    char xS[32], yS[32], zS[32];
+
+    snprintf(xS, sizeof(xS), "%.6g", x);
+    snprintf(yS, sizeof(yS), "%.6g", y);
+    snprintf(zS, sizeof(zS), "%.6g", z);
+
+    const char *parVal[3] = {xS, yS, zS};
+    try {
+            qDebug() << "writing Point in SQL";
+
+            PGresult *result = PQexecPrepared(connection, "insertPoint3D", 3, parVal, NULL, NULL, 0);
+            checkResult(result);
+
+            PQclear(result);
+
+        } catch (const std::exception &e) {
+            qDebug() << "SQL write Error";
+        }
+
+}
+
 
 
 

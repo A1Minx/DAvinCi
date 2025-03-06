@@ -19,9 +19,7 @@ void M_DrawPoint::onMouseClick(QMouseEvent *event) {
 
         qDebug() << "Left click at " << x << ", " << y;
         qDebug() << "Draw Point";qDebug() << "returning Mode";
-        controller->addShape();
-        //controller->addLine(x-5, y-5, x+5, y+5);
-        //controller->addLine(x-5, y+5, x+5, y-5);
+        controller->addPoint(x,y,0);
     } else if (event->button() == Qt::RightButton) {
         controller->getModeController()->changeMode(ModeController::Modes::Selection);
 

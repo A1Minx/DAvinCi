@@ -5,14 +5,15 @@
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
 #include <Model.h>
-#include <ModeController.h>
+#include <Controller.h>
+
+class Controller;
 
 class DrawingOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 
 public:
-    explicit DrawingOpenGLWidget(Model *model, QWidget *parent = nullptr);
-    void configModeController(ModeController *modeController);
+    explicit DrawingOpenGLWidget(Model *model, Controller *controller, QWidget *parent = nullptr);
     ~DrawingOpenGLWidget();
 
 protected:
@@ -20,11 +21,24 @@ protected:
     void resizeGL(int w, int h) override;
     void paintGL() override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
 private:
-    Model *model;
-    ModeController *modeController;
+    void updateCamera();
+    void drawPoints();
 
+    Model *model;
+    Controller *controller;
+
+    // Camera parameters
+    QMatrix4x4 projectionMatrix;
+    QMatrix4x4 viewMatrix;
+    float cameraDistance;
+    float cameraRotationX;
+    float cameraRotationY;
+    QPoint lastMousePos;
+    bool isRotating;
 };
 
 #endif // DRAWINGOPENGLWIDGET_H
