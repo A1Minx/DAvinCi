@@ -8,6 +8,9 @@ class Object3D {
         void draw();
 
     private:
+        // add Parent and Child Objects and Layer
+
+
         int syncStatus;
         // syncStatus gets stored bitwise / Implement data exchange at parent level and set children locally
         // Exclusive - local data coherent with Database, no other read/write access

@@ -18,7 +18,7 @@ class DrawingOpenGLWidget;
 class ModeController
 {
 public:
-    ModeController(Controller *controller, DrawingOpenGLWidget *view);
+    ModeController(Controller *controller);
 
     enum class Modes {
         Selection,
@@ -32,7 +32,6 @@ public:
 
 private:
     Controller *controller;
-    DrawingOpenGLWidget *view;
 
     M_ModeInterface *CurrentMode;
 

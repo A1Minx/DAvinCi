@@ -4,6 +4,7 @@
 
 #include <vector>
 #include "SQLServer.h"
+#include "Point.h"
 
 class Model {
 public:
@@ -14,6 +15,8 @@ public:
 
     void addShape();
 
+    void addPoint(float x, float y, float z);
+
     SQLServer *sqlServer;
 
 
@@ -22,6 +25,8 @@ public:
 private:
     // Store multiple lines as pairs of coordinates
     std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>> lines;
+
+    std::vector<Point*> points;
 };
 
 #endif // MODEL_H

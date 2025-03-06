@@ -11,6 +11,8 @@ class SQLServer {
         void writeSQL(const char *parVal[2]);
         void readSQL();
 
+        void newPoint(float x, float y, float z);
+
         ~SQLServer();
 
 

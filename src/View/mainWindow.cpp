@@ -16,9 +16,9 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  showMaximized();
 
  Model *model = new Model();
- DrawingOpenGLWidget *view = new DrawingOpenGLWidget(model);
- Controller *controller = new Controller(model, view);
- view->configModeController(controller->getModeController());
+ Controller *controller = new Controller(model, nullptr);
+ DrawingOpenGLWidget *view = new DrawingOpenGLWidget(model, controller);
+ controller->setView(view);  
 
 
  QWidget *centralWidget = new QWidget(this);
@@ -84,9 +84,9 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  //----- test buttons -----
  //-- load
- QPushButton *writeSQL = new QPushButton("DummyDraw",  this);
- writeSQL->setText("DummyDraw");
- writeSQL->setToolTip("DummyDraw");
+ QPushButton *writeSQL = new QPushButton("Write SQL",  this);
+ writeSQL->setText("Write SQL");
+ writeSQL->setToolTip("Write SQL");
  writeSQL->show();
  writeSQL->setIcon(QIcon::fromTheme("face-smile"));
 
@@ -95,9 +95,9 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  buttonLayout->addWidget(writeSQL);
 
  //-- save
-  QPushButton *readSQL = new QPushButton("Save",  this);
- readSQL->setText("Save");
- readSQL->setToolTip("Save File");
+  QPushButton *readSQL = new QPushButton("Read SQL",  this);
+ readSQL->setText("Read SQL");
+ readSQL->setToolTip("Read SQL");
  readSQL->show();
  readSQL->setIcon(QIcon::fromTheme("face-smile"));
 

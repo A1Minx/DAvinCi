@@ -1,12 +1,14 @@
 #include "ModeController.h"
 #include <QDebug>
 
-ModeController::ModeController(Controller *controller, DrawingOpenGLWidget *view)
-    :controller(controller), view(view)
+ModeController::ModeController(Controller *controller)
+    :controller(controller)
 {
     this->drawLine = new M_DrawLine(controller);
     this->drawPoint = new M_DrawPoint(controller);
     this->selection = new M_Selection(controller);
+
+    this->CurrentMode = selection; // set default mode
 }
 
 void ModeController::changeMode(Modes mode)

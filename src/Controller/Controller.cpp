@@ -6,9 +6,13 @@
 Controller::Controller(Model *model, DrawingOpenGLWidget *view)
     : model(model), view(view)
 {
-    this->modeController = new ModeController(this, view);
+    this->modeController = new ModeController(this);
 }
 
+void Controller::setView(DrawingOpenGLWidget *view)
+{
+    this->view = view;
+}
 
 // ----- GUI controlls -----
 // -- Data Management
@@ -43,15 +47,6 @@ void Controller::setModeDrawLine()
     modeController->changeMode(ModeController::Modes::DrawLine);
 }
 
-void Controller::dummyDraw()
-{
-
-    static float offset = 0.1f;
-    model->addLine(-0.5f + offset, -0.5f, 0.5f + offset, 0.5f);
-    offset += 0.1f;
-    // Trigger a repaint after adding a new line
-    view->update();
-}
 
 
 // ----- internals -----
@@ -79,6 +74,13 @@ void Controller::addShape()
     view->update();
 }
 
+void Controller::addPoint(float x, float y, float z)
+{
+    model->addPoint(x,y,z);
+    view->update();
+}
+
+
 
 // ----- SQL Test -----
 void Controller::readSQL()
@@ -90,6 +92,11 @@ void Controller::writeSQL()
 {
     const char *dummyParam[2] = {"10", "20"};
     model->sqlServer->writeSQL(dummyParam);
+}
+
+void Controller::handleMouseClick(QMouseEvent *event)
+{
+    modeController->getCurrentMode()->onMouseClick(event);
 }
 
 

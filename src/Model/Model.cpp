@@ -17,6 +17,13 @@ void Model::addShape()
     qDebug() << "Shape added";
 }
 
+void Model::addPoint(float x, float y, float z)
+{
+    points.push_back(new Point(x,y,z));
+    sqlServer->newPoint(x,y,z);
+}
+
+
 
 const std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>>& Model::getLines() const {
     return lines;
