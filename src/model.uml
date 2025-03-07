@@ -1,0 +1,72 @@
+classDiagram
+
+    class Object3D {
+        <<abstract>>
+        +float z
+    }
+
+
+
+    %% ----------- basic Objects ----------------
+
+    class BasicObject {
+        <<abstract>>
+        +float x
+        +float y
+    }
+
+
+
+    class Point {
+        +float x
+        +float y
+        +float z
+    }
+
+
+
+    class Line {
+        +Point a
+        +Point b
+        +float length
+        +float radius
+        +float direction
+        +float kloth_par
+    }
+
+
+
+    class Area {
+        +Line[] enclosing
+        +float square_area
+    }
+
+
+
+    class Volume {
+        +Area[] enclosing
+        +float cubic_space
+    }
+
+
+
+    %% ----------- composed Objects ----------------
+
+    class Object {
+        +Object3D[] children
+        %% add Pointers to Planbereich
+    }
+
+
+
+    %% -------------- Inheritance -------------------
+
+    BasicObject <|-- Point : extends
+    BasicObject <|-- Line : extends
+    BasicObject <|-- Area : extends
+    BasicObject <|-- Volume : extends
+
+
+
+    Object3D <|-- BasicObject : extends
+    Object3D <|-- Object : extends

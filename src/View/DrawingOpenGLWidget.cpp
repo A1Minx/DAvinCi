@@ -7,8 +7,7 @@
 
 DrawingOpenGLWidget::DrawingOpenGLWidget(Model *model, Controller *controller, QWidget *parent)
     : QOpenGLWidget(parent), model(model), controller(controller),
-      cameraDistance(5.0f), cameraRotationX(0.0f), cameraRotationY(0.0f),
-      isRotating(false)
+      cameraDistance(5.0f), cameraRotationX(0.0f), cameraRotationY(0.0f)
 {
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -21,13 +20,16 @@ void DrawingOpenGLWidget::initializeGL() {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f); // Dark gray background
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_POINT_SMOOTH);
-    glPointSize(5.0f);
+    glPointSize(10.0f);
+    cameraDistance = 500.0f; // Größere Distanz für bessere Übersicht
+    qDebug() << "OpenGL initialisiert";
 }
 
 void DrawingOpenGLWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
     projectionMatrix.setToIdentity();
-    projectionMatrix.perspective(45.0f, float(w) / float(h), 0.1f, 100.0f);
+    projectionMatrix.perspective(45.0f, float(w) / float(h), 0.1f, 1000.0f); // Größerer Far-Clip
+    qDebug() << "Viewport resized:" << w << "x" << h;
 }
 
 void DrawingOpenGLWidget::paintGL() {
@@ -41,7 +43,7 @@ void DrawingOpenGLWidget::paintGL() {
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(viewMatrix.constData());
     
-    drawPoints();
+    drawCube();
 }
 
 void DrawingOpenGLWidget::updateCamera() {
@@ -55,52 +57,85 @@ void DrawingOpenGLWidget::updateCamera() {
     viewMatrix.translate(0.0f, 0.0f, -cameraDistance);
 }
 
-void DrawingOpenGLWidget::drawPoints() {
-    const auto& points = model->getPoints();
+void DrawingOpenGLWidget::drawCube() {
+    float size = 200.0f; // 200x200x200 Würfel
+    float halfSize = size / 2.0f;
     
-    glBegin(GL_POINTS);
-    glColor3f(1.0f, 1.0f, 1.0f); // White points
+    qDebug() << "Zeichne Würfel mit Größe:" << size;
     
-    for (const auto& point : points) {
-        glVertex3f(point->x, point->y, point->z);
-    }
+    glBegin(GL_QUADS);
+    glColor3f(1.0f, 0.0f, 0.0f); // Rot
+    
+    // Vorderseite
+    glVertex3f(-halfSize, -halfSize, halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+    
+    // Rückseite
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(-halfSize, halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, -halfSize);
+    
+    // Oberseite
+    glVertex3f(-halfSize, halfSize, -halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+    
+    // Unterseite
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+    glVertex3f(-halfSize, -halfSize, halfSize);
+    
+    // Rechte Seite
+    glVertex3f(halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+    
+    // Linke Seite
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(-halfSize, -halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, -halfSize);
     
     glEnd();
+    qDebug() << "Würfel gezeichnet";
 }
 
 void DrawingOpenGLWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         controller->handleMouseClick(event);
-    } else if (event->button() == Qt::RightButton) {
-        isRotating = true;
-        lastMousePos = event->pos();
     }
+    lastMousePos = event->pos();
+    grabMouse(); // Fängt die Maus ein, damit wir auch außerhalb des Widgets Mausbewegungen erhalten
 }
 
 void DrawingOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
-    if (isRotating) {
-        int dx = event->x() - lastMousePos.x();
-        int dy = event->y() - lastMousePos.y();
-        
-        cameraRotationY += dx * 0.5f;
-        cameraRotationX += dy * 0.5f;
-        
-        // Limit vertical rotation
-        cameraRotationX = std::max(-90.0f, std::min(90.0f, cameraRotationX));
-        
-        lastMousePos = event->pos();
-        update();
-    }
+    int dx = event->x() - lastMousePos.x();
+    int dy = event->y() - lastMousePos.y();
+    
+    cameraRotationY += dx * 0.5f;
+    cameraRotationX += dy * 0.5f;
+    
+    // Limit vertical rotation
+    cameraRotationX = std::max(-90.0f, std::min(90.0f, cameraRotationX));
+    
+    lastMousePos = event->pos();
+    update();
 }
 
 void DrawingOpenGLWidget::wheelEvent(QWheelEvent *event) {
     float delta = event->angleDelta().y() / 120.0f;
-    cameraDistance = std::max(1.0f, std::min(20.0f, cameraDistance - delta));
+    cameraDistance = std::max(100.0f, std::min(1000.0f, cameraDistance - delta));
+    qDebug() << "Kamera-Distanz:" << cameraDistance;
     update();
 }
 
 void DrawingOpenGLWidget::mouseReleaseEvent(QMouseEvent *event) {
-    if (event->button() == Qt::RightButton) {
-        isRotating = false;
-    }
+    releaseMouse(); // Gibt die Maus wieder frei
 }
+

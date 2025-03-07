@@ -23,10 +23,11 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     void updateCamera();
-    void drawPoints();
+    void drawCube();
 
     Model *model;
     Controller *controller;
@@ -38,7 +39,6 @@ private:
     float cameraRotationX;
     float cameraRotationY;
     QPoint lastMousePos;
-    bool isRotating;
 };
 
 #endif // DRAWINGOPENGLWIDGET_H

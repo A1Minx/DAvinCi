@@ -1,0 +1,61 @@
+classDiagram
+    class Controller {
+        -Model* model
+        -DrawingOpenGLWidget* view
+        -ModeController* modeController
+        +handleMouseClick(QMouseEvent*)
+        +setView(DrawingOpenGLWidget*)
+    }
+
+    class ModeController {
+        -vector~unique_ptr~Mode~ modes
+        -Mode* currentMode
+        +addMode(unique_ptr~Mode~)
+        +setCurrentMode(int)
+        +onMouseClick(QMouseEvent*)
+    }
+
+    class Mode {
+        <<abstract>>
+        +onMouseClick(QMouseEvent*)
+    }
+
+    class DrawMode {
+        +onMouseClick(QMouseEvent*)
+    }
+
+    class SelectMode {
+        +onMouseClick(QMouseEvent*)
+    }
+
+    class DeleteMode {
+        +onMouseClick(QMouseEvent*)
+    }
+
+    class ICommand {
+        <<interface>>
+        +execute() void
+        +undo() void
+    }
+
+    class AddPointCommand {
+        -Model* model
+        -Point point
+        +execute() void
+        +undo() void
+    }
+
+    class DeletePointCommand {
+        -Model* model
+        -Point point
+        +execute() void
+        +undo() void
+    }
+
+    Controller "1" --> "1" ModeController : owns
+    ModeController "1" --> "*" Mode : owns
+    DrawMode --|> Mode : implements
+    SelectMode --|> Mode : implements
+    DeleteMode --|> Mode : implements
+    AddPointCommand ..|> ICommand : implements
+    DeletePointCommand ..|> ICommand : implements
