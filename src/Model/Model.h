@@ -3,30 +3,26 @@
 #define MODEL_H
 
 #include <vector>
+#include <memory>
 #include "SQLServer.h"
 #include "Point.h"
+#include "Line.h"
 
 class Model {
 public:
     Model();
 
-
-    void addLine(float x1, float y1, float x2, float y2);
-
     void addShape();
+    void addLine(Point* p1, Point* p2);
+    Point* addPoint(float x, float y, float z);
 
-    void addPoint(float x, float y, float z);
-
+    std::vector<std::shared_ptr<Point>> getPoints() const;
+    std::vector<std::shared_ptr<Line>> getLines() const;
     SQLServer *sqlServer;
 
-
-    const std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>>& getLines() const;
-
 private:
-    // Store multiple lines as pairs of coordinates
-    std::vector<std::pair<std::pair<float, float>, std::pair<float, float>>> lines;
-
     std::vector<Point*> points;
+    std::vector<Line*> lines;
 };
 
 #endif // MODEL_H

@@ -47,6 +47,12 @@ void Controller::setModeDrawLine()
     modeController->changeMode(ModeController::Modes::DrawLine);
 }
 
+void Controller::setModeSelection()
+{
+    qDebug() << "setMode Selection implementation";
+
+    modeController->changeMode(ModeController::Modes::Selection);
+}
 
 
 // ----- internals -----
@@ -55,29 +61,26 @@ ModeController* Controller::getModeController()
     return modeController;
 }
 
-Model* Controller::getModel()
-{
-    return this->model;
-}
 
-
-// ----- Model Interactions -----
-void Controller::addLine(float x1, float y1, float x2, float y2)
-{
-    model->addLine(x1,y1,x2,y2);
-    view->update();
-}
 
 void Controller::addShape()
 {
+    //TODO: Check if this can be used for all types of Shapes (Polymorphism)
     model->addShape();
     view->update();
 }
 
-void Controller::addPoint(float x, float y, float z)
+void Controller::addLine(Point *p1, Point *p2)
 {
-    model->addPoint(x,y,z);
+    model->addLine(p1, p2);
     view->update();
+}
+
+Point* Controller::addPoint(float x, float y, float z)
+{
+    Point* point = model->addPoint(x,y,z);
+    view->update();
+    return point;
 }
 
 
@@ -94,9 +97,16 @@ void Controller::writeSQL()
     model->sqlServer->writeSQL(dummyParam);
 }
 
+
+
+// ----- Interactivity -----
 void Controller::handleMouseClick(QMouseEvent *event)
 {
-    modeController->getCurrentMode()->onMouseClick(event);
+    // Bildschirmkoordinaten in Weltkoordinaten konvertieren. Notwendig, da ansonsten nicht an der Mausposition gezeichnet wird. 
+    // TODO: Prüfen ob es ein Problem ist, dass Screen Koordinaten int und Weltkoordinaten float sind. Genauigkeitsverlust? 
+    QVector3D worldPos = view->screenToWorld(event->x(), event->y());
+    
+    modeController->getCurrentMode()->onMouseClick(event, worldPos);
 }
 
 

@@ -19,13 +19,20 @@ SQLServer::SQLServer()
 
     // -- Prepared Statements
     // -- InsertPoint
+    //2D TODO: Delete
     const char *InsertPointQuery = "INSERT INTO Points (Points_x, Points_y) Values ($1, $2)";
     PGresult *insertPoint = PQprepare(connection, "insertPointTest", InsertPointQuery, 2, NULL);
     checkResult(insertPoint);
 
+    //3D
     const char *InsertPoint3DQuery = "INSERT INTO Points (Points_x, Points_y, Points_z) Values ($1, $2, $3)";
     PGresult *insertPoint3D = PQprepare(connection, "insertPoint3D", InsertPoint3DQuery, 3, NULL);
     checkResult(insertPoint3D);
+
+    // -- insertLine
+    const char *InsertLineQuery = "INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID) Values ($1, $2)";
+    PGresult *insertLine = PQprepare(connection, "insertLine", InsertLineQuery, 2, NULL);
+    checkResult(insertLine);
 
     // -- readPoints
     const char *readPointsQuery = "SELECT * FROM Points";
@@ -107,7 +114,7 @@ void SQLServer::writeSQL(const char *parVal[2])
 }
 
 
-void SQLServer::newPoint(float x, float y, float z)
+int SQLServer::newPoint(float x, float y, float z)
 {
     char xS[32], yS[32], zS[32];
 
@@ -128,8 +135,30 @@ void SQLServer::newPoint(float x, float y, float z)
             qDebug() << "SQL write Error";
         }
 
+        PGresult *idResult = PQexec(connection, "SELECT lastval()");
+        int newID = atoi(PQgetvalue(idResult, 0, 0));
+        PQclear(idResult);
+       
+        return newID;
 }
 
+void SQLServer::newLine(int p1_ID, int p2_ID)
+{
+    try {
+        qDebug() << "writing Line in SQL";
 
+        char p1_ID_str[32], p2_ID_str[32];
+        snprintf(p1_ID_str, sizeof(p1_ID_str), "%d", p1_ID);
+        snprintf(p2_ID_str, sizeof(p2_ID_str), "%d", p2_ID);
+        
+        const char *parVal[2] = {p1_ID_str, p2_ID_str};
+        PGresult *result = PQexecPrepared(connection, "insertLine", 2, parVal, NULL, NULL, 0);
+        checkResult(result);
 
+        PQclear(result);
+
+    } catch (const std::exception &e) {
+        qDebug() << "SQL write Error";
+    }
+}
 

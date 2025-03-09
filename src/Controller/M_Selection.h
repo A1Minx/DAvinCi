@@ -5,17 +5,14 @@
 
 class Controller;
 
-
-
 class M_Selection : public M_ModeInterface {
 public:
     M_Selection(Controller *controller);
-
-    void onMouseClick(QMouseEvent *event) override;
+    
+    void onMouseClick(QMouseEvent *event, const QVector3D& worldPos) override;
 
 private:
     Controller *controller;
-
 };
 
 #endif

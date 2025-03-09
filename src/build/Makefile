@@ -63,7 +63,8 @@ SOURCES       = ../main.cpp \
 		../Controller/M_Selection.cpp \
 		../Model/SQLServer.cpp \
 		../Model/Point.cpp \
-		../Model/Object3D.cpp moc_Controller.cpp \
+		../Model/Object3D.cpp \
+		../Model/Line.cpp moc_Controller.cpp \
 		moc_DrawingOpenGLWidget.cpp
 OBJECTS       = main.o \
 		mainWindow.o \
@@ -77,6 +78,7 @@ OBJECTS       = main.o \
 		SQLServer.o \
 		Point.o \
 		Object3D.o \
+		Line.o \
 		moc_Controller.o \
 		moc_DrawingOpenGLWidget.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -178,7 +180,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../Model/SQLServer.h \
 		../Model/BasicObject.h \
 		../Model/Point.h \
-		../Model/Object3D.h ../main.cpp \
+		../Model/Object3D.h \
+		../Model/Line.h ../main.cpp \
 		../View/mainWindow.cpp \
 		../Controller/Controller.cpp \
 		../View/DrawingOpenGLWidget.cpp \
@@ -189,7 +192,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../Controller/M_Selection.cpp \
 		../Model/SQLServer.cpp \
 		../Model/Point.cpp \
-		../Model/Object3D.cpp
+		../Model/Object3D.cpp \
+		../Model/Line.cpp
 QMAKE_TARGET  = DAvinCi
 DESTDIR       = 
 TARGET        = DAvinCi
@@ -393,8 +397,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../View/mainWindow.h ../Controller/Controller.h ../View/DrawingOpenGLWidget.h ../Model/Model.h ../Controller/ModeController.h ../Controller/M_DrawLine.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../Controller/Controller.cpp ../View/DrawingOpenGLWidget.cpp ../Model/Model.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../View/mainWindow.h ../Controller/Controller.h ../View/DrawingOpenGLWidget.h ../Model/Model.h ../Controller/ModeController.h ../Controller/M_DrawLine.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/Line.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../Controller/Controller.cpp ../View/DrawingOpenGLWidget.cpp ../Model/Model.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/Line.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -436,6 +440,7 @@ moc_Controller.cpp: ../Controller/Controller.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/Controller.h \
 		../Controller/ModeController.h \
 		../Controller/M_ModeInterface.h \
@@ -452,6 +457,7 @@ moc_DrawingOpenGLWidget.cpp: ../View/DrawingOpenGLWidget.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/Controller.h \
 		../View/DrawingOpenGLWidget.h \
 		../Controller/ModeController.h \
@@ -490,6 +496,7 @@ mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/M_DrawLine.h \
@@ -504,6 +511,7 @@ Controller.o: ../Controller/Controller.cpp ../Controller/Controller.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/M_DrawLine.h \
@@ -517,6 +525,7 @@ DrawingOpenGLWidget.o: ../View/DrawingOpenGLWidget.cpp ../View/DrawingOpenGLWidg
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/Controller.h \
 		../Controller/ModeController.h \
 		../Controller/M_ModeInterface.h \
@@ -529,25 +538,30 @@ Model.o: ../Model/Model.cpp ../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
-		../Model/Object3D.h
+		../Model/Object3D.h \
+		../Model/Line.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Model.o ../Model/Model.cpp
 
 ModeController.o: ../Controller/ModeController.cpp ../Controller/ModeController.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/M_DrawLine.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
 		../Controller/M_DrawPoint.h \
 		../Controller/M_Selection.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModeController.o ../Controller/ModeController.cpp
 
 M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
 		../Controller/M_ModeInterface.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
 		../Controller/Controller.h \
 		../View/DrawingOpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
-		../Model/Point.h \
-		../Model/BasicObject.h \
-		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_DrawPoint.h \
 		../Controller/M_Selection.h
@@ -562,6 +576,7 @@ M_DrawPoint.o: ../Controller/M_DrawPoint.cpp ../Controller/M_DrawPoint.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_DrawLine.h \
 		../Controller/M_Selection.h
@@ -576,6 +591,7 @@ M_Selection.o: ../Controller/M_Selection.cpp ../Controller/M_Selection.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_DrawLine.h \
 		../Controller/M_DrawPoint.h
@@ -591,6 +607,12 @@ Point.o: ../Model/Point.cpp ../Model/Point.h \
 
 Object3D.o: ../Model/Object3D.cpp ../Model/Object3D.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Object3D.o ../Model/Object3D.cpp
+
+Line.o: ../Model/Line.cpp ../Model/Line.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
+		../Model/Point.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Line.o ../Model/Line.cpp
 
 moc_Controller.o: moc_Controller.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Controller.o moc_Controller.cpp

@@ -4,6 +4,9 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
+#include <QMouseEvent>
+#include <QWheelEvent>
+#include <QVector3D>
 #include <Model.h>
 #include <Controller.h>
 
@@ -16,29 +19,30 @@ public:
     explicit DrawingOpenGLWidget(Model *model, Controller *controller, QWidget *parent = nullptr);
     ~DrawingOpenGLWidget();
 
+    void update(); 
+
+    // Konvertiert Bildschirmkoordinaten in Weltkoordinaten
+    QVector3D screenToWorld(int x, int y);
+
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    void updateCamera();
-    void drawCube();
+    void drawGrid();
+    void drawPoints();
+    void updateProjectionMatrix();
 
     Model *model;
     Controller *controller;
 
-    // Camera parameters
+    // View parameters
     QMatrix4x4 projectionMatrix;
-    QMatrix4x4 viewMatrix;
-    float cameraDistance;
-    float cameraRotationX;
-    float cameraRotationY;
-    QPoint lastMousePos;
+    float zoomLevel;        // Zoom-Faktor
+    float gridSize;         // Größe des Gitters
 };
 
 #endif // DRAWINGOPENGLWIDGET_H

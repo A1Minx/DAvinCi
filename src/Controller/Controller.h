@@ -5,8 +5,7 @@
 #include <iostream>
 #include <DrawingOpenGLWidget.h>
 #include <ModeController.h>
-
-
+#include <QMouseEvent>
 
 class Controller : public QObject
 {
@@ -24,15 +23,15 @@ public slots:
     void clearShapes();
     void setModeDrawPoint();
     void setModeDrawLine();
+    void setModeSelection();
     void writeSQL();
     void readSQL();
     void handleMouseClick(QMouseEvent *event);
 
 public:
-    Model* getModel();
-    void addLine(float x1, float y1, float x2, float y2);
+    void addLine(Point* p1, Point* p2);
     void addShape();
-    void addPoint(float x, float y, float z);
+    Point* addPoint(float x, float y, float z);
 
 private:
     Model *model;
