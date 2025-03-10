@@ -20,3 +20,9 @@ void M_DrawPoint::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
     }
 }
 
+void M_DrawPoint::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
+    // Nothing to do here; empty implementation to satisfy Interface
+    // TODO: Check if this is a good design principle. 
+    // Pro Argument: All Modes implement the necessary Mouse Methods, and it doesnt hurt if they are empty.
+    return;
+}

@@ -38,6 +38,11 @@ SQLServer::SQLServer()
     const char *readPointsQuery = "SELECT * FROM Points";
     PGresult *readPoints = PQprepare(connection, "readPoints", readPointsQuery, 0, NULL);
     checkResult(readPoints);
+
+    // -- readLines
+    const char *readLinesQuery = "SELECT * FROM Lines";
+    PGresult *readLines = PQprepare(connection, "readLines", readLinesQuery, 0, NULL);
+    checkResult(readLines);
 }
 
 SQLServer::~SQLServer()
@@ -63,11 +68,12 @@ void SQLServer::checkResult(PGresult *result)
 
 
 
-// -- Actions --
-void SQLServer::readSQL()
+// ----- Actions -----
+// -- read --
+void SQLServer::readSQLPoints()
 {
     try {
-        qDebug() << "reading SQL";
+        qDebug() << "reading SQL Points";
 
         PGresult *result = PQexecPrepared(connection, "readPoints", 0, NULL, NULL, NULL, 0);
         checkResult(result);
@@ -98,21 +104,42 @@ void SQLServer::readSQL()
     }
 }
 
-void SQLServer::writeSQL(const char *parVal[2])
+void SQLServer::readSQLLines()
 {
     try {
-            qDebug() << "writing SQL";
+            qDebug() << "reading SQL Lines";
 
-            PGresult *result = PQexecPrepared(connection, "insertPointTest", 2, parVal, NULL, NULL, 0);
+            PGresult *result = PQexecPrepared(connection, "readLines", 0, NULL, NULL, NULL, 0);
             checkResult(result);
 
+            int rows = PQntuples(result);
+            int cols = PQnfields(result);
+
+            for (int col = 0; col < cols; col++) {
+                std::cout << PQfname(result, col);
+                if (col < cols - 1)
+                    std::cout << "\t";
+            }
+            std::cout << std::endl;
+
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
+                    std::cout << PQgetvalue(result, row, col);
+                    if (col < cols - 1)
+                        std::cout << "\t";
+                }
+                std::cout << std::endl;
+            }
+            
             PQclear(result);
 
         } catch (const std::exception &e) {
-            qDebug() << "SQL write Error";
+            qDebug() << "SQL read Error";
         }
 }
 
+
+// -- write --
 
 int SQLServer::newPoint(float x, float y, float z)
 {

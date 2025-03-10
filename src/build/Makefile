@@ -545,22 +545,27 @@ Model.o: ../Model/Model.cpp ../Model/Model.h \
 ModeController.o: ../Controller/ModeController.cpp ../Controller/ModeController.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/M_DrawLine.h \
-		../Model/Point.h \
-		../Model/BasicObject.h \
-		../Model/Object3D.h \
 		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModeController.o ../Controller/ModeController.cpp
-
-M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
-		../Controller/M_ModeInterface.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
+		../Controller/M_Selection.h \
 		../Controller/Controller.h \
 		../View/DrawingOpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
+		../Model/Line.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModeController.o ../Controller/ModeController.cpp
+
+M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
+		../Controller/M_ModeInterface.h \
+		../Controller/Controller.h \
+		../View/DrawingOpenGLWidget.h \
+		../Model/Model.h \
+		../Model/SQLServer.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
 		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_DrawPoint.h \
@@ -569,13 +574,13 @@ M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
 
 M_DrawPoint.o: ../Controller/M_DrawPoint.cpp ../Controller/M_DrawPoint.h \
 		../Controller/M_ModeInterface.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
 		../Controller/Controller.h \
 		../View/DrawingOpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
-		../Model/Point.h \
-		../Model/BasicObject.h \
-		../Model/Object3D.h \
 		../Model/Line.h \
 		../Controller/ModeController.h \
 		../Controller/M_DrawLine.h \

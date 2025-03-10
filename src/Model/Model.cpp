@@ -7,6 +7,8 @@ Model::Model()
     this->sqlServer = new SQLServer();
 }
 
+
+// ----- Interactions with persistent Data Model -----
 void Model::addShape()
 {
     qDebug() << "Shape added";
@@ -26,6 +28,26 @@ void Model::addLine(Point* p1, Point* p2)
     sqlServer->newLine(p1->getID(), p2->getID());
 }
 
+// ----- Interactions with temporary Data -----
+void Model::addTempLine(float x1, float y1, float z1, float x2, float y2, float z2)
+{    
+    tempLines.emplace_back(x1, y1, z1, x2, y2, z2);
+}
+
+void Model::removeTempLines()
+{
+    tempLines.clear();
+}
+
+void Model::addTempPoint(float x, float y, float z)
+{
+    markedPoints.emplace_back(x, y, z);
+}
+
+void Model::removeTempPoints()
+{
+    markedPoints.clear();
+}
 
 // ----- Getters -----
 std::vector<std::shared_ptr<Point>> Model::getPoints() const

@@ -19,6 +19,7 @@ void M_DrawLine::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
             p2 = controller->addPoint(worldPos.x(), worldPos.y(), 0.0f);
             controller->addLine(p1, p2);
             firstClick = true;
+            controller->removeTempLines();
         }
     } else if (event->button() == Qt::RightButton) {
         if (!firstClick) {
@@ -27,8 +28,25 @@ void M_DrawLine::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
             p1 = nullptr;
         } else {
             qDebug() << "Switch to Selection Mode";
+            controller->removeTempLines();
             controller->setModeSelection();
         }
     }
+}
+
+void M_DrawLine::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
+    
+    std::shared_ptr<Point> nearestPoint = controller->getNearestPoint(worldPos.x(), worldPos.y(), worldPos.z());
+    if (nearestPoint) {
+        controller->removeTempPoints();
+        controller->addTempPoint(nearestPoint->getX(), nearestPoint->getY(), nearestPoint->getZ());
+    } else {
+        controller->removeTempPoints();
+    }
+
+    if (!firstClick) {
+        controller->removeTempLines();
+        controller->addTempLine(p1->getX(), p1->getY(), p1->getZ(), worldPos.x(), worldPos.y(), worldPos.z());
+    } 
 }
 

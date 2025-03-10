@@ -8,8 +8,8 @@ class SQLServer {
     public:
         SQLServer();
 
-        void writeSQL(const char *parVal[2]);
-        void readSQL();
+        void readSQLLines();
+        void readSQLPoints();
 
         int newPoint(float x, float y, float z);
         void newLine(int p1_ID, int p2_ID);

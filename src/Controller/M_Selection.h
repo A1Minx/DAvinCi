@@ -10,7 +10,8 @@ public:
     M_Selection(Controller *controller);
     
     void onMouseClick(QMouseEvent *event, const QVector3D& worldPos) override;
-
+    void onMouseMove(QMouseEvent *event, const QVector3D& worldPos) override;
+    
 private:
     Controller *controller;
 };

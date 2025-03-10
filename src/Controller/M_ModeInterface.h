@@ -10,6 +10,7 @@ public:
     
 
     virtual void onMouseClick(QMouseEvent *event, const QVector3D& worldPos) = 0;
+    virtual void onMouseMove(QMouseEvent *event, const QVector3D& worldPos) = 0;
 };
 
 #endif

@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Controller_t {
-    QByteArrayData data[13];
-    char stringdata0[137];
+    QByteArrayData data[14];
+    char stringdata0[163];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -40,17 +40,19 @@ QT_MOC_LITERAL(4, 22, 11), // "clearShapes"
 QT_MOC_LITERAL(5, 34, 16), // "setModeDrawPoint"
 QT_MOC_LITERAL(6, 51, 15), // "setModeDrawLine"
 QT_MOC_LITERAL(7, 67, 16), // "setModeSelection"
-QT_MOC_LITERAL(8, 84, 8), // "writeSQL"
-QT_MOC_LITERAL(9, 93, 7), // "readSQL"
-QT_MOC_LITERAL(10, 101, 16), // "handleMouseClick"
-QT_MOC_LITERAL(11, 118, 12), // "QMouseEvent*"
-QT_MOC_LITERAL(12, 131, 5) // "event"
+QT_MOC_LITERAL(8, 84, 12), // "readSQLLines"
+QT_MOC_LITERAL(9, 97, 13), // "readSQLPoints"
+QT_MOC_LITERAL(10, 111, 16), // "handleMouseClick"
+QT_MOC_LITERAL(11, 128, 12), // "QMouseEvent*"
+QT_MOC_LITERAL(12, 141, 5), // "event"
+QT_MOC_LITERAL(13, 147, 15) // "handleMouseMove"
 
     },
     "Controller\0save\0\0load\0clearShapes\0"
     "setModeDrawPoint\0setModeDrawLine\0"
-    "setModeSelection\0writeSQL\0readSQL\0"
-    "handleMouseClick\0QMouseEvent*\0event"
+    "setModeSelection\0readSQLLines\0"
+    "readSQLPoints\0handleMouseClick\0"
+    "QMouseEvent*\0event\0handleMouseMove"
 };
 #undef QT_MOC_LITERAL
 
@@ -60,7 +62,7 @@ static const uint qt_meta_data_Controller[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       9,   14, // methods
+      10,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -68,15 +70,16 @@ static const uint qt_meta_data_Controller[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   59,    2, 0x0a /* Public */,
-       3,    0,   60,    2, 0x0a /* Public */,
-       4,    0,   61,    2, 0x0a /* Public */,
-       5,    0,   62,    2, 0x0a /* Public */,
-       6,    0,   63,    2, 0x0a /* Public */,
-       7,    0,   64,    2, 0x0a /* Public */,
-       8,    0,   65,    2, 0x0a /* Public */,
-       9,    0,   66,    2, 0x0a /* Public */,
-      10,    1,   67,    2, 0x0a /* Public */,
+       1,    0,   64,    2, 0x0a /* Public */,
+       3,    0,   65,    2, 0x0a /* Public */,
+       4,    0,   66,    2, 0x0a /* Public */,
+       5,    0,   67,    2, 0x0a /* Public */,
+       6,    0,   68,    2, 0x0a /* Public */,
+       7,    0,   69,    2, 0x0a /* Public */,
+       8,    0,   70,    2, 0x0a /* Public */,
+       9,    0,   71,    2, 0x0a /* Public */,
+      10,    1,   72,    2, 0x0a /* Public */,
+      13,    1,   75,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -87,6 +90,7 @@ static const uint qt_meta_data_Controller[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 11,   12,
     QMetaType::Void, 0x80000000 | 11,   12,
 
        0        // eod
@@ -104,9 +108,10 @@ void Controller::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->setModeDrawPoint(); break;
         case 4: _t->setModeDrawLine(); break;
         case 5: _t->setModeSelection(); break;
-        case 6: _t->writeSQL(); break;
-        case 7: _t->readSQL(); break;
+        case 6: _t->readSQLLines(); break;
+        case 7: _t->readSQLPoints(); break;
         case 8: _t->handleMouseClick((*reinterpret_cast< QMouseEvent*(*)>(_a[1]))); break;
+        case 9: _t->handleMouseMove((*reinterpret_cast< QMouseEvent*(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -141,13 +146,13 @@ int Controller::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 10;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 10)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 9;
+        _id -= 10;
     }
     return _id;
 }

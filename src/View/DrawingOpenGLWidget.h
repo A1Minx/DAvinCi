@@ -25,15 +25,21 @@ public:
     QVector3D screenToWorld(int x, int y);
 
 protected:
+
+    // GL functions
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
+
+    // Control events
     void mousePressEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     void drawGrid();
-    void drawPoints();
+    void drawModel();
+    void drawTemporary();
     void updateProjectionMatrix();
 
     Model *model;

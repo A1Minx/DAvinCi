@@ -2,6 +2,7 @@
 #define M_DRAWPOINT_H
 
 #include "M_ModeInterface.h"
+#include "Point.h"
 
 class Controller;
 
@@ -10,6 +11,7 @@ public:
     M_DrawPoint(Controller *controller);
 
     void onMouseClick(QMouseEvent *event, const QVector3D& worldPos) override;
+    void onMouseMove(QMouseEvent *event, const QVector3D& worldPos) override;
 
 private:
     Controller *controller;

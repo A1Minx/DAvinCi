@@ -84,24 +84,24 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  //----- test buttons -----
  //-- load
- QPushButton *writeSQL = new QPushButton("Write SQL",  this);
- writeSQL->setText("Write SQL");
- writeSQL->setToolTip("Write SQL");
- writeSQL->show();
- writeSQL->setIcon(QIcon::fromTheme("face-smile"));
+ QPushButton *readSQLLines = new QPushButton("Read SQL Lines",  this);
+ readSQLLines->setText("Read SQL Lines");
+ readSQLLines->setToolTip("Read SQL Lines");
+ readSQLLines->show();
+ //readSQLLines->setIcon(QIcon::fromTheme("face-smile"));
 
- QObject::connect(writeSQL, SIGNAL(clicked()), controller, SLOT(writeSQL()));
+ QObject::connect(readSQLLines, SIGNAL(clicked()), controller, SLOT(readSQLLines()));
 
- buttonLayout->addWidget(writeSQL);
+ buttonLayout->addWidget(readSQLLines);
 
  //-- save
-  QPushButton *readSQL = new QPushButton("Read SQL",  this);
- readSQL->setText("Read SQL");
- readSQL->setToolTip("Read SQL");
- readSQL->show();
- readSQL->setIcon(QIcon::fromTheme("face-smile"));
+  QPushButton *readSQLPoints = new QPushButton("Read SQL Points",  this);
+ readSQLPoints->setText("Read SQL Points");
+ readSQLPoints->setToolTip("Read SQL Points");
+ readSQLPoints->show();
+ //readSQLPoints->setIcon(QIcon::fromTheme("face-smile"));
 
- QObject::connect(readSQL, SIGNAL(clicked()), controller, SLOT(readSQL()));
+ QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
 
- buttonLayout->addWidget(readSQL);
+ buttonLayout->addWidget(readSQLPoints);
 }

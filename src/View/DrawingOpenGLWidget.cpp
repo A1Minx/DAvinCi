@@ -39,12 +39,12 @@ void DrawingOpenGLWidget::paintGL() {
     
     // Nur Zoom anwenden
     glScalef(zoomLevel, zoomLevel, 1.0f);
-    
-    // Zeichne das Gitter
+
     drawGrid();
-    
-    // Zeichne die Punkte
-    drawPoints();
+
+    drawModel();
+
+    drawTemporary();
 }
 
 void DrawingOpenGLWidget::drawGrid() {
@@ -92,37 +92,58 @@ void DrawingOpenGLWidget::drawGrid() {
     glLineWidth(1.0f);
 }
 
-void DrawingOpenGLWidget::drawPoints() {
-    // Hole die Punkte als shared_ptr
-    std::vector<std::shared_ptr<Point>> points = model->getPoints();
+void DrawingOpenGLWidget::drawModel() {
     
-    if (points.empty()) {
-        return;
-    }
+    std::vector<std::shared_ptr<Point>> points = model->getPoints();
+    std::vector<std::shared_ptr<Line>> lines = model->getLines();
     
     glColor3f(1.0f, 0.0f, 0.0f); // Rot
-    glPointSize(10.0f);
+    glPointSize(5.0f);
     
-    glBegin(GL_POINTS);
-    for (const auto& point : points) {
-        // Verwende den Point über den shared_ptr
-        glVertex3f(point->getX(), point->getY(), point->getZ());
+    glEnable(GL_POINT_SMOOTH); // Make Points round
+    if (!points.empty()) {
+        glBegin(GL_POINTS);
+        for (const auto& point : points) {
+            glVertex3f(point->getX(), point->getY(), point->getZ());
+        }
+        glEnd();
     }
-    glEnd();
+
+    if (!lines.empty()) {
+        glBegin(GL_LINES);
+        for (const auto& line : lines) {
+            glVertex3f(line->getP1()->getX(), line->getP1()->getY(), line->getP1()->getZ());
+            glVertex3f(line->getP2()->getX(), line->getP2()->getY(), line->getP2()->getZ());
+        }
+        glEnd();
+    }
 }
 
-void DrawingOpenGLWidget::mousePressEvent(QMouseEvent *event) {
-    controller->handleMouseClick(event);
-}
+void DrawingOpenGLWidget::drawTemporary() {
+    const std::vector<TempLine> tempLines = model->getTempLines();
+    const std::vector<TempPoint> markedPoints = model->getTempPoints();
 
-void DrawingOpenGLWidget::wheelEvent(QWheelEvent *event) {
-    // Zoom-Faktor anpassen
-    float delta = event->angleDelta().y() / 120.0f;
-    zoomLevel *= (1.0f + delta * 0.1f);
-    zoomLevel = std::max(0.1f, std::min(10.0f, zoomLevel));
     
-    updateProjectionMatrix();
-    update();
+    if (!tempLines.empty()) {
+        glColor3f(0.0f, 1.0f, 0.0f); 
+        glBegin(GL_LINES);
+        for (const auto& line : tempLines) {
+            glVertex3f(line.x1, line.y1, line.z1);
+            glVertex3f(line.x2, line.y2, line.z2);    
+        }
+        glEnd();
+    }
+    
+    
+    if (!markedPoints.empty()) {
+        glColor3f(0.0f, 1.0f, 0.0f); 
+        glPointSize(10.0f);
+        glBegin(GL_POINTS);
+        for (const auto& point : markedPoints) {
+            glVertex3f(point.x, point.y, point.z);
+        }
+        glEnd();
+    }
 }
 
 void DrawingOpenGLWidget::updateProjectionMatrix() {
@@ -134,7 +155,7 @@ void DrawingOpenGLWidget::updateProjectionMatrix() {
 }
 
 void DrawingOpenGLWidget::update() {
-    qDebug() << "updating View";
+    //qDebug() << "updating View";
     QOpenGLWidget::update();
 }
 
@@ -154,8 +175,26 @@ QVector3D DrawingOpenGLWidget::screenToWorld(int x, int y) {
     float worldX = normalizedX * (width() / 2.0f);
     float worldY = normalizedY * (height() / 2.0f);
     
-    qDebug() << "Screen coords:" << x << y << "-> World coords:" << worldX << worldY;
-    
     return QVector3D(worldX, worldY, 0.0f);
+}
+
+
+// Control events
+void DrawingOpenGLWidget::mousePressEvent(QMouseEvent *event) {
+    controller->handleMouseClick(event);
+}
+
+void DrawingOpenGLWidget::wheelEvent(QWheelEvent *event) {
+    // Zoom-Faktor anpassen
+    float delta = event->angleDelta().y() / 120.0f;
+    zoomLevel *= (1.0f + delta * 0.1f);
+    zoomLevel = std::max(0.1f, std::min(10.0f, zoomLevel));
+    
+    updateProjectionMatrix();
+    update();
+}
+
+void DrawingOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
+    controller->handleMouseMove(event);
 }
 

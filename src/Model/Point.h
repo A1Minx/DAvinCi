@@ -17,6 +17,8 @@ public:
 
     int getID() const { return id; }
 
+    float distanceTo(float x, float y, float z);
+
 private:
     float x;
     float y;
