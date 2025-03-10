@@ -3,19 +3,19 @@
 
 #include "BasicObject.h"
 #include "Point.h"
-
+#include <memory>
 class Line : BasicObject {
 
 public:
-    Line(Point* p1, Point* p2);
+    Line(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2);
     ~Line();
 
-    Point* getP1() const { return p1; }
-    Point* getP2() const { return p2; } 
+    std::shared_ptr<Point> getP1() const { return p1; }
+    std::shared_ptr<Point> getP2() const { return p2; } 
 
 private:
-    Point* p1;
-    Point* p2;
+    std::shared_ptr<Point> p1;
+    std::shared_ptr<Point> p2;
 };
 
 #endif // LINE_H_INCLUDED

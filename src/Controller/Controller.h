@@ -6,7 +6,7 @@
 #include <DrawingOpenGLWidget.h>
 #include <ModeController.h>
 #include <QMouseEvent>
-
+#include <memory>
 class Controller : public QObject
 {
     Q_OBJECT
@@ -30,9 +30,9 @@ public slots:
     void handleMouseMove(QMouseEvent *event);
 
 public:
-    void addLine(Point* p1, Point* p2);
+    void addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2);
     void addShape();
-    Point* addPoint(float x, float y, float z);
+    std::shared_ptr<Point> addPoint(float x, float y, float z);
 
     void addTempLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void removeTempLines();

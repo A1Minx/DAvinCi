@@ -88,15 +88,15 @@ void Controller::addShape()
     view->update();
 }
 
-void Controller::addLine(Point *p1, Point *p2)
+void Controller::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2)
 {
     model->addLine(p1, p2);
     view->update();
 }
 
-Point* Controller::addPoint(float x, float y, float z)
+std::shared_ptr<Point> Controller::addPoint(float x, float y, float z)
 {
-    Point* point = model->addPoint(x,y,z);
+    std::shared_ptr<Point> point = model->addPoint(x,y,z);
     view->update();
     return point;
 }

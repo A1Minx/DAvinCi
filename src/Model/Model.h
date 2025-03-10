@@ -28,8 +28,8 @@ public:
     Model();
 
     void addShape();
-    void addLine(Point* p1, Point* p2);
-    Point* addPoint(float x, float y, float z);
+    void addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2);
+    std::shared_ptr<Point> addPoint(float x, float y, float z);
 
     void addTempLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void removeTempLines();
@@ -44,8 +44,8 @@ public:
     SQLServer *sqlServer;
 
 private:
-    std::vector<Point*> points;
-    std::vector<Line*> lines;
+    std::vector<std::shared_ptr<Point>> points;
+    std::vector<std::shared_ptr<Line>> lines;
     std::vector<TempLine> tempLines;
     std::vector<TempPoint> markedPoints;
 };

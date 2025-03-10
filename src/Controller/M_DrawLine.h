@@ -1,5 +1,6 @@
 #ifndef M_DRAWLINE_H
 #define M_DRAWLINE_H
+#include <memory>
 
 class Controller;
 class Point;
@@ -17,8 +18,8 @@ public:
 private:
     Controller *controller;
     bool firstClick = true;
-    float x1, y1;
-    Point *p1, *p2;
+    std::shared_ptr<Point> p1, p2;
+    std::shared_ptr<Point> nearestPoint;
 };
 
 #endif
