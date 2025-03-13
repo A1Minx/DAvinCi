@@ -3,6 +3,9 @@
 #include <QDebug>
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <stdexcept>
 
 #include <postgresql/libpq-fe.h>
 
@@ -39,6 +42,11 @@ SQLServer::SQLServer()
     PGresult *readPoints = PQprepare(connection, "readPoints", readPointsQuery, 0, NULL);
     checkResult(readPoints);
 
+    // -- readPointByID
+    const char *readPointByIDQuery = "SELECT * FROM Points WHERE Points_ID = $1";
+    PGresult *readPointByID = PQprepare(connection, "readPointByID", readPointByIDQuery, 1, NULL);
+    checkResult(readPointByID);
+
     // -- readLines
     const char *readLinesQuery = "SELECT * FROM Lines";
     PGresult *readLines = PQprepare(connection, "readLines", readLinesQuery, 0, NULL);
@@ -55,14 +63,13 @@ SQLServer::~SQLServer()
 // -- Internal Functions --
 void SQLServer::checkResult(PGresult *result)
 {
-    if (PQresultStatus(result) == PGRES_COMMAND_OK) {
-            return;
-        }
-    else if (PQresultStatus(result) == PGRES_TUPLES_OK){
-            return;
+    ExecStatusType status = PQresultStatus(result);
+    if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK) {
+        return;
     } else {
-            throw std::runtime_error("Prepare Error");
-        }
+        qDebug() << "SQL Error:" << PQresultErrorMessage(result);
+        throw std::runtime_error("Prepare Error");
+    }
 }
 
 
@@ -70,8 +77,42 @@ void SQLServer::checkResult(PGresult *result)
 
 // ----- Actions -----
 // -- read --
-void SQLServer::readSQLPoints()
+
+std::shared_ptr<Point> SQLServer::readPointByID(int id)
 {
+    std::shared_ptr<Point> point;
+    try {
+        qDebug() << "reading SQL Points";
+
+        char id_str[32];
+        snprintf(id_str, sizeof(id_str), "%d", id);
+
+        const char *parVal[1] = {id_str};
+
+        PGresult *result = PQexecPrepared(connection, "readPointByID", 1, parVal, NULL, NULL, 0);
+        checkResult(result);
+
+        int rows = PQntuples(result);
+        int cols = PQnfields(result);
+        
+        if (rows > 0) {
+            float x = std::stof(PQgetvalue(result, 0, 1));
+            float y = std::stof(PQgetvalue(result, 0, 2));
+            float z = std::stof(PQgetvalue(result, 0, 3));
+            point = std::make_shared<Point>(x, y, z, id);
+        }
+        
+        PQclear(result);
+
+    } catch (const std::exception &e) {
+        qDebug() << "SQL read Error";
+    }
+    return point;
+}
+
+std::vector<std::shared_ptr<Point>> SQLServer::readSQLPoints() 
+{
+    std::vector<std::shared_ptr<Point>> points;
     try {
         qDebug() << "reading SQL Points";
 
@@ -81,20 +122,16 @@ void SQLServer::readSQLPoints()
         int rows = PQntuples(result);
         int cols = PQnfields(result);
 
-        for (int col = 0; col < cols; col++) {
-            std::cout << PQfname(result, col);
-            if (col < cols - 1)
-                std::cout << "\t";
-        }
-        std::cout << std::endl;
-
         for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                std::cout << PQgetvalue(result, row, col);
-                if (col < cols - 1)
-                    std::cout << "\t";
-            }
-            std::cout << std::endl;
+            int id = std::stoi(PQgetvalue(result, row, 0));
+            float x = std::stof(PQgetvalue(result, row, 1));
+            float y = std::stof(PQgetvalue(result, row, 2));
+            float z = std::stof(PQgetvalue(result, row, 3));
+            points.push_back(std::make_shared<Point>(x, y, z, id));
+        }
+
+        for (const auto& point : points) {
+            std::cout << "ID: " << point->getID() << "\t" << point->getX() << "\t" << point->getY() << "\t" << point->getZ() << std::endl;
         }
 
         PQclear(result);
@@ -102,10 +139,12 @@ void SQLServer::readSQLPoints()
     } catch (const std::exception &e) {
         qDebug() << "SQL read Error";
     }
+    return points;
 }
 
-void SQLServer::readSQLLines()
+std::vector<std::shared_ptr<Line>> SQLServer::readSQLLines()
 {
+    std::vector<std::shared_ptr<Line>> lines;
     try {
             qDebug() << "reading SQL Lines";
 
@@ -115,27 +154,24 @@ void SQLServer::readSQLLines()
             int rows = PQntuples(result);
             int cols = PQnfields(result);
 
-            for (int col = 0; col < cols; col++) {
-                std::cout << PQfname(result, col);
-                if (col < cols - 1)
-                    std::cout << "\t";
-            }
-            std::cout << std::endl;
-
             for (int row = 0; row < rows; row++) {
-                for (int col = 0; col < cols; col++) {
-                    std::cout << PQgetvalue(result, row, col);
-                    if (col < cols - 1)
-                        std::cout << "\t";
-                }
-                std::cout << std::endl;
+                int p1_ID = std::stoi(PQgetvalue(result, row, 1));
+                int p2_ID = std::stoi(PQgetvalue(result, row, 2));
+                std::shared_ptr<Point> p1 = readPointByID(p1_ID);
+                std::shared_ptr<Point> p2 = readPointByID(p2_ID);
+                lines.push_back(std::make_shared<Line>(p1, p2));
+            }
+
+            for (const auto& line : lines) {
+                std::cout << line->getP2()->getID() << "\t" << line->getP1()->getID() << std::endl;
             }
             
             PQclear(result);
 
-        } catch (const std::exception &e) {
-            qDebug() << "SQL read Error";
-        }
+    } catch (const std::exception &e) {
+        qDebug() << "SQL read Error";
+    }
+    return lines;
 }
 
 
@@ -160,6 +196,7 @@ int SQLServer::newPoint(float x, float y, float z)
 
         } catch (const std::exception &e) {
             qDebug() << "SQL write Error";
+            qDebug() << e.what();
         }
 
         PGresult *idResult = PQexec(connection, "SELECT lastval()");

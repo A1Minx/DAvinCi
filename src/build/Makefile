@@ -55,7 +55,7 @@ OBJECTS_DIR   = ./
 SOURCES       = ../main.cpp \
 		../View/mainWindow.cpp \
 		../Controller/Controller.cpp \
-		../View/DrawingOpenGLWidget.cpp \
+		./View/DrawingOpenGLWidget.cpp \
 		../Model/Model.cpp \
 		../Controller/ModeController.cpp \
 		../Controller/M_DrawLine.cpp \
@@ -64,8 +64,8 @@ SOURCES       = ../main.cpp \
 		../Model/SQLServer.cpp \
 		../Model/Point.cpp \
 		../Model/Object3D.cpp \
-		../Model/Line.cpp moc_Controller.cpp \
-		moc_DrawingOpenGLWidget.cpp
+		../Model/Line.cpp moc_mainWindow.cpp \
+		moc_Controller.cpp
 OBJECTS       = main.o \
 		mainWindow.o \
 		Controller.o \
@@ -79,8 +79,8 @@ OBJECTS       = main.o \
 		Point.o \
 		Object3D.o \
 		Line.o \
-		moc_Controller.o \
-		moc_DrawingOpenGLWidget.o
+		moc_mainWindow.o \
+		moc_Controller.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -170,7 +170,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../../qt.pro ../View/mainWindow.h \
 		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		./View/DrawingOpenGLWidget.h \
 		../Model/Model.h \
 		../Controller/ModeController.h \
 		../Controller/M_DrawLine.h \
@@ -184,7 +184,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../Model/Line.h ../main.cpp \
 		../View/mainWindow.cpp \
 		../Controller/Controller.cpp \
-		../View/DrawingOpenGLWidget.cpp \
+		./View/DrawingOpenGLWidget.cpp \
 		../Model/Model.cpp \
 		../Controller/ModeController.cpp \
 		../Controller/M_DrawLine.cpp \
@@ -397,8 +397,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../View/mainWindow.h ../Controller/Controller.h ../View/DrawingOpenGLWidget.h ../Model/Model.h ../Controller/ModeController.h ../Controller/M_DrawLine.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/Line.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../Controller/Controller.cpp ../View/DrawingOpenGLWidget.cpp ../Model/Model.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/Line.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../View/mainWindow.h ../Controller/Controller.h ./View/DrawingOpenGLWidget.h ../Model/Model.h ../Controller/ModeController.h ../Controller/M_DrawLine.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/Line.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../Controller/Controller.cpp ./View/DrawingOpenGLWidget.cpp ../Model/Model.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/Line.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -430,11 +430,16 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_Controller.cpp moc_DrawingOpenGLWidget.cpp
+compiler_moc_header_make_all: moc_mainWindow.cpp moc_Controller.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_Controller.cpp moc_DrawingOpenGLWidget.cpp
+	-$(DEL_FILE) moc_mainWindow.cpp moc_Controller.cpp
+moc_mainWindow.cpp: ../View/mainWindow.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/mainWindow.h -o moc_mainWindow.cpp
+
 moc_Controller.cpp: ../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Point.h \
@@ -450,24 +455,6 @@ moc_Controller.cpp: ../Controller/Controller.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Controller/Controller.h -o moc_Controller.cpp
-
-moc_DrawingOpenGLWidget.cpp: ../View/DrawingOpenGLWidget.h \
-		../Model/Model.h \
-		../Model/SQLServer.h \
-		../Model/Point.h \
-		../Model/BasicObject.h \
-		../Model/Object3D.h \
-		../Model/Line.h \
-		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
-		../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h \
-		moc_predefs.h \
-		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/DrawingOpenGLWidget.h -o moc_DrawingOpenGLWidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -490,7 +477,7 @@ main.o: ../main.cpp ../View/mainWindow.h
 
 mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
 		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Point.h \
@@ -501,11 +488,12 @@ mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/M_DrawLine.h \
 		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h
+		../Controller/M_Selection.h \
+		../View/Orth_XZ_OpenGLWidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainWindow.o ../View/mainWindow.cpp
 
 Controller.o: ../Controller/Controller.cpp ../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Point.h \
@@ -519,20 +507,8 @@ Controller.o: ../Controller/Controller.cpp ../Controller/Controller.h \
 		../Controller/M_Selection.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Controller.o ../Controller/Controller.cpp
 
-DrawingOpenGLWidget.o: ../View/DrawingOpenGLWidget.cpp ../View/DrawingOpenGLWidget.h \
-		../Model/Model.h \
-		../Model/SQLServer.h \
-		../Model/Point.h \
-		../Model/BasicObject.h \
-		../Model/Object3D.h \
-		../Model/Line.h \
-		../Controller/Controller.h \
-		../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DrawingOpenGLWidget.o ../View/DrawingOpenGLWidget.cpp
+DrawingOpenGLWidget.o: ./View/DrawingOpenGLWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DrawingOpenGLWidget.o ./View/DrawingOpenGLWidget.cpp
 
 Model.o: ../Model/Model.cpp ../Model/Model.h \
 		../Model/SQLServer.h \
@@ -551,7 +527,7 @@ ModeController.o: ../Controller/ModeController.cpp ../Controller/ModeController.
 		../Model/Object3D.h \
 		../Controller/M_Selection.h \
 		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Line.h
@@ -560,7 +536,7 @@ ModeController.o: ../Controller/ModeController.cpp ../Controller/ModeController.
 M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Point.h \
@@ -578,7 +554,7 @@ M_DrawPoint.o: ../Controller/M_DrawPoint.cpp ../Controller/M_DrawPoint.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Line.h \
@@ -590,7 +566,7 @@ M_DrawPoint.o: ../Controller/M_DrawPoint.cpp ../Controller/M_DrawPoint.h \
 M_Selection.o: ../Controller/M_Selection.cpp ../Controller/M_Selection.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/Controller.h \
-		../View/DrawingOpenGLWidget.h \
+		../View/Orth_XY_OpenGLWidget.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
 		../Model/Point.h \
@@ -602,7 +578,11 @@ M_Selection.o: ../Controller/M_Selection.cpp ../Controller/M_Selection.h \
 		../Controller/M_DrawPoint.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_Selection.o ../Controller/M_Selection.cpp
 
-SQLServer.o: ../Model/SQLServer.cpp ../Model/SQLServer.h
+SQLServer.o: ../Model/SQLServer.cpp ../Model/SQLServer.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
+		../Model/Line.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SQLServer.o ../Model/SQLServer.cpp
 
 Point.o: ../Model/Point.cpp ../Model/Point.h \
@@ -619,11 +599,11 @@ Line.o: ../Model/Line.cpp ../Model/Line.h \
 		../Model/Point.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Line.o ../Model/Line.cpp
 
+moc_mainWindow.o: moc_mainWindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainWindow.o moc_mainWindow.cpp
+
 moc_Controller.o: moc_Controller.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Controller.o moc_Controller.cpp
-
-moc_DrawingOpenGLWidget.o: moc_DrawingOpenGLWidget.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_DrawingOpenGLWidget.o moc_DrawingOpenGLWidget.cpp
 
 ####### Install
 

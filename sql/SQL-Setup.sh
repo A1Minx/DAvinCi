@@ -29,6 +29,11 @@ if [[ $? -ne 0 ]]; then
 fi
 echo "SQL script executed successfully."
 
+if [[ $1 == "-dummy" ]]; then
+    echo "adding dummy data"
+    psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -f ./SQL-DummyData.sql
+fi
+
 
 echo "Database setup completed successfully."
 

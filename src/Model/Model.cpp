@@ -5,6 +5,8 @@
 Model::Model()
 {
     this->sqlServer = new SQLServer();
+    points = sqlServer->readSQLPoints();
+    lines = sqlServer->readSQLLines();
 }
 
 

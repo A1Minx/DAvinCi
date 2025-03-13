@@ -6,22 +6,26 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-
+class Model;
+class Controller;
+class Orth_XY_OpenGLWidget;
+class Orth_XZ_OpenGLWidget;
 
 class mainWindow : public QMainWindow
 {
- public:
-  explicit mainWindow(QWidget *parent = nullptr);
- private:
+    Q_OBJECT
+    
+public:
+    explicit mainWindow(QWidget *parent = nullptr);
 
+private:
+    Model *model;
+    Controller *controller;
+    QWidget *view;
 
- signals:
- public slots:
+public slots:
+    void setXYView();
+    void setXZView();
 };
-
-
-
-
-
 
 #endif // WINDOW_H

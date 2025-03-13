@@ -1,7 +1,8 @@
 #include "mainWindow.h"
 #include "Controller.h"
 #include "Model.h"
-#include "DrawingOpenGLWidget.h"
+#include "Orth_XY_OpenGLWidget.h"
+#include "Orth_XZ_OpenGLWidget.h"
 #include <QPushButton>
 #include <QApplication>
 #include <QGridLayout>
@@ -10,15 +11,50 @@
 #include <QOpenGLWidget>
 #include <QPainter>
 
+void mainWindow::setXYView() {
+  if (view) {
+    view->hide();
+    delete view;
+  }
+  
+  view = new Orth_XY_OpenGLWidget(model, controller);
+  controller->setView(static_cast<Orth_XY_OpenGLWidget*>(view));
+
+//TODO: Use polymorphism instead of casting, check which view functions can be moved to parent class
+  
+  // Füge die View wieder zum Layout hinzu
+  QGridLayout *mainLayout = qobject_cast<QGridLayout*>(centralWidget()->layout());
+  if (mainLayout) {
+    mainLayout->addWidget(view, 1, 0);
+  }
+  view->show();
+ };
+
+void mainWindow::setXZView() {
+  if (view) {
+    view->hide();
+    delete view;
+  }
+  
+  view = new Orth_XZ_OpenGLWidget(model, controller);
+  controller->setView(static_cast<Orth_XZ_OpenGLWidget*>(view));
+  
+  // Füge die View wieder zum Layout hinzu
+  QGridLayout *mainLayout = qobject_cast<QGridLayout*>(centralWidget()->layout());
+  if (mainLayout) {
+    mainLayout->addWidget(view, 1, 0);
+  }
+  view->show();
+ };
 
 
 mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  showMaximized();
 
- Model *model = new Model();
- Controller *controller = new Controller(model, nullptr);
- DrawingOpenGLWidget *view = new DrawingOpenGLWidget(model, controller);
- controller->setView(view);  
+ model = new Model();
+ controller = new Controller(model, nullptr);
+ view = new Orth_XY_OpenGLWidget(model, controller);
+ controller->setView(static_cast<Orth_XY_OpenGLWidget*>(view));
 
 
  QWidget *centralWidget = new QWidget(this);
@@ -53,10 +89,15 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  // ----- Layout -----
  QGridLayout *mainLayout = new QGridLayout(centralWidget);
 
- // -- button row
+ // -- button row to
  QHBoxLayout *buttonLayout = new QHBoxLayout();
 
  mainLayout->addLayout(buttonLayout,0,0,Qt::AlignTop);
+
+ // -- button row bottom
+ QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
+
+ mainLayout->addLayout(buttonLayoutBottom,1,0,Qt::AlignBottom);
 
  // -- vertical stretch
  mainLayout->setColumnStretch(0, 1);
@@ -69,10 +110,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  // ----- Graphics Window -----
 
-
-
  mainLayout->addWidget(view);
-
 
  // ----- Layers Widget -----
  QWidget *emptyContainer = new QWidget(this);
@@ -82,7 +120,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
 
 
- //----- test buttons -----
+ //-----  buttons top -----
  //-- load
  QPushButton *readSQLLines = new QPushButton("Read SQL Lines",  this);
  readSQLLines->setText("Read SQL Lines");
@@ -104,4 +142,25 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
 
  buttonLayout->addWidget(readSQLPoints);
+
+
+ //-----  buttons bottom -----
+
+ QPushButton *XYView = new QPushButton("XY View",  this);
+ XYView->setText("XY View");
+ XYView->setToolTip("XY View");
+ XYView->show();
+
+ QObject::connect(XYView, SIGNAL(clicked()), this, SLOT(setXYView()));
+
+ buttonLayoutBottom->addWidget(XYView);
+
+ QPushButton *XZView = new QPushButton("XZ View",  this);
+ XZView->setText("XZ View");
+ XZView->setToolTip("XZ View");
+ XZView->show();
+
+ QObject::connect(XZView, SIGNAL(clicked()), this, SLOT(setXZView()));
+
+ buttonLayoutBottom->addWidget(XZView);
 }

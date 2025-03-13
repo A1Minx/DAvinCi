@@ -3,13 +3,14 @@
 #include <QDebug>
 
 
-Controller::Controller(Model *model, DrawingOpenGLWidget *view)
-    : model(model), view(view)
+Controller::Controller(Model *model, Orth_XY_OpenGLWidget *view)
+    : model(model), view(view), modeController(nullptr)
 {
     this->modeController = new ModeController(this);
+    setModeDrawPoint();
 }
 
-void Controller::setView(DrawingOpenGLWidget *view)
+void Controller::setView(Orth_XY_OpenGLWidget *view)
 {
     this->view = view;
 }

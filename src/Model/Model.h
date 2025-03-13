@@ -20,7 +20,8 @@ struct TempLine {
 struct TempPoint {
     float x, y, z;
     
-    TempPoint(float x, float y, float z) : x(x), y(y), z(z) {}
+    TempPoint(float x, float y, float z) 
+        : x(x), y(y), z(z) {}
 };
 
 class Model {

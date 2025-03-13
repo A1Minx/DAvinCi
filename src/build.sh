@@ -4,9 +4,20 @@
 source ../.Userdata.env
 
 echo "Executing table creation script..."
+
+
+
+
 cd ../sql
 
-./SQL-Setup.sh
+if [[ $1 != "-dummy" ]] then
+    echo "build empty server"
+    ./SQL-Setup.sh
+fi
+if [[ $1 == "-dummy" ]] then
+    echo "build server with dummy data"
+    ./SQL-Setup.sh -dummy
+fi
 
 echo "Compiling..."
 cd ../src/build
