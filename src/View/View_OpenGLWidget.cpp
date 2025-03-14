@@ -1,0 +1,1 @@
+//implement as Base class for Views
