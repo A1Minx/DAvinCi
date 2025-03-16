@@ -6,11 +6,14 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
+#include <locale.h>
 
 #include <postgresql/libpq-fe.h>
 
 SQLServer::SQLServer()
 {
+    setlocale(LC_NUMERIC, "C");
+
     connection = PQconnectdb("");
     if (!connection || PQstatus(connection) != CONNECTION_OK) {
         if (connection) {
@@ -22,10 +25,6 @@ SQLServer::SQLServer()
 
     // -- Prepared Statements
     // -- InsertPoint
-    //2D TODO: Delete
-    const char *InsertPointQuery = "INSERT INTO Points (Points_x, Points_y) Values ($1, $2)";
-    PGresult *insertPoint = PQprepare(connection, "insertPointTest", InsertPointQuery, 2, NULL);
-    checkResult(insertPoint);
 
     //3D
     const char *InsertPoint3DQuery = "INSERT INTO Points (Points_x, Points_y, Points_z) Values ($1, $2, $3)";
@@ -186,6 +185,10 @@ int SQLServer::newPoint(float x, float y, float z)
     snprintf(zS, sizeof(zS), "%.6g", z);
 
     const char *parVal[3] = {xS, yS, zS};
+
+    qDebug() << "Point: " << x << " " << y << " " << z;
+
+
     try {
             qDebug() << "writing Point in SQL";
 

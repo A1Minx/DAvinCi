@@ -1,18 +1,23 @@
 #include "Controller.h"
 #include "ModeController.h"
 #include <QDebug>
+#include "View_OpenGLWidget.h"
+#include "Orth_XY_OpenGLWidget.h"
 
 
-Controller::Controller(Model *model, Orth_XY_OpenGLWidget *view)
+
+Controller::Controller(Model *model, View_OpenGLWidget *view)
     : model(model), view(view), modeController(nullptr)
 {
     this->modeController = new ModeController(this);
-    setModeDrawPoint();
 }
 
-void Controller::setView(Orth_XY_OpenGLWidget *view)
+void Controller::setView(View_OpenGLWidget *view)
 {
     this->view = view;
+    if (view) {
+        setModeSelection();
+    }
 }
 
 // ----- GUI controlls -----

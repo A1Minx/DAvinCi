@@ -5,11 +5,10 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
+#include <QGridLayout>
 class Model;
 class Controller;
-class Orth_XY_OpenGLWidget;
-class Orth_XZ_OpenGLWidget;
+class View_OpenGLWidget;
 
 class mainWindow : public QMainWindow
 {
@@ -21,11 +20,14 @@ public:
 private:
     Model *model;
     Controller *controller;
-    QWidget *view;
+    View_OpenGLWidget *view;
+
+    QGridLayout *mainLayout;
 
 public slots:
     void setXYView();
     void setXZView();
+    void setYZView();
 };
 
 #endif // WINDOW_H

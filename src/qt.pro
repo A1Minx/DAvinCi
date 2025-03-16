@@ -13,6 +13,7 @@ SOURCES += \
     ./View/View_OpenGLWidget.cpp \
     ./View/Orth_XY_OpenGLWidget.cpp \
     ./View/Orth_XZ_OpenGLWidget.cpp \
+    ./View/Orth_YZ_OpenGLWidget.cpp \
     ./Controller/Controller.cpp \
     ./Controller/ModeController.cpp \
     ./Controller/M_DrawLine.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     ./View/View_OpenGLWidget.h \
     ./View/Orth_XY_OpenGLWidget.h \
     ./View/Orth_XZ_OpenGLWidget.h \
+    ./View/Orth_YZ_OpenGLWidget.h \
     ./Controller/Controller.h \
     ./Controller/M_DrawLine.h \
     ./Controller/ModeController.h \

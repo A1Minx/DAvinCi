@@ -2,13 +2,12 @@
 #define CONTROLLER_H
 
 #include <QObject>
-#include <Orth_XY_OpenGLWidget.h>
 #include <Model.h>
 #include <QMouseEvent>
 #include <ModeController.h>
 #include <memory>
 
-class Orth_XY_OpenGLWidget;
+class View_OpenGLWidget;
 class Model;
 class ModeController;
 
@@ -17,8 +16,8 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    Controller(Model *model, Orth_XY_OpenGLWidget *view);
-    void setView(Orth_XY_OpenGLWidget *view);
+    Controller(Model *model, View_OpenGLWidget *view);
+    void setView(View_OpenGLWidget *view);
 
     ModeController* getModeController();
 
@@ -51,7 +50,7 @@ public:
 
 private:
     Model *model;
-    Orth_XY_OpenGLWidget *view;
+    View_OpenGLWidget *view;
     ModeController *modeController;
 };
 
