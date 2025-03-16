@@ -14,51 +14,6 @@ Orth_YZ_OpenGLWidget::~Orth_YZ_OpenGLWidget()
 {
 }
 
-void Orth_YZ_OpenGLWidget::drawGrid() {
-    float viewWidth = width() / zoomLevel;
-    float viewHeight = height() / zoomLevel;
-    
-    // visible area
-    float left = -viewWidth/2;
-    float right = viewWidth/2;
-    float bottom = -viewHeight/2;
-    float top = viewHeight/2;
-    
-    // Runde zu Gitterlinien
-    left = floor(left / gridSize) * gridSize;
-    right = ceil(right / gridSize) * gridSize;
-    bottom = floor(bottom / gridSize) * gridSize;
-    top = ceil(top / gridSize) * gridSize;
-    
-    glColor4f(0.3f, 0.3f, 0.3f, 0.5f); // Hellgraue Gitterlinien
-    
-    // Vertikale Linien (X-Achse)
-    glBegin(GL_LINES);
-    for (float x = left; x <= right; x += gridSize) {
-        glVertex3f(x, 100.0f, bottom);  // X-Y Ebene
-        glVertex3f(x, 100.0f, top);     // X-Y Ebene
-    }
-    // Horizontale Linien (Y-Achse)
-    for (float y = bottom; y <= top; y += gridSize) {
-        glVertex3f(left, y, 100.0f);    // X-Y Ebene
-        glVertex3f(right, y, 100.0f);   // X-Y Ebene
-    }
-    glEnd();
-    
-    // Zeichne Achsen
-    glColor3f(0.5f, 0.5f, 0.5f); // Hellere Farbe für Achsen
-    glLineWidth(2.0f);
-    glBegin(GL_LINES);
-    // X-Achse
-    glVertex3f(left, 0.0f, 0.0f);
-    glVertex3f(right, 0.0f, 0.0f);
-    // Y-Achse
-    glVertex3f(0.0f, bottom, 0.0f);
-    glVertex3f(0.0f, top, 0.0f);
-    glEnd();
-    glLineWidth(1.0f);
-}
-
 void Orth_YZ_OpenGLWidget::updateProjectionMatrix() {
     float w = width();
     float h = height();
@@ -87,5 +42,75 @@ QVector3D Orth_YZ_OpenGLWidget::screenToWorld(int x, int y) {
     float worldZ = normalizedZ * (height() / 2.0f);
     
     return QVector3D(0.0f, worldY, worldZ);
+}
+
+void Orth_YZ_OpenGLWidget::updateBuffers() {
+    View_OpenGLWidget::updateBuffers();
+
+    // draw Grid
+    float viewWidth = width() / zoomLevel;
+    float viewHeight = height() / zoomLevel;
+
+    float left = -viewWidth/2;
+    float right = viewWidth/2;
+    float bottom = -viewHeight/2;
+    float top = viewHeight/2;
+
+    // rounding TODO: Check if necessary
+    left = floor(left / gridSize) * gridSize;
+    right = ceil(right / gridSize) * gridSize;
+    bottom = floor(bottom / gridSize) * gridSize;
+    top = ceil(top / gridSize) * gridSize;
+
+    qDebug() << "left: " << left << "right: " << right << "bottom: " << bottom << "top: " << top;
+
+    // grid data
+    glColor4f(0.3f, 0.3f, 0.3f, 0.5f); // light grey
+
+    std::vector<float> newGridData;
+    
+    for (float y = bottom; y <= top; y += gridSize) {
+        newGridData.push_back(0.0f);
+        newGridData.push_back(y);
+        newGridData.push_back(left);
+        newGridData.push_back(0.0f);
+        newGridData.push_back(y);
+        newGridData.push_back(right);
+    }
+
+    for (float z = bottom; z <= top; z += gridSize) {
+        newGridData.push_back(left);
+        newGridData.push_back(0.0f);
+        newGridData.push_back(z);
+        newGridData.push_back(right);
+        newGridData.push_back(0.0f);
+        newGridData.push_back(z);
+    }
+
+    // axis data TODO: check if necessary
+    
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glLineWidth(2.0f);
+
+    newGridData.push_back(0.0f);
+    newGridData.push_back(left);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(right);
+    newGridData.push_back(0.0f);
+
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(bottom);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(top);
+
+
+    //if( newGridData != gridData) {
+        gridData = newGridData;
+        glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+        glBufferData(GL_ARRAY_BUFFER, gridData.size() * sizeof(float), gridData.data(), GL_DYNAMIC_DRAW);
+    //}
 }
 

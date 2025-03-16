@@ -13,8 +13,8 @@ public:
     QVector3D screenToWorld(int x, int y) override;
 
 protected:
-    void drawGrid() override;
     void updateProjectionMatrix() override;
+    void updateBuffers() override;
 };
 
 #endif // ORTH_XZ_OPENGLWIDGET_H

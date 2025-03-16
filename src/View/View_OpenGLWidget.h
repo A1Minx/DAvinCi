@@ -19,7 +19,7 @@ public:
     : QOpenGLWidget(parent), model(model), controller(controller),
       zoomLevel(1.0f), 
       pointVBO(0), tempPointVBO(0), lineVBO(0), tempLineVBO(0), gridVBO(0),
-      gridSize(50.0f)
+      gridSize(100.0f)
     {
         setFocusPolicy(Qt::StrongFocus);
     }
@@ -60,15 +60,17 @@ protected:
     inline virtual void resizeGL(int w, int h) {
         glViewport(0, 0, w, h); // TODO: Implement possibility to have multiple viewports in subclasses
         updateProjectionMatrix();
+        update();
     }
 
     inline virtual void paintGL() {
         glClear(GL_COLOR_BUFFER_BIT);
     
-        
-        
-        glMatrixMode(GL_MODELVIEW);
+        glMatrixMode(GL_PROJECTION);
         glLoadMatrixf(projectionMatrix.constData());
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
         updateBuffers();
         drawGrid();
@@ -165,8 +167,6 @@ protected:
             glBindBuffer(GL_ARRAY_BUFFER, tempLineVBO);
             glBufferData(GL_ARRAY_BUFFER, tempLineData.size() * sizeof(float), tempLineData.data(), GL_DYNAMIC_DRAW);
         }
-
-        //TODO: Add Grid to VBO, check if it needs to be implemented in subclasses or if a common implementation can be found
     }
 
     GLuint pointVBO;
@@ -176,8 +176,19 @@ protected:
     GLuint gridVBO;
 
     // ----- Drawing -----
-    virtual void drawGrid() = 0; 
-    // Grid needs different implementation for every view. Make sure grid is geometrically aligned to World instead of screen.
+    inline virtual void drawGrid() {
+        if (gridData.empty()) return;
+
+        glColor3f(0.3f, 0.3f, 0.3f);  // Dark Grey
+        glLineWidth(1.0f);
+
+        glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+        glDrawArrays(GL_LINES, 0, gridData.size() / 3);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }; 
+    // TODO:Make sure grid is geometrically aligned to World instead of screen.
 
     inline virtual void drawPoints() {
         if (pointData.empty()) return;
