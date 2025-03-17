@@ -24,6 +24,14 @@ public:
         setFocusPolicy(Qt::StrongFocus);
     }
 
+    inline virtual void setHorizon(float horizon) {
+        this->horizon = horizon;
+    }
+
+    inline virtual void setGridSize(float gridSize) {
+        this->gridSize = gridSize;
+    }
+
     ~View_OpenGLWidget() {
         makeCurrent();
         glDeleteBuffers(1, &pointVBO);
@@ -67,10 +75,12 @@ protected:
         glClear(GL_COLOR_BUFFER_BIT);
     
         glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
         glLoadMatrixf(projectionMatrix.constData());
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        glScalef(zoomLevel, zoomLevel, 1.0f);
 
         updateBuffers();
         drawGrid();
@@ -249,6 +259,7 @@ protected:
     std::vector<float> gridData;
 
     float gridSize;
+    float horizon;
     
     // ----- Projection -----
     virtual void updateProjectionMatrix() = 0;

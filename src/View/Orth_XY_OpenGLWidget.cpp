@@ -22,7 +22,6 @@ void Orth_XY_OpenGLWidget::updateProjectionMatrix() {
     projectionMatrix.ortho(-w/(2.0f*zoomLevel), w/(2.0f*zoomLevel), 
                           -h/(2.0f*zoomLevel), h/(2.0f*zoomLevel), 
                           -1000, 1000);
-    projectionMatrix.scale(zoomLevel, zoomLevel, 1.0f);
 }
 
 QVector3D Orth_XY_OpenGLWidget::screenToWorld(int x, int y) {
@@ -37,7 +36,7 @@ QVector3D Orth_XY_OpenGLWidget::screenToWorld(int x, int y) {
     float worldX = normalizedX * (width() / 2.0f);
     float worldY = normalizedY * (height() / 2.0f);
     
-    return QVector3D(worldX, worldY, 0.0f);
+    return QVector3D(worldX, worldY, horizon);
 }
 
 void Orth_XY_OpenGLWidget::updateBuffers() {

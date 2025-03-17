@@ -11,6 +11,8 @@
 #include <QMenuBar>
 #include <QOpenGLWidget>
 #include <QPainter>
+#include <QLineEdit>
+#include <QLabel>
 
 void mainWindow::setXYView() {
   if (view) {
@@ -51,6 +53,25 @@ void mainWindow::setYZView() {
   view->show();
  };
 
+void mainWindow::setHorizon() {
+  if (view && horizonLineEdit) {
+    bool ok;
+    float horizonValue = horizonLineEdit->text().toFloat(&ok);
+    if (ok && horizonValue > 0) {
+      view->setHorizon(horizonValue);
+    }
+  }
+}
+
+void mainWindow::setGridPrecision() {
+  if (view && gridPrecisionLineEdit) {
+    bool ok;
+    float precisionValue = gridPrecisionLineEdit->text().toFloat(&ok);
+    if (ok && precisionValue > 0) {
+      view->setGridSize(precisionValue);
+    }
+  }
+}
 
 mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  showMaximized();
@@ -180,5 +201,28 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  buttonLayoutBottom->addWidget(YZView);
 
- buttonLayoutBottom->addStretch(1);
+
+ 
+// inputs for horizon and grid    
+ QLabel *horizonLabel = new QLabel("Horizon:", this);
+ buttonLayoutBottom->addWidget(horizonLabel);
+ 
+ horizonLineEdit = new QLineEdit(this);
+ horizonLineEdit->setFixedWidth(100);
+ horizonLineEdit->setText("0");
+ horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
+ QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
+ buttonLayoutBottom->addWidget(horizonLineEdit);
+ 
+ QLabel *gridPrecisionLabel = new QLabel("Grid Precision:", this);
+ buttonLayoutBottom->addWidget(gridPrecisionLabel);
+ 
+ gridPrecisionLineEdit = new QLineEdit(this);
+ gridPrecisionLineEdit->setFixedWidth(100);
+ gridPrecisionLineEdit->setText("100");
+ gridPrecisionLineEdit->setToolTip("Grid Precision");
+ QObject::connect(gridPrecisionLineEdit, SIGNAL(editingFinished()), this, SLOT(setGridPrecision()));
+ buttonLayoutBottom->addWidget(gridPrecisionLineEdit);
+
+  buttonLayoutBottom->addStretch(1);
 }

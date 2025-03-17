@@ -6,6 +6,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QLineEdit>
+#include <QLabel>
 class Model;
 class Controller;
 class View_OpenGLWidget;
@@ -23,11 +25,15 @@ private:
     View_OpenGLWidget *view;
 
     QGridLayout *mainLayout;
+    QLineEdit *horizonLineEdit;
+    QLineEdit *gridPrecisionLineEdit;
 
 public slots:
     void setXYView();
     void setXZView();
     void setYZView();
+    void setHorizon();
+    void setGridPrecision();
 };
 
 #endif // WINDOW_H
