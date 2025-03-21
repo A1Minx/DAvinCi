@@ -20,6 +20,10 @@ private:
     bool firstClick = true;
     std::shared_ptr<Point> p1, p2;
     std::shared_ptr<Point> nearestPoint;
+
+    //TODO: make configurable
+    float tempColor[4] = {0.0f, 1.0f, 0.0f, 1.0f};
+    float tempSize = 10.0f;
 };
 
 #endif

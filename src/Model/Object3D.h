@@ -1,4 +1,5 @@
-
+#include "Spec.h"
+#include <memory>
 
 class Object3D {
     public:
@@ -7,7 +8,8 @@ class Object3D {
         ~Object3D();
         void draw();
 
-    private:
+    protected:
+
         // add Parent and Child Objects and Layer
 
 

@@ -18,11 +18,19 @@ void Orth_YZ_OpenGLWidget::updateProjectionMatrix() {
     float w = width();
     float h = height();
     
+    viewMatrix.setToIdentity();
+    viewMatrix.lookAt(
+        QVector3D(1, 0, 0), 
+        QVector3D(0, 0, 0),  
+        QVector3D(0, 0, 1)   
+    ); //position camera viewing on yz
     
     projectionMatrix.setToIdentity();
     projectionMatrix.ortho(-1000, 1000,
-                          -w/(2.0f*zoomLevel), w/(2.0f*zoomLevel), 
-                          -h/(2.0f*zoomLevel), h/(2.0f*zoomLevel));
+                          -w/(2.0f), w/(2.0f), 
+                          -h/(2.0f), h/(2.0f));
+    projectionMatrix.scale(zoomLevel);
+
 }
 
 QVector3D Orth_YZ_OpenGLWidget::screenToWorld(int x, int y) {
@@ -64,47 +72,105 @@ void Orth_YZ_OpenGLWidget::updateBuffers() {
     qDebug() << "left: " << left << "right: " << right << "bottom: " << bottom << "top: " << top;
 
     // grid data
-    glColor4f(0.3f, 0.3f, 0.3f, 0.5f); // light grey
 
     std::vector<float> newGridData;
     
     for (float y = bottom; y <= top; y += gridSize) {
+        // position
         newGridData.push_back(0.0f);
         newGridData.push_back(y);
         newGridData.push_back(left);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
+        // position
         newGridData.push_back(0.0f);
         newGridData.push_back(y);
         newGridData.push_back(right);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
     }
 
     for (float z = bottom; z <= top; z += gridSize) {
+        // position
+        newGridData.push_back(0.0f);
         newGridData.push_back(left);
-        newGridData.push_back(0.0f);
         newGridData.push_back(z);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
+        // position
+        newGridData.push_back(0.0f);
         newGridData.push_back(right);
-        newGridData.push_back(0.0f);
         newGridData.push_back(z);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
     }
 
     // axis data TODO: check if necessary
-    
-    glColor3f(0.5f, 0.5f, 0.5f);
-    glLineWidth(2.0f);
 
+    // position
     newGridData.push_back(0.0f);
     newGridData.push_back(left);
     newGridData.push_back(0.0f);
+    // color
     newGridData.push_back(0.0f);
-    newGridData.push_back(right);
     newGridData.push_back(0.0f);
-
+    newGridData.push_back(0.0f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(1.0f);
+    // position
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
     newGridData.push_back(bottom);
+    // color
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(1.0f);
+    // position
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
     newGridData.push_back(top);
-
+    // color
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(1.0f);   
+    // position
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    // color
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(1.0f);
 
     //if( newGridData != gridData) {
         gridData = newGridData;

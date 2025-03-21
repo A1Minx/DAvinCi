@@ -3,11 +3,12 @@
 
 #include "BasicObject.h"
 #include <string>
-
-class Point : BasicObject {
+#include "Spec.h"
+#include <memory>
+class Point : public BasicObject {
 
 public:
-    Point(float x, float y, float z, int id);
+    Point(float x, float y, float z, std::shared_ptr<Spec> spec, int id);
     ~Point();
     
     // Getter für die Koordinaten
@@ -19,12 +20,21 @@ public:
 
     float distanceTo(float x, float y, float z);
 
+    std::shared_ptr<PointSpec> getSpec() const { return spec; }
+    void setSpec(std::shared_ptr<PointSpec> spec) { this->spec = spec; }
+    
+    float* getColor() const { return spec->getColor(); }
+    float getSize() const { return spec->getSize(); }
+
 private:
     float x;
     float y;
     float z;
     std::string name;
+
     const int id; 
+
+    std::shared_ptr<PointSpec> spec;
 };
 
 #endif // POINT_H_INCLUDED

@@ -12,7 +12,7 @@ void M_DrawPoint::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
         qDebug() << "Left click at screen:" << event->x() << ", " << event->y();
         qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
         
-        controller->addPoint(worldPos.x(), worldPos.y(), worldPos.z());
+        controller->addPoint(worldPos.x(), worldPos.y(), worldPos.z(), controller->getCurrPointSpec());
     } else if (event->button() == Qt::RightButton) {
         controller->setModeSelection();
     }

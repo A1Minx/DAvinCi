@@ -23,7 +23,8 @@ SOURCES += \
     ./Model/SQLServer.cpp \
     ./Model/Point.cpp \
     ./Model/Object3D.cpp \
-    ./Model/Line.cpp
+    ./Model/Line.cpp \
+    ./Model/Spec.cpp
 
 HEADERS += \
     ./View/mainWindow.h \
@@ -42,7 +43,8 @@ HEADERS += \
     ./Model/BasicObject.h \
     ./Model/Point.h \
     ./Model/Object3D.h \
-    ./Model/Line.h
+    ./Model/Line.h \
+    ./Model/Spec.h
 
 INCLUDEPATH +=  ./Controller ./View ./Model /usr/include /usr/lib/x86_64-linux-gnu
 

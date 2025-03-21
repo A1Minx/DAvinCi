@@ -10,6 +10,8 @@ Controller::Controller(Model *model, View_OpenGLWidget *view)
     : model(model), view(view), modeController(nullptr)
 {
     this->modeController = new ModeController(this);
+    this->currPointSpec = model->getPointSpec(1);
+    this->currLineSpec = model->getLineSpec(2);
 }
 
 void Controller::setView(View_OpenGLWidget *view)
@@ -94,15 +96,15 @@ void Controller::addShape()
     view->update();
 }
 
-void Controller::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2)
+void Controller::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec)
 {
-    model->addLine(p1, p2);
+    model->addLine(p1, p2, spec);
     view->update();
 }
 
-std::shared_ptr<Point> Controller::addPoint(float x, float y, float z)
+std::shared_ptr<Point> Controller::addPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec)
 {
-    std::shared_ptr<Point> point = model->addPoint(x,y,z);
+    std::shared_ptr<Point> point = model->addPoint(x,y,z, spec);
     view->update();
     return point;
 }
@@ -146,9 +148,9 @@ void Controller::handleMouseMove(QMouseEvent *event)
 
 
 // -- Markers and Temporary elements --
-void Controller::addTempLine(float x1, float y1, float z1, float x2, float y2, float z2)
+void Controller::addTempLine(float x1, float y1, float z1, float x2, float y2, float z2, float color[4], float width)
 {
-    model->addTempLine(x1, y1, z1, x2, y2, z2);
+    model->addTempLine(x1, y1, z1, x2, y2, z2, color, width);
     view->update();
 }
 
@@ -158,9 +160,9 @@ void Controller::removeTempLines()
     view->update();
 }
 
-void Controller::addTempPoint(float x, float y, float z)
+void Controller::addTempPoint(float x, float y, float z, float color[4], float size)
 {
-    model->addTempPoint(x, y, z);
+    model->addTempPoint(x, y, z, color, size);
     view->update();
 }
 
@@ -168,4 +170,27 @@ void Controller::removeTempPoints()
 {
     model->removeTempPoints();
     view->update();
+}
+
+
+// ----- Spec Management -----
+
+void Controller::setCurrPointSpec(std::shared_ptr<PointSpec> spec)
+{
+    currPointSpec = spec;
+}
+
+void Controller::setCurrLineSpec(std::shared_ptr<LineSpec> spec)
+{
+    currLineSpec = spec;
+}
+
+std::shared_ptr<PointSpec> Controller::getCurrPointSpec()
+{
+    return currPointSpec;
+}
+
+std::shared_ptr<LineSpec> Controller::getCurrLineSpec()
+{
+    return currLineSpec;
 }

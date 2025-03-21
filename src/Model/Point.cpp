@@ -1,10 +1,10 @@
 #include "Point.h"
 #include <cmath>
 
-Point::Point(float x, float y, float z, int id)
-    : x(x), y(y), z(z), id(id)
+Point::Point(float x, float y, float z, std::shared_ptr<Spec> spec, int id)
+    : x(x), y(y), z(z), id(id) //TODO: Implement specs with spec
 {
-
+    this->spec = spec;
 }
 
 Point::~Point()

@@ -17,11 +17,20 @@ Orth_XY_OpenGLWidget::~Orth_XY_OpenGLWidget()
 void Orth_XY_OpenGLWidget::updateProjectionMatrix() {
     float w = width();
     float h = height();
+
+    viewMatrix.setToIdentity();
+    viewMatrix.lookAt(
+        QVector3D(0, 0, 1), 
+        QVector3D(0, 0, 0),  
+        QVector3D(0, 1, 0)   
+    ); //position camera viewing on xy
     
     projectionMatrix.setToIdentity();
     projectionMatrix.ortho(-w/(2.0f*zoomLevel), w/(2.0f*zoomLevel), 
                           -h/(2.0f*zoomLevel), h/(2.0f*zoomLevel), 
                           -1000, 1000);
+
+    projectionMatrix.scale(zoomLevel);
 }
 
 QVector3D Orth_XY_OpenGLWidget::screenToWorld(int x, int y) {
@@ -65,41 +74,103 @@ void Orth_XY_OpenGLWidget::updateBuffers() {
     std::vector<float> newGridData;
     
     for (float x = left; x <= right; x += gridSize) {
+        // position
         newGridData.push_back(x);
         newGridData.push_back(bottom);
         newGridData.push_back(0.0f);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
+        
         newGridData.push_back(x);
         newGridData.push_back(top);
         newGridData.push_back(0.0f);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
     }
 
     for (float y = bottom; y <= top; y += gridSize) {
+        // position
         newGridData.push_back(left);
         newGridData.push_back(y);
         newGridData.push_back(0.0f);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
+        
         newGridData.push_back(right);
         newGridData.push_back(y);
         newGridData.push_back(0.0f);
+        // color
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(0.5f);
+        newGridData.push_back(1.0f);
+        // width
+        newGridData.push_back(0.5f);
     }
 
     // axis data TODO: check if necessary
-    
-    glColor3f(0.5f, 0.5f, 0.5f);
-    glLineWidth(2.0f);
-
+    // position
     newGridData.push_back(left);
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
+    // color
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(0.5f);
+
+    //position
     newGridData.push_back(right);
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
+    // color
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(0.5f);
 
+    //position
     newGridData.push_back(0.0f);
     newGridData.push_back(bottom);
     newGridData.push_back(0.0f);
+    // color
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(0.5f);
+    
+    //position
     newGridData.push_back(0.0f);
     newGridData.push_back(top);
     newGridData.push_back(0.0f);
+    // color
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
+    // width
+    newGridData.push_back(0.5f);
 
 
     //if( newGridData != gridData) {
