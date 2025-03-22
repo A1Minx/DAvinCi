@@ -114,11 +114,11 @@ std::shared_ptr<Point> SQLServer::readPointByID(int id)
             int spec_id = std::stoi(PQgetvalue(result, 0, 4));
 
             if (spec = model->getPointSpec(spec_id)) {
-                point = std::make_shared<Point>(x, y, z, spec);
+                point = std::make_shared<Point>(x, y, z, spec, id);
             } else {
                 readSQLPointSpec();
                 spec = model->getPointSpec(spec_id);
-                point = std::make_shared<Point>(x, y, z, spec);
+                point = std::make_shared<Point>(x, y, z, spec, id);
             }
         }
         
@@ -152,11 +152,11 @@ std::vector<std::shared_ptr<Point>> SQLServer::readSQLPoints()
             int spec_id = std::stoi(PQgetvalue(result, row, 4));
 
             if (spec = model->getPointSpec(spec_id)) {
-                points.push_back(std::make_shared<Point>(x, y, z, spec));
+                points.push_back(std::make_shared<Point>(x, y, z, spec, id));
             } else {
                 readSQLPointSpec();
                 spec = model->getPointSpec(spec_id);
-                points.push_back(std::make_shared<Point>(x, y, z, spec));
+                points.push_back(std::make_shared<Point>(x, y, z, spec, id));
             }
         }
 

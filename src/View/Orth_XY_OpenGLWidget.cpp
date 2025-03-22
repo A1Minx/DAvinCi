@@ -129,48 +129,48 @@ void Orth_XY_OpenGLWidget::updateBuffers() {
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
     // color
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
     newGridData.push_back(1.0f);
     // width
-    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
 
     //position
     newGridData.push_back(right);
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
     // color
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
     newGridData.push_back(1.0f);
     // width
-    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
 
     //position
     newGridData.push_back(0.0f);
     newGridData.push_back(bottom);
     newGridData.push_back(0.0f);
     // color
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
     newGridData.push_back(1.0f);
     // width
-    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
     
     //position
     newGridData.push_back(0.0f);
     newGridData.push_back(top);
     newGridData.push_back(0.0f);
     // color
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
-    newGridData.push_back(0.5f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
+    newGridData.push_back(0.0f);
     newGridData.push_back(1.0f);
     // width
-    newGridData.push_back(0.5f);
+    newGridData.push_back(1.0f);
 
 
     //if( newGridData != gridData) {

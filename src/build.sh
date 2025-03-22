@@ -22,6 +22,11 @@ fi
 echo "Compiling..."
 cd ../src/build
 
+if [[ $1 == "-clean" || $2 == "-clean" ]]; then
+    echo "compile clean Build"
+    rm ./*
+fi
+
 qmake ../qt.pro
 
 make

@@ -8,7 +8,8 @@
 class Point : public BasicObject {
 
 public:
-    Point(float x, float y, float z, std::shared_ptr<Spec> spec, int id);
+    Point(float x, float y, float z, std::shared_ptr<PointSpec> spec, int id);
+
     ~Point();
     
     // Getter für die Koordinaten

@@ -140,8 +140,8 @@ void Orth_YZ_OpenGLWidget::updateBuffers() {
     newGridData.push_back(1.0f);
     // position
     newGridData.push_back(0.0f);
+    newGridData.push_back(right);
     newGridData.push_back(0.0f);
-    newGridData.push_back(bottom);
     // color
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
@@ -163,7 +163,7 @@ void Orth_YZ_OpenGLWidget::updateBuffers() {
     // position
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
+    newGridData.push_back(bottom);
     // color
     newGridData.push_back(0.0f);
     newGridData.push_back(0.0f);

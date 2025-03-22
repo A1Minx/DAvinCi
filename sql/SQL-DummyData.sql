@@ -27,13 +27,25 @@ INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 100, 100, 1
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 200, 100, 1);
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (100, 100, -100, 1);
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 200, -100, 1);
-INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (100, 200, 0, 1);
-INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 100, 0, 1);
+INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (100, 200, -100, 1);
+INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 100, -100, 1);
 
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (1, 2, 1);
-INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (3, 4, 1);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (1, 3, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (3, 4, 1);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (2, 4, 1);
+
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (5, 7, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (5, 8, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (6, 8, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (7, 6, 1);
+
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (1, 5, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (4, 6, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (2, 7, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (3, 8, 1);
+
+
 
 
 
