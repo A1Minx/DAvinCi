@@ -14,7 +14,7 @@ Orth_YZ_OpenGLWidget::~Orth_YZ_OpenGLWidget()
 {
 }
 
-void Orth_YZ_OpenGLWidget::updateProjectionMatrix() {
+void Orth_YZ_OpenGLWidget::UpdateMatrices() {
     float w = width();
     float h = height();
     
@@ -26,9 +26,9 @@ void Orth_YZ_OpenGLWidget::updateProjectionMatrix() {
     ); //position camera viewing on yz
     
     projectionMatrix.setToIdentity();
-    projectionMatrix.ortho(-1000, 1000,
-                          -w/(2.0f), w/(2.0f), 
-                          -h/(2.0f), h/(2.0f));
+    projectionMatrix.ortho(-w/(2.0f), w/(2.0f), 
+                          -h/(2.0f), h/(2.0f),
+                          -1000, 1000);
     projectionMatrix.scale(zoomLevel);
 
 }
@@ -58,10 +58,11 @@ void Orth_YZ_OpenGLWidget::updateBuffers() {
     float viewWidth = width() / zoomLevel;
     float viewHeight = height() / zoomLevel;
 
-    float left = -viewWidth/2;
-    float right = viewWidth/2;
-    float bottom = -viewHeight/2;
-    float top = viewHeight/2;
+    // keep a bit larger to prevent weird glitches on the edge of the view
+    float left = -viewWidth;
+    float right = viewWidth;
+    float bottom = -viewHeight;
+    float top = viewHeight;
 
     // rounding TODO: Check if necessary
     left = floor(left / gridSize) * gridSize;

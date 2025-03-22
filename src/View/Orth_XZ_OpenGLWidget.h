@@ -13,7 +13,7 @@ public:
     QVector3D screenToWorld(int x, int y) override;
 
 protected:
-    void updateProjectionMatrix() override;
+    void UpdateMatrices() override;
     void updateBuffers() override;
 };
 

@@ -30,7 +30,7 @@ INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 200, -100, 
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (100, 200, -100, 1);
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 100, -100, 1);
 
-INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (1, 2, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (1, 2, 2);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (1, 3, 1);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (3, 4, 1);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (2, 4, 1);

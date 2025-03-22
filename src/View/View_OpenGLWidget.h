@@ -95,12 +95,12 @@ protected:
 
     inline virtual void resizeGL(int w, int h) {
         glViewport(0, 0, w, h); // TODO: Implement possibility to have multiple viewports in subclasses
-        updateProjectionMatrix();
+        UpdateMatrices();
         update();
     }
 
     inline virtual void paintGL() {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
         // glMatrixMode(GL_PROJECTION);
         // glLoadIdentity();
@@ -122,6 +122,9 @@ protected:
 
         updateBuffers();
         drawGrid();
+
+        glClear(GL_DEPTH_BUFFER_BIT);
+
         drawPoints();  
         drawLines();    
         drawTempPoints();       
@@ -137,9 +140,9 @@ protected:
     virtual inline void wheelEvent(QWheelEvent *event) {
         float delta = event->angleDelta().y() / 120.0f;
         zoomLevel *= (1.0f + delta * 0.1f);
-        zoomLevel = std::max(0.1f, std::min(10.0f, zoomLevel));
+        zoomLevel = std::max(0.1f, std::min(1000.0f, zoomLevel));
         
-        updateProjectionMatrix();
+        UpdateMatrices();
         update();
     } 
     // TODO: Move logic to controller? Think about if this should ever be view independent and managed by modes.
@@ -373,7 +376,7 @@ protected:
     float horizon;
     
     // ----- Projection -----
-    virtual void updateProjectionMatrix() = 0;
+    virtual void UpdateMatrices() = 0;
 
     QMatrix4x4 projectionMatrix;   
     QMatrix4x4 viewMatrix;
