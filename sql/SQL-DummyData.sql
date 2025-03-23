@@ -10,9 +10,9 @@ INSERT INTO Colors (Color_ID,R,G,B,A) Values (6,0.5,0.5,0.5,1); --grey
 INSERT INTO Colors (Color_ID,R,G,B,A) Values (7,0,0,0,1); --black
 INSERT INTO Colors (Color_ID,R,G,B,A) Values (8,1,1,1,1); --White
 
-INSERT INTO Point_spec (Spec_ID, Color, Size, Name) Values (1, 1, 5, 'large red');
-INSERT INTO Point_spec (Spec_ID, Color, Size, Name) Values (2, 2, 10, 'larger green');
-INSERT INTO Point_spec (Spec_ID, Color, Size, Name) Values (3, 4, 10, 'larger yellow');
+INSERT INTO Point_spec (Spec_ID, Color, Size, Name) Values (1, 1, 50, 'large red');
+INSERT INTO Point_spec (Spec_ID, Color, Size, Name) Values (2, 2, 70, 'larger green');
+INSERT INTO Point_spec (Spec_ID, Color, Size, Name) Values (3, 4, 70, 'larger yellow');
 
 INSERT INTO Line_spec (Spec_ID, Color, Width, Name) Values (1, 1, 1.0, 'thin red');
 INSERT INTO Line_spec (Spec_ID, Color, Width, Name) Values (2, 1, 5.0, 'thic red');

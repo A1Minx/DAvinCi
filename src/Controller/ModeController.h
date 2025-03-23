@@ -30,10 +30,13 @@ public:
 
     M_ModeInterface* getCurrentMode();
 
+    void reConfigureView();
+
 private:
     Controller *controller;
 
     M_ModeInterface *CurrentMode;
+    Modes currentModeType;
 
     //available Modes. All get initialized once during startup when the ModeController gets constructed to avoid reoccuring heap allocations
     M_DrawLine *drawLine;

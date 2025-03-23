@@ -10,6 +10,7 @@ ModeController::ModeController(Controller *controller)
     this->selection = new M_Selection(controller);
 
     this->CurrentMode = selection; // set default mode
+    this->currentModeType = Modes::Selection;
 }
 
 void ModeController::changeMode(Modes mode)
@@ -19,16 +20,19 @@ void ModeController::changeMode(Modes mode)
             qDebug() << "entering Mode Selection";
             controller->setMouseTracking(true);
             this->CurrentMode = selection;
+            this->currentModeType = Modes::Selection;
             break;
         case Modes::DrawLine:
             qDebug() << "entering Mode drawLine";
             controller->setMouseTracking(true);
             this->CurrentMode = drawLine;
+            this->currentModeType = Modes::DrawLine;
             break;
         case Modes::DrawPoint:
             qDebug() << "entering Mode drawPoint";
             controller->setMouseTracking(false);
             this->CurrentMode = drawPoint;
+            this->currentModeType = Modes::DrawPoint;
             break;
         default:
             qDebug() << "Mode not available";
@@ -38,4 +42,11 @@ void ModeController::changeMode(Modes mode)
 M_ModeInterface * ModeController::getCurrentMode()
 {
     return this->CurrentMode;
+}
+
+void ModeController::reConfigureView()
+{
+    if ((this->currentModeType == Modes::DrawLine) || (this->currentModeType == Modes::Selection)) {
+        controller->setMouseTracking(true);
+    }
 }

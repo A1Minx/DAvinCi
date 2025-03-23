@@ -17,9 +17,6 @@ Controller::Controller(Model *model, View_OpenGLWidget *view)
 void Controller::setView(View_OpenGLWidget *view)
 {
     this->view = view;
-    if (view) {
-        setModeSelection();
-    }
 }
 
 // ----- GUI controlls -----

@@ -56,6 +56,10 @@ void M_DrawLine::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
 
 void M_DrawLine::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
     
+    qDebug() << "Mouse Move at screen:" << event->x() << ", " << event->y();
+    qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
+
+
     nearestPoint = controller->getNearestPoint(worldPos.x(), worldPos.y(), worldPos.z());
     if (nearestPoint) {
         controller->removeTempPoints();

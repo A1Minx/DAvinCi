@@ -25,6 +25,8 @@ void mainWindow::setXYView() {
 
   mainLayout->addWidget(view, 1, 0);
   view->show();
+
+  controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setXZView() {
@@ -38,6 +40,8 @@ void mainWindow::setXZView() {
   
   mainLayout->addWidget(view, 1, 0);
   view->show();
+
+  controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setYZView() {
@@ -51,6 +55,8 @@ void mainWindow::setYZView() {
   
   mainLayout->addWidget(view, 1, 0);
   view->show();
+
+  controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setHorizon() {
