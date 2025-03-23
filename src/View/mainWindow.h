@@ -5,23 +5,35 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
-
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QLabel>
+class Model;
+class Controller;
+class View_OpenGLWidget;
 
 class mainWindow : public QMainWindow
 {
- public:
-  explicit mainWindow(QWidget *parent = nullptr);
- private:
+    Q_OBJECT
+    
+public:
+    explicit mainWindow(QWidget *parent = nullptr);
 
+private:
+    Model *model;
+    Controller *controller;
+    View_OpenGLWidget *view;
 
- signals:
- public slots:
+    QGridLayout *mainLayout;
+    QLineEdit *horizonLineEdit;
+    QLineEdit *gridPrecisionLineEdit;
+
+public slots:
+    void setXYView();
+    void setXZView();
+    void setYZView();
+    void setHorizon();
+    void setGridPrecision();
 };
-
-
-
-
-
 
 #endif // WINDOW_H

@@ -1,24 +1,85 @@
 #include "mainWindow.h"
 #include "Controller.h"
 #include "Model.h"
-#include "DrawingOpenGLWidget.h"
+#include "View_OpenGLWidget.h"
+#include "Orth_XY_OpenGLWidget.h"
+#include "Orth_XZ_OpenGLWidget.h"
+#include "Orth_YZ_OpenGLWidget.h"
 #include <QPushButton>
 #include <QApplication>
-#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMenuBar>
 #include <QOpenGLWidget>
 #include <QPainter>
+#include <QLineEdit>
+#include <QLabel>
 
+void mainWindow::setXYView() {
+  if (view) {
+    view->hide();
+    delete view;
+  }
+  
+  view = new Orth_XY_OpenGLWidget(model, controller);
+  controller->setView(view);
 
+  mainLayout->addWidget(view, 1, 0);
+  view->show();
+ };
+
+void mainWindow::setXZView() {
+  if (view) {
+    view->hide();
+    delete view;
+  }
+  
+  view = new Orth_XZ_OpenGLWidget(model, controller);
+  controller->setView(view);
+  
+  mainLayout->addWidget(view, 1, 0);
+  view->show();
+ };
+
+void mainWindow::setYZView() {
+  if (view) {
+    view->hide();
+    delete view;
+  }
+  
+  view = new Orth_YZ_OpenGLWidget(model, controller);
+  controller->setView(view);
+  
+  mainLayout->addWidget(view, 1, 0);
+  view->show();
+ };
+
+void mainWindow::setHorizon() {
+  if (view && horizonLineEdit) {
+    bool ok;
+    float horizonValue = horizonLineEdit->text().toFloat(&ok);
+    if (ok && horizonValue > 0) {
+      view->setHorizon(horizonValue);
+    }
+  }
+}
+
+void mainWindow::setGridPrecision() {
+  if (view && gridPrecisionLineEdit) {
+    bool ok;
+    float precisionValue = gridPrecisionLineEdit->text().toFloat(&ok);
+    if (ok && precisionValue > 0) {
+      view->setGridSize(precisionValue);
+    }
+  }
+}
 
 mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  showMaximized();
 
- Model *model = new Model();
- Controller *controller = new Controller(model, nullptr);
- DrawingOpenGLWidget *view = new DrawingOpenGLWidget(model, controller);
- controller->setView(view);  
+ model = new Model();
+ controller = new Controller(model, nullptr);
+ view = new Orth_XY_OpenGLWidget(model, controller);
+ controller->setView(view);
 
 
  QWidget *centralWidget = new QWidget(this);
@@ -51,28 +112,33 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
 
  // ----- Layout -----
- QGridLayout *mainLayout = new QGridLayout(centralWidget);
+ mainLayout = new QGridLayout(centralWidget);
+ mainLayout->setContentsMargins(10, 10, 10, 10);
+ mainLayout->setSpacing(5);
 
- // -- button row
+ // -- button row to
  QHBoxLayout *buttonLayout = new QHBoxLayout();
+ buttonLayout->setAlignment(Qt::AlignLeft);
 
- mainLayout->addLayout(buttonLayout,0,0,Qt::AlignTop);
+ mainLayout->addLayout(buttonLayout, 0, 0);
+
+ // -- button row bottom
+ QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
+ buttonLayoutBottom->setAlignment(Qt::AlignLeft);
+
+ mainLayout->addLayout(buttonLayoutBottom, 2, 0);
 
  // -- vertical stretch
- mainLayout->setColumnStretch(0, 1);
- mainLayout->setColumnStretch(1, 0);
+ mainLayout->setColumnStretch(0, 5); // View
+ mainLayout->setColumnStretch(1, 1); // Side Container
 
  // -- horizontal stretch
- mainLayout->setRowStretch(0, 0);
- mainLayout->setRowStretch(1, 1);
-
+ mainLayout->setRowStretch(0, 0);    // Top Buttons
+ mainLayout->setRowStretch(1, 10);   // View
+ mainLayout->setRowStretch(2, 0);    // Bottom Buttons
 
  // ----- Graphics Window -----
-
-
-
- mainLayout->addWidget(view);
-
+ mainLayout->addWidget(view, 1, 0);
 
  // ----- Layers Widget -----
  QWidget *emptyContainer = new QWidget(this);
@@ -82,26 +148,81 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
 
 
- //----- test buttons -----
+ //-----  buttons top -----
  //-- load
- QPushButton *writeSQL = new QPushButton("Write SQL",  this);
- writeSQL->setText("Write SQL");
- writeSQL->setToolTip("Write SQL");
- writeSQL->show();
- writeSQL->setIcon(QIcon::fromTheme("face-smile"));
+ QPushButton *readSQLLines = new QPushButton("Read SQL Lines",  this);
+ readSQLLines->setText("Read SQL Lines");
+ readSQLLines->setToolTip("Read SQL Lines");
+ readSQLLines->show();
+ //readSQLLines->setIcon(QIcon::fromTheme("face-smile"));
 
- QObject::connect(writeSQL, SIGNAL(clicked()), controller, SLOT(writeSQL()));
+ QObject::connect(readSQLLines, SIGNAL(clicked()), controller, SLOT(readSQLLines()));
 
- buttonLayout->addWidget(writeSQL);
+ buttonLayout->addWidget(readSQLLines);
 
  //-- save
-  QPushButton *readSQL = new QPushButton("Read SQL",  this);
- readSQL->setText("Read SQL");
- readSQL->setToolTip("Read SQL");
- readSQL->show();
- readSQL->setIcon(QIcon::fromTheme("face-smile"));
+  QPushButton *readSQLPoints = new QPushButton("Read SQL Points",  this);
+ readSQLPoints->setText("Read SQL Points");
+ readSQLPoints->setToolTip("Read SQL Points");
+ readSQLPoints->show();
+ //readSQLPoints->setIcon(QIcon::fromTheme("face-smile"));
 
- QObject::connect(readSQL, SIGNAL(clicked()), controller, SLOT(readSQL()));
+ QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
 
- buttonLayout->addWidget(readSQL);
+ buttonLayout->addWidget(readSQLPoints);
+
+
+ //-----  buttons bottom -----
+
+ QPushButton *XYView = new QPushButton("XY View",  this);
+ XYView->setText("XY View");
+ XYView->setToolTip("XY View");
+ XYView->show();
+
+ QObject::connect(XYView, SIGNAL(clicked()), this, SLOT(setXYView()));
+
+ buttonLayoutBottom->addWidget(XYView);
+
+ QPushButton *XZView = new QPushButton("XZ View",  this);
+ XZView->setText("XZ View");
+ XZView->setToolTip("XZ View");
+ XZView->show();
+
+ QObject::connect(XZView, SIGNAL(clicked()), this, SLOT(setXZView()));
+
+ buttonLayoutBottom->addWidget(XZView);
+
+ QPushButton *YZView = new QPushButton("YZ View",  this);
+ YZView->setText("YZ View");
+ YZView->setToolTip("YZ View");
+ YZView->show();
+
+ QObject::connect(YZView, SIGNAL(clicked()), this, SLOT(setYZView()));
+
+ buttonLayoutBottom->addWidget(YZView);
+
+
+ 
+// inputs for horizon and grid    
+ QLabel *horizonLabel = new QLabel("Horizon:", this);
+ buttonLayoutBottom->addWidget(horizonLabel);
+ 
+ horizonLineEdit = new QLineEdit(this);
+ horizonLineEdit->setFixedWidth(100);
+ horizonLineEdit->setText("0");
+ horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
+ QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
+ buttonLayoutBottom->addWidget(horizonLineEdit);
+ 
+ QLabel *gridPrecisionLabel = new QLabel("Grid Precision:", this);
+ buttonLayoutBottom->addWidget(gridPrecisionLabel);
+ 
+ gridPrecisionLineEdit = new QLineEdit(this);
+ gridPrecisionLineEdit->setFixedWidth(100);
+ gridPrecisionLineEdit->setText("100");
+ gridPrecisionLineEdit->setToolTip("Grid Precision");
+ QObject::connect(gridPrecisionLineEdit, SIGNAL(editingFinished()), this, SLOT(setGridPrecision()));
+ buttonLayoutBottom->addWidget(gridPrecisionLineEdit);
+
+  buttonLayoutBottom->addStretch(1);
 }

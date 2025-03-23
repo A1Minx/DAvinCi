@@ -1,17 +1,25 @@
 #include "Controller.h"
 #include "ModeController.h"
 #include <QDebug>
+#include "View_OpenGLWidget.h"
+#include "Orth_XY_OpenGLWidget.h"
 
 
-Controller::Controller(Model *model, DrawingOpenGLWidget *view)
-    : model(model), view(view)
+
+Controller::Controller(Model *model, View_OpenGLWidget *view)
+    : model(model), view(view), modeController(nullptr)
 {
     this->modeController = new ModeController(this);
+    this->currPointSpec = model->getPointSpec(1);
+    this->currLineSpec = model->getLineSpec(2);
 }
 
-void Controller::setView(DrawingOpenGLWidget *view)
+void Controller::setView(View_OpenGLWidget *view)
 {
     this->view = view;
+    if (view) {
+        setModeSelection();
+    }
 }
 
 // ----- GUI controlls -----
@@ -47,6 +55,12 @@ void Controller::setModeDrawLine()
     modeController->changeMode(ModeController::Modes::DrawLine);
 }
 
+void Controller::setModeSelection()
+{
+    qDebug() << "setMode Selection implementation";
+
+    modeController->changeMode(ModeController::Modes::Selection);
+}
 
 
 // ----- internals -----
@@ -55,49 +69,128 @@ ModeController* Controller::getModeController()
     return modeController;
 }
 
-Model* Controller::getModel()
+
+// -- Calculations --
+std::shared_ptr<Point> Controller::getNearestPoint(float x, float y, float z)
 {
-    return this->model;
+    static const float MAX_DISTANCE = 20.0f;
+    std::shared_ptr<Point> candidate = nullptr;
+    float minDistance = MAX_DISTANCE;
+
+    for (const std::shared_ptr<Point>& point : model->getPoints()) {
+        float distance = point->distanceTo(x, y, z);
+        if (distance < minDistance) {
+            minDistance = distance;
+            candidate = point;
+        }
+    }
+    return candidate;
 }
 
 
-// ----- Model Interactions -----
-void Controller::addLine(float x1, float y1, float x2, float y2)
-{
-    model->addLine(x1,y1,x2,y2);
-    view->update();
-}
 
 void Controller::addShape()
 {
+    //TODO: Check if this can be used for all types of Shapes (Polymorphism)
     model->addShape();
     view->update();
 }
 
-void Controller::addPoint(float x, float y, float z)
+void Controller::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec)
 {
-    model->addPoint(x,y,z);
+    model->addLine(p1, p2, spec);
     view->update();
+}
+
+std::shared_ptr<Point> Controller::addPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec)
+{
+    std::shared_ptr<Point> point = model->addPoint(x,y,z, spec);
+    view->update();
+    return point;
 }
 
 
 
 // ----- SQL Test -----
-void Controller::readSQL()
+void Controller::readSQLLines()
 {
-    model->sqlServer->readSQL();
+    model->sqlServer->readSQLLines();
 }
 
-void Controller::writeSQL()
+void Controller::readSQLPoints()
 {
-    const char *dummyParam[2] = {"10", "20"};
-    model->sqlServer->writeSQL(dummyParam);
+    model->sqlServer->readSQLPoints();
 }
 
+
+// -- change View Options --
+void Controller::setMouseTracking(bool tracking)
+{
+    view->setMouseTracking(tracking);
+};
+
+
+
+// ----- Interactivity -----
 void Controller::handleMouseClick(QMouseEvent *event)
 {
-    modeController->getCurrentMode()->onMouseClick(event);
+    // Bildschirmkoordinaten in Weltkoordinaten konvertieren. Notwendig, da ansonsten nicht an der Mausposition gezeichnet wird. 
+    // TODO: Prüfen ob es ein Problem ist, dass Screen Koordinaten int und Weltkoordinaten float sind. Genauigkeitsverlust? 
+    QVector3D worldPos = view->screenToWorld(event->x(), event->y());
+    modeController->getCurrentMode()->onMouseClick(event, worldPos);
+}
+
+void Controller::handleMouseMove(QMouseEvent *event)
+{
+    QVector3D worldPos = view->screenToWorld(event->x(), event->y());
+    modeController->getCurrentMode()->onMouseMove(event, worldPos);
 }
 
 
+// -- Markers and Temporary elements --
+void Controller::addTempLine(float x1, float y1, float z1, float x2, float y2, float z2, float color[4], float width)
+{
+    model->addTempLine(x1, y1, z1, x2, y2, z2, color, width);
+    view->update();
+}
 
+void Controller::removeTempLines()
+{
+    model->removeTempLines();
+    view->update();
+}
+
+void Controller::addTempPoint(float x, float y, float z, float color[4], float size)
+{
+    model->addTempPoint(x, y, z, color, size);
+    view->update();
+}
+
+void Controller::removeTempPoints()
+{
+    model->removeTempPoints();
+    view->update();
+}
+
+
+// ----- Spec Management -----
+
+void Controller::setCurrPointSpec(std::shared_ptr<PointSpec> spec)
+{
+    currPointSpec = spec;
+}
+
+void Controller::setCurrLineSpec(std::shared_ptr<LineSpec> spec)
+{
+    currLineSpec = spec;
+}
+
+std::shared_ptr<PointSpec> Controller::getCurrPointSpec()
+{
+    return currPointSpec;
+}
+
+std::shared_ptr<LineSpec> Controller::getCurrLineSpec()
+{
+    return currLineSpec;
+}

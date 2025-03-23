@@ -5,19 +5,18 @@
 M_Selection::M_Selection(Controller* controller)
     : controller(controller)
 {
-
 }
 
-
-
-void M_Selection::onMouseClick(QMouseEvent *event) {
-
-    float x = event->x();
-    float y = event->y();
-
+void M_Selection::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
     if (event->button() == Qt::MiddleButton) {
-        qDebug() << "Wheel Click at " << x << ", " << y;
+        qDebug() << "Wheel Click at screen:" << event->x() << ", " << event->y();
+        qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
     }
+}
+
+void M_Selection::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
+    qDebug() << "Mouse Move at screen:" << event->x() << ", " << event->y();
+    qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
 }
 
 

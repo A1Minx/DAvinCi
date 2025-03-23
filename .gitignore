@@ -37,8 +37,10 @@
 # ENV
 *.env
 
-# Dont upload Dependencies
+#Build Folder
+/src/build
 
+# Dont upload Dependencies
 /src/dependencies/libpq
 
 # IDE files

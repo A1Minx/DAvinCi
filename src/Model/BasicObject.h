@@ -3,11 +3,13 @@
 
 #include "Object3D.h"
 
-class BasicObject : Object3D {
+class BasicObject : public Object3D {
 
 public:
 
     //function to add Object
+
+protected:
 
 private:
 

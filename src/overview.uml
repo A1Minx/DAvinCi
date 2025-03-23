@@ -1,0 +1,66 @@
+::: mermaid
+
+classDiagram
+    class Model {
+        -vector~shared_ptr~Point~ points
+        -SQLite::Database db
+        +readSQL() vector~shared_ptr~Point~
+        +writeSQL() void
+        +getPoints() vector~shared_ptr~Point~
+    }
+
+    class Controller {
+        -Model* model
+        -DrawingOpenGLWidget* view
+        -ModeController* modeController
+        +handleMouseClick(QMouseEvent*)
+        +setView(DrawingOpenGLWidget*)
+    }
+
+    class DrawingOpenGLWidget {
+        -Model* model
+        -Controller* controller
+        -QMatrix4x4 projectionMatrix
+        -QMatrix4x4 viewMatrix
+        +initializeGL()
+        +paintGL()
+        +drawPoints()
+    }
+
+    class ModeController {
+        -vector~unique_ptr~Mode~ modes
+        -Mode* currentMode
+        +addMode(unique_ptr~Mode~)
+        +setCurrentMode(int)
+        +onMouseClick(QMouseEvent*)
+    }
+
+    class Mode {
+        <<abstract>>
+        +onMouseClick(QMouseEvent*)
+    }
+/
+    class Point {
+        +float x
+        +float y
+        +float z
+    }
+
+    class MainWindow {
+        -Model* model
+        -Controller* controller
+        -DrawingOpenGLWidget* view
+    }
+
+    Model "1" --> "*" Point : contains
+    Controller "1" --> "1" Model : owns
+    Controller "1" --> "1" DrawingOpenGLWidget : owns
+    Controller "1" --> "1" ModeController : owns
+    DrawingOpenGLWidget "1" --> "1" Model : references
+    DrawingOpenGLWidget "1" --> "1" Controller : references
+    ModeController "1" --> "*" Mode : owns
+    MainWindow "1" --> "1" Model : owns
+    MainWindow "1" --> "1" Controller : owns
+    MainWindow "1" --> "1" DrawingOpenGLWidget : owns
+
+:::
