@@ -3,7 +3,7 @@
 #include <QDebug>
 
 M_Selection::M_Selection(Controller* controller)
-    : controller(controller)
+    : M_ModeInterface(controller)
 {
 }
 

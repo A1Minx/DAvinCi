@@ -3,7 +3,7 @@
 #include <QDebug>
 
 M_DrawPoint::M_DrawPoint(Controller* controller)
-    : controller(controller)
+    : M_ModeInterface(controller)
 {
 }
 

@@ -13,7 +13,6 @@ public:
     void onMouseMove(QMouseEvent *event, const QVector3D& worldPos) override;
     
 private:
-    Controller *controller;
 };
 
 #endif

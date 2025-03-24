@@ -1,6 +1,10 @@
 #include "ModeController.h"
 #include "Controller.h"
 #include <QDebug>
+#include "M_ModeInterface.h"
+#include "M_DrawLine.h"
+#include "M_DrawPoint.h"
+#include "M_Selection.h"
 
 ModeController::ModeController(Controller *controller)
     :controller(controller)

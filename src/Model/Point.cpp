@@ -19,5 +19,3 @@ float Point::distanceTo(float x, float y, float z)
 
 
 
-
-

@@ -3,10 +3,12 @@
 
 
 
-#include "M_ModeInterface.h"
-#include "M_DrawLine.h"
-#include "M_DrawPoint.h"
-#include "M_Selection.h"
+
+
+class M_ModeInterface;
+class M_DrawLine;
+class M_DrawPoint;
+class M_Selection;
 
 
 //forward declarations

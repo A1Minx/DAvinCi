@@ -4,7 +4,7 @@
 #include <QDebug>
 
 M_DrawLine::M_DrawLine(Controller* controller)
-    : controller(controller)
+    : M_ModeInterface(controller)
 {
 }
 
@@ -60,7 +60,7 @@ void M_DrawLine::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
     qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
 
 
-    nearestPoint = controller->getNearestPoint(worldPos.x(), worldPos.y(), worldPos.z());
+    nearestPoint = nearestPointSelection(event, worldPos, controller->getHiddenAxis());
     if (nearestPoint) {
         controller->removeTempPoints();
         controller->addTempPoint(nearestPoint->getX(), nearestPoint->getY(), nearestPoint->getZ(), tempColor, tempSize);
@@ -72,5 +72,8 @@ void M_DrawLine::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
         controller->removeTempLines();
         controller->addTempLine(p1->getX(), p1->getY(), p1->getZ(), worldPos.x(), worldPos.y(), worldPos.z(), tempColor, tempSize);
     } 
+
+
+    
 }
 

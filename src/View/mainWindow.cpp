@@ -20,12 +20,15 @@ void mainWindow::setXYView() {
     delete view;
   }
   
+  
   view = new Orth_XY_OpenGLWidget(model, controller);
   controller->setView(view);
-
+  controller->setHiddenAxis('z');
+  
   mainLayout->addWidget(view, 1, 0);
+  
   view->show();
-
+  
   controller->getModeController()->reConfigureView();
  };
 
@@ -37,7 +40,7 @@ void mainWindow::setXZView() {
   
   view = new Orth_XZ_OpenGLWidget(model, controller);
   controller->setView(view);
-  
+  controller->setHiddenAxis('y');
   mainLayout->addWidget(view, 1, 0);
   view->show();
 
@@ -49,10 +52,10 @@ void mainWindow::setYZView() {
     view->hide();
     delete view;
   }
-  
+
   view = new Orth_YZ_OpenGLWidget(model, controller);
   controller->setView(view);
-  
+  controller->setHiddenAxis('x');
   mainLayout->addWidget(view, 1, 0);
   view->show();
 
@@ -84,13 +87,20 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  model = new Model();
  controller = new Controller(model, nullptr);
- view = new Orth_XY_OpenGLWidget(model, controller);
+ view = nullptr;
+
+  // ----- Layout -----
+ QWidget *centralWidget = new QWidget(this);
+ setCentralWidget(centralWidget);
+
+
+ mainLayout = new QGridLayout(centralWidget);
+ mainLayout->setContentsMargins(10, 10, 10, 10);
+ mainLayout->setSpacing(5);
+
+ setXYView();
  controller->setView(view);
 
-
- QWidget *centralWidget = new QWidget(this);
-
- setCentralWidget(centralWidget);
 
  // ----- Menu -----
  // -- File
@@ -115,12 +125,6 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  QMenu *advancedMenu = toolsMenu->addMenu("Advanced");
  QAction *subOption = advancedMenu->addAction("Advanced Option");
-
-
- // ----- Layout -----
- mainLayout = new QGridLayout(centralWidget);
- mainLayout->setContentsMargins(10, 10, 10, 10);
- mainLayout->setSpacing(5);
 
  // -- button row to
  QHBoxLayout *buttonLayout = new QHBoxLayout();
