@@ -3,10 +3,12 @@
 
 
 
-#include "M_ModeInterface.h"
-#include "M_DrawLine.h"
-#include "M_DrawPoint.h"
-#include "M_Selection.h"
+
+
+class M_ModeInterface;
+class M_DrawLine;
+class M_DrawPoint;
+class M_Selection;
 
 
 //forward declarations
@@ -30,10 +32,13 @@ public:
 
     M_ModeInterface* getCurrentMode();
 
+    void reConfigureView();
+
 private:
     Controller *controller;
 
     M_ModeInterface *CurrentMode;
+    Modes currentModeType;
 
     //available Modes. All get initialized once during startup when the ModeController gets constructed to avoid reoccuring heap allocations
     M_DrawLine *drawLine;

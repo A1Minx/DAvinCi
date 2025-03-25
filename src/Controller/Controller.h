@@ -47,6 +47,7 @@ public:
     void removeTempPoints();
 
     std::shared_ptr<Point> getNearestPoint(float x, float y, float z);
+    std::shared_ptr<Point> getNearestPoint(float a, float b, char hiddenAxis);
     
     void setMouseTracking(bool tracking);
 
@@ -56,9 +57,13 @@ public:
     void setCurrPointSpec(std::shared_ptr<PointSpec> spec);
     void setCurrLineSpec(std::shared_ptr<LineSpec> spec);
 
+    void setHiddenAxis(char axis);
+    char getHiddenAxis() {return hiddenAxis;};
+
 private:
     Model *model;
     View_OpenGLWidget *view;
+    char hiddenAxis;
     ModeController *modeController;
 
     std::shared_ptr<PointSpec> currPointSpec;

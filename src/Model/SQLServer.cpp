@@ -29,13 +29,13 @@ SQLServer::SQLServer(Model *model)
     // -- InsertPoint
 
     //3D
-    const char *InsertPoint3DQuery = "INSERT INTO Points (Points_x, Points_y, Points_z) Values ($1, $2, $3)";
-    PGresult *insertPoint3D = PQprepare(connection, "insertPoint3D", InsertPoint3DQuery, 3, NULL);
+    const char *InsertPoint3DQuery = "INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values ($1, $2, $3, $4)";
+    PGresult *insertPoint3D = PQprepare(connection, "insertPoint3D", InsertPoint3DQuery, 4, NULL);
     checkResult(insertPoint3D);
 
     // -- insertLine
-    const char *InsertLineQuery = "INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID) Values ($1, $2)";
-    PGresult *insertLine = PQprepare(connection, "insertLine", InsertLineQuery, 2, NULL);
+    const char *InsertLineQuery = "INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values ($1, $2, $3)";
+    PGresult *insertLine = PQprepare(connection, "insertLine", InsertLineQuery, 3, NULL);
     checkResult(insertLine);
 
     // -- readPoints

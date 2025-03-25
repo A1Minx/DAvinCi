@@ -522,10 +522,6 @@ moc_Controller.cpp: ../Controller/Controller.h \
 		../Model/Spec.h \
 		../Model/Line.h \
 		../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Controller/Controller.h -o moc_Controller.cpp
@@ -559,10 +555,6 @@ mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
 		../Model/Spec.h \
 		../Model/Line.h \
 		../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h \
 		../View/View_OpenGLWidget.h \
 		../View/Orth_XY_OpenGLWidget.h \
 		../View/Orth_XZ_OpenGLWidget.h \
@@ -578,11 +570,7 @@ View_OpenGLWidget.o: ../View/View_OpenGLWidget.cpp ../View/View_OpenGLWidget.h \
 		../Model/Spec.h \
 		../Model/Line.h \
 		../Controller/Controller.h \
-		../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h
+		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o View_OpenGLWidget.o ../View/View_OpenGLWidget.cpp
 
 Orth_XY_OpenGLWidget.o: ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.h \
@@ -627,27 +615,24 @@ Controller.o: ../Controller/Controller.cpp ../Controller/Controller.h \
 		../Model/Spec.h \
 		../Model/Line.h \
 		../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h \
 		../View/View_OpenGLWidget.h \
-		../View/Orth_XY_OpenGLWidget.h
+		../View/Orth_XY_OpenGLWidget.h \
+		../Controller/M_ModeInterface.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Controller.o ../Controller/Controller.cpp
 
 ModeController.o: ../Controller/ModeController.cpp ../Controller/ModeController.h \
-		../Controller/M_ModeInterface.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h \
+		../Controller/Controller.h \
+		../Model/Model.h \
+		../Model/SQLServer.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
-		../Controller/M_Selection.h \
-		../Controller/Controller.h \
-		../Model/Model.h \
-		../Model/SQLServer.h \
-		../Model/Line.h
+		../Model/Line.h \
+		../Controller/M_ModeInterface.h \
+		../Controller/M_DrawLine.h \
+		../Controller/M_DrawPoint.h \
+		../Controller/M_Selection.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ModeController.o ../Controller/ModeController.cpp
 
 M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
@@ -660,24 +645,20 @@ M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
-		../Controller/ModeController.h \
-		../Controller/M_DrawPoint.h \
-		../Controller/M_Selection.h
+		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_DrawLine.o ../Controller/M_DrawLine.cpp
 
 M_DrawPoint.o: ../Controller/M_DrawPoint.cpp ../Controller/M_DrawPoint.h \
 		../Controller/M_ModeInterface.h \
+		../Controller/Controller.h \
+		../Model/Model.h \
+		../Model/SQLServer.h \
 		../Model/Point.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
-		../Controller/Controller.h \
-		../Model/Model.h \
-		../Model/SQLServer.h \
 		../Model/Line.h \
-		../Controller/ModeController.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_Selection.h
+		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_DrawPoint.o ../Controller/M_DrawPoint.cpp
 
 M_Selection.o: ../Controller/M_Selection.cpp ../Controller/M_Selection.h \
@@ -690,9 +671,7 @@ M_Selection.o: ../Controller/M_Selection.cpp ../Controller/M_Selection.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
-		../Controller/ModeController.h \
-		../Controller/M_DrawLine.h \
-		../Controller/M_DrawPoint.h
+		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_Selection.o ../Controller/M_Selection.cpp
 
 Model.o: ../Model/Model.cpp ../Model/Model.h \

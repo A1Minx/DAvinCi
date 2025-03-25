@@ -26,7 +26,7 @@ public:
     : QOpenGLWidget(parent), model(model), controller(controller),
       zoomLevel(1.0f), 
       pointVBO(0), tempPointVBO(0), lineVBO(0), tempLineVBO(0), gridVBO(0),
-      gridSize(100.0f)
+      gridSize(100.0f), horizon(100.0f)
     {
         setFocusPolicy(Qt::StrongFocus);
     }
@@ -68,17 +68,17 @@ protected:
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f); // Dark Grey Background
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_POINT_SMOOTH);
-        glLineWidth(1.0f);
 
         // load identity
         projectionMatrix.setToIdentity();
         viewMatrix.setToIdentity();
         modelMatrix.setToIdentity();
 
-        //std::string basePath = getcwd(cwd, sizeof(cwd));
+        
+        // Shader Compilation TODO: Check if this can be done in constructor, also, if shaders stay the same in all views, 
+        // change view management to get set up once at startup.
         std::string vertexShaderPath = "../View/Shaders/vertex.shader";
         std::string fragmentShaderPath = "../View/Shaders/fragment.shader";
-        
         
         std::string vertexShader = LoadShaderFromFile(vertexShaderPath);
         std::string fragmentShader = LoadShaderFromFile(fragmentShaderPath);
@@ -275,7 +275,6 @@ protected:
             std::cout << "Shader Error" << std::endl;
         }
     }; 
-    // TODO:Make sure grid is geometrically aligned to World instead of screen.
 
     inline virtual void drawPoints() {
         if (pointData.empty()) return;

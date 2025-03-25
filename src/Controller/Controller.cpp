@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "View_OpenGLWidget.h"
 #include "Orth_XY_OpenGLWidget.h"
+#include "M_ModeInterface.h"
 
 
 
@@ -17,10 +18,29 @@ Controller::Controller(Model *model, View_OpenGLWidget *view)
 void Controller::setView(View_OpenGLWidget *view)
 {
     this->view = view;
-    if (view) {
-        setModeSelection();
+}
+
+void Controller::setHiddenAxis(char axis) {
+    switch (axis) {
+        case 'x':
+            hiddenAxis = 'x';
+            break;
+        case 'y':
+            hiddenAxis = 'y';
+            break;
+        case 'z':
+            hiddenAxis = 'z';
+            break;
+        case '0':
+            hiddenAxis = '0';
+            break;
+        default:
+            qDebug() << "Invalid hidden axis";
+            break;
     }
 }
+
+
 
 // ----- GUI controlls -----
 // -- Data Management
@@ -72,13 +92,49 @@ ModeController* Controller::getModeController()
 
 // -- Calculations --
 std::shared_ptr<Point> Controller::getNearestPoint(float x, float y, float z)
+// gets the nearest Point
 {
+    qDebug() << "getNearestPoint for x: " << x << " y: " << y << " z: " << z;
     static const float MAX_DISTANCE = 20.0f;
     std::shared_ptr<Point> candidate = nullptr;
     float minDistance = MAX_DISTANCE;
 
     for (const std::shared_ptr<Point>& point : model->getPoints()) {
         float distance = point->distanceTo(x, y, z);
+        if (distance < minDistance) {
+            minDistance = distance;
+            candidate = point;
+        }
+    }
+    return candidate;
+}
+
+std::shared_ptr<Point> Controller::getNearestPoint(float a, float b, char hiddenAxis) 
+{
+    qDebug() << "getNearestPoint for hidden axis: " << hiddenAxis << " with a: " << a << " and b: " << b;
+// overload to get nearest points that are further away on the hidden axis
+// TODO: Implement a function to get the point that is closest on the invisible axis after the check of the visible axes
+    static const float MAX_DISTANCE = 20.0f;
+    std::shared_ptr<Point> candidate = nullptr;
+    float minDistance = MAX_DISTANCE;
+
+    for (const std::shared_ptr<Point>& point : model->getPoints()) {
+        float distance;
+        switch (hiddenAxis) {
+            case 'x':
+                distance = point->distanceTo(point->getX(), a, b);
+                break;
+            case 'y':
+                distance = point->distanceTo(a, point->getY(), b);
+                break;
+            case 'z':
+                distance = point->distanceTo(a, b, point->getZ());
+                break;
+            default:
+                qDebug() << "Invalid hidden axis";
+                break;
+        }
+        qDebug() << "distance: " << distance;
         if (distance < minDistance) {
             minDistance = distance;
             candidate = point;

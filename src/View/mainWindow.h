@@ -28,6 +28,8 @@ private:
     QLineEdit *horizonLineEdit;
     QLineEdit *gridPrecisionLineEdit;
 
+    
+
 public slots:
     void setXYView();
     void setXZView();

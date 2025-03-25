@@ -20,11 +20,16 @@ void mainWindow::setXYView() {
     delete view;
   }
   
+  //TODO: Check if its reasonable to set up views once and change only pointer to current view
   view = new Orth_XY_OpenGLWidget(model, controller);
   controller->setView(view);
-
+  controller->setHiddenAxis('z');
+  
   mainLayout->addWidget(view, 1, 0);
+  
   view->show();
+  
+  controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setXZView() {
@@ -35,9 +40,11 @@ void mainWindow::setXZView() {
   
   view = new Orth_XZ_OpenGLWidget(model, controller);
   controller->setView(view);
-  
+  controller->setHiddenAxis('y');
   mainLayout->addWidget(view, 1, 0);
   view->show();
+
+  controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setYZView() {
@@ -45,12 +52,14 @@ void mainWindow::setYZView() {
     view->hide();
     delete view;
   }
-  
+
   view = new Orth_YZ_OpenGLWidget(model, controller);
   controller->setView(view);
-  
+  controller->setHiddenAxis('x');
   mainLayout->addWidget(view, 1, 0);
   view->show();
+
+  controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setHorizon() {
@@ -78,13 +87,20 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  model = new Model();
  controller = new Controller(model, nullptr);
- view = new Orth_XY_OpenGLWidget(model, controller);
+ view = nullptr;
+
+  // ----- Layout -----
+ QWidget *centralWidget = new QWidget(this);
+ setCentralWidget(centralWidget);
+
+
+ mainLayout = new QGridLayout(centralWidget);
+ mainLayout->setContentsMargins(10, 10, 10, 10);
+ mainLayout->setSpacing(5);
+
+ setXYView();
  controller->setView(view);
 
-
- QWidget *centralWidget = new QWidget(this);
-
- setCentralWidget(centralWidget);
 
  // ----- Menu -----
  // -- File
@@ -109,12 +125,6 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  QMenu *advancedMenu = toolsMenu->addMenu("Advanced");
  QAction *subOption = advancedMenu->addAction("Advanced Option");
-
-
- // ----- Layout -----
- mainLayout = new QGridLayout(centralWidget);
- mainLayout->setContentsMargins(10, 10, 10, 10);
- mainLayout->setSpacing(5);
 
  // -- button row to
  QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -209,7 +219,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  
  horizonLineEdit = new QLineEdit(this);
  horizonLineEdit->setFixedWidth(100);
- horizonLineEdit->setText("0");
+ horizonLineEdit->setText("100");
  horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
  QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
  buttonLayoutBottom->addWidget(horizonLineEdit);

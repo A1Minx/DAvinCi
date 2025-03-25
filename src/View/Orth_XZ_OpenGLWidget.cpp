@@ -21,7 +21,7 @@ void Orth_XZ_OpenGLWidget::UpdateMatrices()
 
     viewMatrix.setToIdentity();
     viewMatrix.lookAt(
-        QVector3D(0, 1, 0), 
+        QVector3D(0, -1, 0), 
         QVector3D(0, 0, 0),  
         QVector3D(0, 0, 1)   
     ); //position camera viewing on xz

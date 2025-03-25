@@ -11,7 +11,7 @@ protected:
     std::string name;
 
 public:
-    Spec(std::string name, float color[4], int id) : name(name), id(id) {
+    Spec(std::string name, float color[4], int id) : id(id), name(name) {
         for (int i = 0; i < 4; i++) {
             this->color[i] = color[i];
         }

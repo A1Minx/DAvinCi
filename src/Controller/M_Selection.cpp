@@ -3,7 +3,7 @@
 #include <QDebug>
 
 M_Selection::M_Selection(Controller* controller)
-    : controller(controller)
+    : M_ModeInterface(controller)
 {
 }
 
@@ -15,8 +15,7 @@ void M_Selection::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
 }
 
 void M_Selection::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
-    qDebug() << "Mouse Move at screen:" << event->x() << ", " << event->y();
-    qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
+
 }
 
 
