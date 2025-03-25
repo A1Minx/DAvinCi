@@ -34,9 +34,11 @@ void Orth_YZ_OpenGLWidget::UpdateMatrices() {
 }
 
 QVector3D Orth_YZ_OpenGLWidget::screenToWorld(int x, int y) {
-    y = height() - y;
+    y = height() - y; // Y-Koordinate umkehren (OpenGL hat Ursprung unten links, Qt oben links)
     
     // Normalisiere die Koordinaten auf den Bereich [-1, 1]
+    // Die X-Koordinate des Bildschirms entspricht der Y-Koordinate in der Welt
+    // Die Y-Koordinate des Bildschirms entspricht der Z-Koordinate in der Welt
     float normalizedY = (2.0f * x / width()) - 1.0f;
     float normalizedZ = (2.0f * y / height()) - 1.0f;
     
@@ -48,6 +50,9 @@ QVector3D Orth_YZ_OpenGLWidget::screenToWorld(int x, int y) {
     float worldY = normalizedY * (width() / 2.0f);
     float worldZ = normalizedZ * (height() / 2.0f);
     
+    // Da wir in der YZ-Ebene sind, ist die X-Koordinate konstant (horizon)
+    // Überprüfe ob die Y und Z Koordinaten korrekt zugeordnet sind
+    // Möglicherweise musst du hier die Reihenfolge ändern, falls eine Spiegelung auftritt
     return QVector3D(horizon, worldY, worldZ);
 }
 

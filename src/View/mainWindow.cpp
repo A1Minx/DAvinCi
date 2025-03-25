@@ -20,7 +20,7 @@ void mainWindow::setXYView() {
     delete view;
   }
   
-  
+  //TODO: Check if its reasonable to set up views once and change only pointer to current view
   view = new Orth_XY_OpenGLWidget(model, controller);
   controller->setView(view);
   controller->setHiddenAxis('z');

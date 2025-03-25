@@ -122,18 +122,19 @@ std::shared_ptr<Point> Controller::getNearestPoint(float a, float b, char hidden
         float distance;
         switch (hiddenAxis) {
             case 'x':
-                distance = point->distanceTo(a, b, point->getZ());
+                distance = point->distanceTo(point->getX(), a, b);
                 break;
             case 'y':
                 distance = point->distanceTo(a, point->getY(), b);
                 break;
             case 'z':
-                distance = point->distanceTo(point->getX(), a, b);
+                distance = point->distanceTo(a, b, point->getZ());
                 break;
             default:
                 qDebug() << "Invalid hidden axis";
                 break;
         }
+        qDebug() << "distance: " << distance;
         if (distance < minDistance) {
             minDistance = distance;
             candidate = point;
