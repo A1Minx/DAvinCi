@@ -219,7 +219,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  
  horizonLineEdit = new QLineEdit(this);
  horizonLineEdit->setFixedWidth(100);
- horizonLineEdit->setText("0");
+ horizonLineEdit->setText("100");
  horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
  QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
  buttonLayoutBottom->addWidget(horizonLineEdit);

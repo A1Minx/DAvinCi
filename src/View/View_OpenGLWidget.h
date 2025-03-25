@@ -26,7 +26,7 @@ public:
     : QOpenGLWidget(parent), model(model), controller(controller),
       zoomLevel(1.0f), 
       pointVBO(0), tempPointVBO(0), lineVBO(0), tempLineVBO(0), gridVBO(0),
-      gridSize(100.0f)
+      gridSize(100.0f), horizon(100.0f)
     {
         setFocusPolicy(Qt::StrongFocus);
     }

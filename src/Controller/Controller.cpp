@@ -94,6 +94,7 @@ ModeController* Controller::getModeController()
 std::shared_ptr<Point> Controller::getNearestPoint(float x, float y, float z)
 // gets the nearest Point
 {
+    qDebug() << "getNearestPoint for x: " << x << " y: " << y << " z: " << z;
     static const float MAX_DISTANCE = 20.0f;
     std::shared_ptr<Point> candidate = nullptr;
     float minDistance = MAX_DISTANCE;
@@ -108,7 +109,9 @@ std::shared_ptr<Point> Controller::getNearestPoint(float x, float y, float z)
     return candidate;
 }
 
-std::shared_ptr<Point> Controller::getNearestPoint(float a, float b, char hiddenAxis) {
+std::shared_ptr<Point> Controller::getNearestPoint(float a, float b, char hiddenAxis) 
+{
+    qDebug() << "getNearestPoint for hidden axis: " << hiddenAxis << " with a: " << a << " and b: " << b;
 // overload to get nearest points that are further away on the hidden axis
 // TODO: Implement a function to get the point that is closest on the invisible axis after the check of the visible axes
     static const float MAX_DISTANCE = 20.0f;
