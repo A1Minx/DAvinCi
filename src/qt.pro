@@ -48,6 +48,18 @@ HEADERS += \
     ./Model/Line.h \
     ./Model/Spec.h
 
-INCLUDEPATH +=  ./Controller ./View ./Model /usr/include /usr/lib/x86_64-linux-gnu
+INCLUDEPATH += \
+    . \
+    ./Controller \
+    ./View \
+    ./Model \
+    /usr/include \
+    /usr/include/x86_64-linux-gnu \
+    /usr/include/x86_64-linux-gnu/qt5 \
+    /usr/include/x86_64-linux-gnu/qt5/QtCore \
+    /usr/include/x86_64-linux-gnu/qt5/QtGui \
+    /usr/include/x86_64-linux-gnu/qt5/QtWidgets \
+    /usr/include/x86_64-linux-gnu/qt5/QtOpenGL \
+    /usr/include/GL
 
 CONFIG += c++17
