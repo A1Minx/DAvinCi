@@ -17,32 +17,33 @@
 void mainWindow::setXYView() {
   if (view) {
     view->hide();
-    delete view;
   }
   
-  //TODO: Check if its reasonable to set up views once and change only pointer to current view
-  view = new Orth_XY_OpenGLWidget(model, controller);
+  view = xyView;
   controller->setView(view);
   controller->setHiddenAxis('z');
   
-  mainLayout->addWidget(view, 1, 0);
-  
   view->show();
-  
+
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
+
   controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setXZView() {
   if (view) {
     view->hide();
-    delete view;
   }
   
-  view = new Orth_XZ_OpenGLWidget(model, controller);
+  view = xzView;
   controller->setView(view);
   controller->setHiddenAxis('y');
-  mainLayout->addWidget(view, 1, 0);
+  
   view->show();
+
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
 
   controller->getModeController()->reConfigureView();
  };
@@ -50,14 +51,16 @@ void mainWindow::setXZView() {
 void mainWindow::setYZView() {
   if (view) {
     view->hide();
-    delete view;
   }
 
-  view = new Orth_YZ_OpenGLWidget(model, controller);
+  view = yzView;
   controller->setView(view);
   controller->setHiddenAxis('x');
-  mainLayout->addWidget(view, 1, 0);
+  
   view->show();
+
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
 
   controller->getModeController()->reConfigureView();
  };
@@ -78,32 +81,11 @@ void mainWindow::setGridPrecision() {
     float precisionValue = gridPrecisionLineEdit->text().toFloat(&ok);
     if (ok && precisionValue > 0) {
       view->setGridSize(precisionValue);
-    }
+    } 
   }
 }
 
-mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
- showMaximized();
-
- model = new Model();
- controller = new Controller(model, nullptr);
- view = nullptr;
-
-  // ----- Layout -----
- QWidget *centralWidget = new QWidget(this);
- setCentralWidget(centralWidget);
-
-
- mainLayout = new QGridLayout(centralWidget);
- mainLayout->setContentsMargins(10, 10, 10, 10);
- mainLayout->setSpacing(5);
-
- setXYView();
- controller->setView(view);
-
-
- // ----- Menu -----
- // -- File
+void mainWindow::createMenus() {
  QMenuBar *menuBar = new QMenuBar(this);
  setMenuBar(menuBar);
  QMenu *fileMenu = menuBar->addMenu("File");
@@ -113,78 +95,50 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  QObject::connect(loadAction, SIGNAL(triggered()), controller, SLOT(load()));
  QObject::connect(saveAction, SIGNAL(triggered()), controller, SLOT(save()));
 
- // -- Tools
  QMenu *toolsMenu = menuBar->addMenu("Tools");
  QAction *drawLineAction = toolsMenu->addAction("Draw Line");
  QAction *drawPointAction = toolsMenu->addAction("Draw Point");
  QAction *clearShapesAction = toolsMenu->addAction("Clear Shapes");
- //TODO: Parametrizemode selection with argument? Enum?
  QObject::connect(drawLineAction, SIGNAL(triggered()), controller, SLOT(setModeDrawLine()));
  QObject::connect(drawPointAction, SIGNAL(triggered()), controller, SLOT(setModeDrawPoint()));
  QObject::connect(clearShapesAction, SIGNAL(triggered()), controller, SLOT(clearShapes()));
 
  QMenu *advancedMenu = toolsMenu->addMenu("Advanced");
  QAction *subOption = advancedMenu->addAction("Advanced Option");
+}
 
- // -- button row to
+void mainWindow::createTopButtonBar() {
  QHBoxLayout *buttonLayout = new QHBoxLayout();
  buttonLayout->setAlignment(Qt::AlignLeft);
 
  mainLayout->addLayout(buttonLayout, 0, 0);
 
- // -- button row bottom
- QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
- buttonLayoutBottom->setAlignment(Qt::AlignLeft);
-
- mainLayout->addLayout(buttonLayoutBottom, 2, 0);
-
- // -- vertical stretch
- mainLayout->setColumnStretch(0, 5); // View
- mainLayout->setColumnStretch(1, 1); // Side Container
-
- // -- horizontal stretch
- mainLayout->setRowStretch(0, 0);    // Top Buttons
- mainLayout->setRowStretch(1, 10);   // View
- mainLayout->setRowStretch(2, 0);    // Bottom Buttons
-
- // ----- Graphics Window -----
- mainLayout->addWidget(view, 1, 0);
-
- // ----- Layers Widget -----
- QWidget *emptyContainer = new QWidget(this);
- emptyContainer->setMinimumWidth(200);
- emptyContainer->setStyleSheet("border: 1px solid red;");
- mainLayout->addWidget(emptyContainer, 1, 1);
-
-
-
- //-----  buttons top -----
- //-- load
- QPushButton *readSQLLines = new QPushButton("Read SQL Lines",  this);
+ QPushButton *readSQLLines = new QPushButton("Read SQL Lines", this);
  readSQLLines->setText("Read SQL Lines");
  readSQLLines->setToolTip("Read SQL Lines");
  readSQLLines->show();
- //readSQLLines->setIcon(QIcon::fromTheme("face-smile"));
 
  QObject::connect(readSQLLines, SIGNAL(clicked()), controller, SLOT(readSQLLines()));
 
  buttonLayout->addWidget(readSQLLines);
 
- //-- save
-  QPushButton *readSQLPoints = new QPushButton("Read SQL Points",  this);
+ QPushButton *readSQLPoints = new QPushButton("Read SQL Points", this);
  readSQLPoints->setText("Read SQL Points");
  readSQLPoints->setToolTip("Read SQL Points");
  readSQLPoints->show();
- //readSQLPoints->setIcon(QIcon::fromTheme("face-smile"));
 
  QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
 
  buttonLayout->addWidget(readSQLPoints);
+}
 
+void mainWindow::createBottomButtonBar() {
+ QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
+ buttonLayoutBottom->setAlignment(Qt::AlignLeft);
 
- //-----  buttons bottom -----
+ mainLayout->addLayout(buttonLayoutBottom, 2, 0);
 
- QPushButton *XYView = new QPushButton("XY View",  this);
+ QPushButton *XYView = new QPushButton("XY View", this);
  XYView->setText("XY View");
  XYView->setToolTip("XY View");
  XYView->show();
@@ -193,7 +147,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  buttonLayoutBottom->addWidget(XYView);
 
- QPushButton *XZView = new QPushButton("XZ View",  this);
+ QPushButton *XZView = new QPushButton("XZ View", this);
  XZView->setText("XZ View");
  XZView->setToolTip("XZ View");
  XZView->show();
@@ -202,7 +156,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  buttonLayoutBottom->addWidget(XZView);
 
- QPushButton *YZView = new QPushButton("YZ View",  this);
+ QPushButton *YZView = new QPushButton("YZ View", this);
  YZView->setText("YZ View");
  YZView->setToolTip("YZ View");
  YZView->show();
@@ -211,9 +165,6 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  buttonLayoutBottom->addWidget(YZView);
 
-
- 
-// inputs for horizon and grid    
  QLabel *horizonLabel = new QLabel("Horizon:", this);
  buttonLayoutBottom->addWidget(horizonLabel);
  
@@ -234,5 +185,59 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  QObject::connect(gridPrecisionLineEdit, SIGNAL(editingFinished()), this, SLOT(setGridPrecision()));
  buttonLayoutBottom->addWidget(gridPrecisionLineEdit);
 
-  buttonLayoutBottom->addStretch(1);
+ buttonLayoutBottom->addStretch(1);
+}
+
+mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
+ showMaximized();
+
+ model = new Model();
+ controller = new Controller(model, nullptr);
+
+  // ----- Layout -----
+ QWidget *centralWidget = new QWidget(this);
+ setCentralWidget(centralWidget);
+
+ mainLayout = new QGridLayout(centralWidget);
+ mainLayout->setContentsMargins(10, 10, 10, 10);
+ mainLayout->setSpacing(5);
+
+ // -- vertical stretch
+ mainLayout->setColumnStretch(0, 5); // View
+ mainLayout->setColumnStretch(1, 1); // Side Container
+
+ // -- horizontal stretch
+ mainLayout->setRowStretch(0, 0);    // Top Buttons
+ mainLayout->setRowStretch(1, 10);   // View
+ mainLayout->setRowStretch(2, 0);    // Bottom Buttons
+
+ qDebug() << "Creating UI";
+ createMenus();
+ createTopButtonBar();
+ createBottomButtonBar();
+
+ qDebug() << "Creating views";
+ xyView = new Orth_XY_OpenGLWidget(model, controller);
+ xzView = new Orth_XZ_OpenGLWidget(model, controller);
+ yzView = new Orth_YZ_OpenGLWidget(model, controller);
+ 
+ xyView->hide();
+ xzView->hide();
+ yzView->hide();
+
+ mainLayout->addWidget(xyView, 1, 0);
+ mainLayout->addWidget(xzView, 1, 0);
+ mainLayout->addWidget(yzView, 1, 0);
+
+ view = nullptr;
+
+ setXYView();
+
+
+
+ // ----- Layers Widget -----
+ QWidget *emptyContainer = new QWidget(this);
+ emptyContainer->setMinimumWidth(200);
+ emptyContainer->setStyleSheet("border: 1px solid red;");
+ mainLayout->addWidget(emptyContainer, 1, 1);
 }

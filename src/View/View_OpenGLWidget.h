@@ -39,6 +39,14 @@ public:
         this->gridSize = gridSize;
     }
 
+    inline virtual float getHorizon() {
+        return horizon;
+    }
+
+    inline virtual float getGridSize() {
+        return gridSize;
+    }
+
     ~View_OpenGLWidget() {
         makeCurrent();
         glDeleteBuffers(1, &pointVBO);

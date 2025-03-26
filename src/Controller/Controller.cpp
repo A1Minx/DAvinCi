@@ -12,7 +12,9 @@ Controller::Controller(Model *model, View_OpenGLWidget *view)
 {
     this->modeController = new ModeController(this);
     this->currPointSpec = model->getPointSpec(1);
+    qDebug() << "currPointSpec: " << currPointSpec->getColor();
     this->currLineSpec = model->getLineSpec(2);
+    qDebug() << "currLineSpec: " << currLineSpec->getColor();
 }
 
 void Controller::setView(View_OpenGLWidget *view)
