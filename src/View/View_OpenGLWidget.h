@@ -26,7 +26,9 @@ public:
     : QOpenGLWidget(parent), model(model), controller(controller),
       zoomLevel(1.0f), 
       pointVBO(0), tempPointVBO(0), lineVBO(0), tempLineVBO(0), gridVBO(0),
-      gridSize(100.0f), horizon(100.0f)
+      gridSize(100.0f), horizon(100.0f),
+      isPanning(false), panOffsetX(0.0f), panOffsetY(0.0f),
+      ctrlPressed(false)
     {
         setFocusPolicy(Qt::StrongFocus);
     }
@@ -144,6 +146,17 @@ protected:
     // ----- Events -----
 
     float zoomLevel; 
+    bool isPanning;
+    QPoint lastPanPosition;
+    float panOffsetX;
+    float panOffsetY;
+    bool ctrlPressed;
+
+    virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
 
     virtual inline void wheelEvent(QWheelEvent *event) {
         float delta = event->angleDelta().y() / 120.0f;
@@ -152,12 +165,7 @@ protected:
         
         UpdateMatrices();
         update();
-    } 
-    // TODO: Move logic to controller? Think about if this should ever be view independent and managed by modes.
-    // TODO: If it stays in view only, keep this implementation.
-
-    virtual void mousePressEvent(QMouseEvent *event);
-    virtual void mouseMoveEvent(QMouseEvent *event); 
+    }
 
     // ----- Buffers -----
 

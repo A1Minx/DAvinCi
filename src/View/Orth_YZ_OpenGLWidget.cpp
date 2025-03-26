@@ -25,12 +25,14 @@ void Orth_YZ_OpenGLWidget::UpdateMatrices() {
         QVector3D(0, 0, 1)   
     ); //position camera viewing on yz
     
+    //move orthogonal camera
+    viewMatrix.translate(0, panOffsetX, panOffsetY);
+    
     projectionMatrix.setToIdentity();
     projectionMatrix.ortho(-w/(2.0f), w/(2.0f), 
                           -h/(2.0f), h/(2.0f),
                           -1000, 1000);
     projectionMatrix.scale(zoomLevel);
-
 }
 
 QVector3D Orth_YZ_OpenGLWidget::screenToWorld(int x, int y) {

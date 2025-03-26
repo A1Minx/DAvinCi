@@ -10,6 +10,7 @@ LIBS *= -lpq
 SOURCES += \
     main.cpp \
     ./View/mainWindow.cpp \
+    ./View/Free_OpenGLWidget.cpp \
     ./View/View_OpenGLWidget.cpp \
     ./View/Orth_XY_OpenGLWidget.cpp \
     ./View/Orth_XZ_OpenGLWidget.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
 HEADERS += \
     ./View/mainWindow.h \
     ./View/View_OpenGLWidget.h \
+    ./View/Free_OpenGLWidget.h \
     ./View/Orth_XY_OpenGLWidget.h \
     ./View/Orth_XZ_OpenGLWidget.h \
     ./View/Orth_YZ_OpenGLWidget.h \

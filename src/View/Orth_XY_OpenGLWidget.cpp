@@ -25,6 +25,9 @@ void Orth_XY_OpenGLWidget::UpdateMatrices() {
         QVector3D(0, 1, 0)   
     ); //position camera viewing on xy
     
+    //move orthogonal camera
+    viewMatrix.translate(panOffsetX, panOffsetY, 0);
+    
     projectionMatrix.setToIdentity();
     projectionMatrix.ortho(-w/(2.0f), w/(2.0f), 
                           -h/(2.0f), h/(2.0f), 

@@ -5,6 +5,7 @@
 #include "Orth_XY_OpenGLWidget.h"
 #include "Orth_XZ_OpenGLWidget.h"
 #include "Orth_YZ_OpenGLWidget.h"
+#include "Free_OpenGLWidget.h"
 #include <QPushButton>
 #include <QApplication>
 #include <QHBoxLayout>
@@ -64,6 +65,23 @@ void mainWindow::setYZView() {
 
   controller->getModeController()->reConfigureView();
  };
+
+void mainWindow::setFreeView() {
+  if (view) {
+    view->hide();
+  }
+
+  view = freeView;
+  controller->setView(view);
+  controller->setHiddenAxis('0');
+  view->show();
+
+  // needed in free view to place grid position
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
+
+  controller->getModeController()->reConfigureView();
+}
 
 void mainWindow::setHorizon() {
   if (view && horizonLineEdit) {
@@ -165,6 +183,15 @@ void mainWindow::createBottomButtonBar() {
 
  buttonLayoutBottom->addWidget(YZView);
 
+ QPushButton *FreeView = new QPushButton("Free View", this);
+ FreeView->setText("Free View");
+ FreeView->setToolTip("Free View (Ctrl+Middle Mouse to tilt camera)");
+ FreeView->show();
+
+ QObject::connect(FreeView, SIGNAL(clicked()), this, SLOT(setFreeView()));
+
+ buttonLayoutBottom->addWidget(FreeView);
+
  QLabel *horizonLabel = new QLabel("Horizon:", this);
  buttonLayoutBottom->addWidget(horizonLabel);
  
@@ -220,14 +247,17 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  xyView = new Orth_XY_OpenGLWidget(model, controller);
  xzView = new Orth_XZ_OpenGLWidget(model, controller);
  yzView = new Orth_YZ_OpenGLWidget(model, controller);
+ freeView = new Free_OpenGLWidget(model, controller);
  
  xyView->hide();
  xzView->hide();
  yzView->hide();
+ freeView->hide();
 
  mainLayout->addWidget(xyView, 1, 0);
  mainLayout->addWidget(xzView, 1, 0);
  mainLayout->addWidget(yzView, 1, 0);
+ mainLayout->addWidget(freeView, 1, 0);
 
  view = nullptr;
 

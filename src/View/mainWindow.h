@@ -14,6 +14,7 @@ class View_OpenGLWidget;
 class Orth_XY_OpenGLWidget;
 class Orth_XZ_OpenGLWidget;
 class Orth_YZ_OpenGLWidget;
+class Free_OpenGLWidget;
 
 class mainWindow : public QMainWindow
 {
@@ -31,6 +32,7 @@ private:
     Orth_XY_OpenGLWidget *xyView;
     Orth_XZ_OpenGLWidget *xzView;
     Orth_YZ_OpenGLWidget *yzView;
+    Free_OpenGLWidget *freeView;
 
     QGridLayout *mainLayout;
     QLineEdit *horizonLineEdit;
@@ -44,6 +46,7 @@ public slots:
     void setXYView();
     void setXZView();
     void setYZView();
+    void setFreeView();
     void setHorizon();
     void setGridPrecision();
 };
