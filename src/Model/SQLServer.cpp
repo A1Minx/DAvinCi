@@ -202,7 +202,8 @@ std::vector<std::shared_ptr<Line>> SQLServer::readSQLLines()
             }
 
             for (const auto& line : lines) {
-                std::cout << line->getP2()->getID() << "\t" << line->getP1()->getID() << std::endl;
+                std::cout << "Line: (" << line->getP1()->getID() << ", " << line->getP1()->getX() << ", " << line->getP1()->getY() << ", " << line->getP1()->getZ() << ") -> (" 
+                                       << line->getP2()->getID() << ", " << line->getP2()->getX() << ", " << line->getP2()->getY() << ", " << line->getP2()->getZ() << ")" << std::endl;
             }
             
             PQclear(result);
