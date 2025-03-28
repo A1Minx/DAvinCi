@@ -87,7 +87,7 @@ void mainWindow::setHorizon() {
   if (view && horizonLineEdit) {
     bool ok;
     float horizonValue = horizonLineEdit->text().toFloat(&ok);
-    if (ok && horizonValue > 0) {
+    if (ok) {
       view->setHorizon(horizonValue);
     }
   }

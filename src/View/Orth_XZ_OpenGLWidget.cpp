@@ -75,8 +75,6 @@ void Orth_XZ_OpenGLWidget::updateBuffers() {
     bottom = floor(bottom / gridSize) * gridSize;
     top = ceil(top / gridSize) * gridSize;
 
-    qDebug() << "left: " << left << "right: " << right << "bottom: " << bottom << "top: " << top;
-
     // grid data
 
     std::vector<float> newGridData;

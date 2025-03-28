@@ -15,10 +15,12 @@ void M_DrawLine::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
         if (event->button() == Qt::LeftButton) {
             if (firstClick) {
                 qDebug() << "Draw Line First Phase";
+                qDebug() << "Point first click: " << nearestPoint->getX() << ", " << nearestPoint->getY() << ", " << nearestPoint->getZ();
                 p1 = nearestPoint;
                 firstClick = false;
             } else {
                 qDebug() << "Draw Line Second Phase";
+                qDebug() << "Point second click: " << nearestPoint->getX() << ", " << nearestPoint->getY() << ", " << nearestPoint->getZ();
                 p2 = nearestPoint;
                 controller->addLine(p1, p2, controller->getCurrLineSpec());
                 firstClick = true;
@@ -55,10 +57,6 @@ void M_DrawLine::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
 }
 
 void M_DrawLine::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
-    
-    qDebug() << "Mouse Move at screen:" << event->x() << ", " << event->y();
-    qDebug() << "World coordinates:" << worldPos.x() << ", " << worldPos.y() << ", " << worldPos.z();
-
 
     nearestPoint = nearestPointSelection(event, worldPos, controller->getHiddenAxis());
     if (nearestPoint) {

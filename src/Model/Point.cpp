@@ -19,5 +19,9 @@ float Point::distanceTo(float x, float y, float z)
 }
 
 
+float Point::distanceToHorizon(float horizon, float axisCoordinate)
+{
+    return fabs(axisCoordinate - horizon);
+}
 
 

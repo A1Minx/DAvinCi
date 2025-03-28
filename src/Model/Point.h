@@ -20,7 +20,7 @@ public:
     int getID() const { return id; }
 
     float distanceTo(float x, float y, float z);
-
+    float distanceToHorizon(float horizon, float axisCoordinate);
     std::shared_ptr<PointSpec> getSpec() const { return spec; }
     void setSpec(std::shared_ptr<PointSpec> spec) { this->spec = spec; }
     
