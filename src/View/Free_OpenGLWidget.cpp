@@ -10,8 +10,8 @@ Free_OpenGLWidget::Free_OpenGLWidget(Model *model, Controller *controller, QWidg
       yaw(0.0f), pitch(0.0f), isTilting(false)
 {
     // Initial camera setup
-    cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);    // Look at center
-    cameraUp = QVector3D(0.0f, 1.0f, 0.0f);        // Y is up
+    cameraTarget = QVector3D(0, 0, 0);    // Look at center
+    cameraUp = QVector3D(0, 1, 0);        // Y is up
     cameraPosition = QVector3D(0.0f, 0.0f, cameraDistance); // Start position at fixed distance
 }
 

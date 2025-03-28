@@ -603,7 +603,8 @@ View_OpenGLWidget.o: ../View/View_OpenGLWidget.cpp ../View/View_OpenGLWidget.h \
 		../Model/Spec.h \
 		../Model/Line.h \
 		../Controller/Controller.h \
-		../Controller/ModeController.h
+		../Controller/ModeController.h \
+		../View/mainWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o View_OpenGLWidget.o ../View/View_OpenGLWidget.cpp
 
 Orth_XY_OpenGLWidget.o: ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.h \

@@ -8,6 +8,9 @@
 Orth_XY_OpenGLWidget::Orth_XY_OpenGLWidget(Model *model, Controller *controller, QWidget *parent)
     : View_OpenGLWidget(model, controller, parent)
 {
+    cameraPosition = QVector3D(0, 0, 1);
+    cameraTarget = QVector3D(0, 0, 0);
+    cameraUp = QVector3D(0, 1, 0);
 }
 
 Orth_XY_OpenGLWidget::~Orth_XY_OpenGLWidget()

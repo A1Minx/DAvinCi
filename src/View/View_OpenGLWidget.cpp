@@ -1,13 +1,16 @@
 #include "View_OpenGLWidget.h"
 #include "Controller.h"
+#include "mainWindow.h"
 #include <QKeyEvent>
 
 void View_OpenGLWidget::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::MiddleButton) {
-        isPanning = true;
-        lastPanPosition = event->pos();
-        setCursor(Qt::ClosedHandCursor);
+    if(ctrlPressed && event->button() == Qt::MiddleButton){
+        static_cast<mainWindow*>(parent()->parent())->setFreeView();
+    } else if (event->button() == Qt::MiddleButton) {
+            isPanning = true;
+            lastPanPosition = event->pos();
+            setCursor(Qt::ClosedHandCursor);
     } else if (controller) {
         controller->handleMouseClick(event);
     }

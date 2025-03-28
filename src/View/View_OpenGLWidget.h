@@ -65,6 +65,28 @@ public:
 
     virtual QVector3D screenToWorld(int x, int y) = 0;
 
+        virtual QVector3D getCameraPosition() {
+        return cameraPosition;
+    }
+
+    // ----- Camera Position -----
+    virtual QVector3D getCameraTarget() {
+        return cameraTarget;
+    }
+    virtual QVector3D getCameraUp() {
+        return cameraUp;
+    }
+    virtual void setCameraPosition(QVector3D position) {
+        cameraPosition = position;
+    }
+    virtual void setCameraTarget(QVector3D target) {
+        cameraTarget = target;
+    }
+    virtual void setCameraUp(QVector3D up) {
+        cameraUp = up;
+    }
+
+
 protected:
 
     // ----- Architectural Variables -----
@@ -401,7 +423,12 @@ protected:
 
     float gridSize;
     float horizon;
-    
+
+    // ----- Camera Position -----
+    QVector3D cameraPosition;
+    QVector3D cameraTarget;
+    QVector3D cameraUp;
+
     // ----- Projection -----
     virtual void UpdateMatrices() = 0;
 

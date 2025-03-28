@@ -71,7 +71,17 @@ void mainWindow::setFreeView() {
     view->hide();
   }
 
+  //TODO: Make the switch more smooth, make sure the camera actuallie points the same way as the current view
+  //TODO: Right now it only switches when the middle mouse is clicked and mouse not moving, check this
+  QVector3D cameraPosition = view->getCameraPosition();
+  QVector3D cameraTarget = view->getCameraTarget();
+  QVector3D cameraUp = view->getCameraUp();
+
   view = freeView;
+  view->setCameraPosition(cameraPosition);
+  view->setCameraTarget(cameraTarget);
+  view->setCameraUp(cameraUp);
+
   controller->setView(view);
   controller->setHiddenAxis('0');
   view->show();

@@ -8,6 +8,9 @@
 Orth_XZ_OpenGLWidget::Orth_XZ_OpenGLWidget(Model *model, Controller *controller, QWidget *parent)
     : View_OpenGLWidget(model, controller, parent)
 {
+    cameraPosition = QVector3D(0, -1, 0);
+    cameraTarget = QVector3D(0, 0, 0);
+    cameraUp = QVector3D(0, 0, 1);
 }
 
 Orth_XZ_OpenGLWidget::~Orth_XZ_OpenGLWidget()
@@ -21,9 +24,9 @@ void Orth_XZ_OpenGLWidget::UpdateMatrices()
 
     viewMatrix.setToIdentity();
     viewMatrix.lookAt(
-        QVector3D(0, -1, 0), 
-        QVector3D(0, 0, 0),  
-        QVector3D(0, 0, 1)   
+        cameraPosition, 
+        cameraTarget,  
+        cameraUp   
     ); //position camera viewing on xz
     
     //move orthogonal camera

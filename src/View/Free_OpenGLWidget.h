@@ -18,10 +18,8 @@ private:
 
     float yaw;      // Camera rotation around y-axis (in degrees)
     float pitch;    // Camera rotation around x-axis (in degrees)
-    QVector3D cameraPosition;
-    QVector3D cameraTarget;
-    QVector3D cameraUp;
-    const float cameraDistance = 5.0f; // Fixed camera distance
+
+    const float cameraDistance = 200.0f; // Fixed camera distance
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
