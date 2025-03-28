@@ -21,11 +21,13 @@ private:
     QVector3D cameraPosition;
     QVector3D cameraTarget;
     QVector3D cameraUp;
+    const float cameraDistance = 5.0f; // Fixed camera distance
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override; // Override to disable zooming
     bool isTilting;
 };
 

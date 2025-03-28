@@ -9,9 +9,10 @@ Free_OpenGLWidget::Free_OpenGLWidget(Model *model, Controller *controller, QWidg
     : View_OpenGLWidget(model, controller, parent),
       yaw(0.0f), pitch(0.0f), isTilting(false)
 {
-    cameraPosition = QVector3D(0.0f, 0.0f, 5.0f);  // Start position
+    // Initial camera setup
     cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);    // Look at center
     cameraUp = QVector3D(0.0f, 1.0f, 0.0f);        // Y is up
+    cameraPosition = QVector3D(0.0f, 0.0f, cameraDistance); // Start position at fixed distance
 }
 
 Free_OpenGLWidget::~Free_OpenGLWidget()
@@ -23,9 +24,9 @@ void Free_OpenGLWidget::UpdateMatrices()
     float w = width();
     float h = height();
     
-    // Create perspective projection matrix
+    // Create perspective projection matrix with fixed FOV
     float aspectRatio = static_cast<float>(w) / static_cast<float>(h);
-    float fov = 45.0f / zoomLevel;  // Field of view, adjusted by zoom level
+    float fov = 45.0f; // Fixed FOV for more natural perspective
     
     projectionMatrix.setToIdentity();
     projectionMatrix.perspective(fov, aspectRatio, 0.1f, 1000.0f);
@@ -40,30 +41,40 @@ void Free_OpenGLWidget::UpdateMatrices()
     front.setZ(sin(yawRad) * cos(pitchRad));
     front.normalize();
     
-    // Update camera target
-    cameraTarget = cameraPosition + front;
+    // Calculate camera position at fixed distance
+    cameraPosition = cameraTarget - front * cameraDistance;
     
     // Create view matrix
     viewMatrix.setToIdentity();
     viewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
     
-    // Apply regular panning as translation on camera plane
+    // Apply regular panning as translation of target point (and camera follows)
     if (!isTilting) {
         QVector3D right = QVector3D::crossProduct(front, cameraUp).normalized();
         QVector3D up = QVector3D::crossProduct(right, front).normalized();
         
-        cameraPosition += right * panOffsetX * 0.01f;
-        cameraPosition += up * panOffsetY * 0.01f;
-        cameraTarget += right * panOffsetX * 0.01f;
-        cameraTarget += up * panOffsetY * 0.01f;
+        // Move both camera and target to maintain relative position
+        float panSpeed = 0.01f * cameraDistance; // Use fixed distance for pan speed
+        QVector3D panOffset = right * panOffsetX * panSpeed + up * panOffsetY * panSpeed;
+        
+        cameraTarget += panOffset;
+        cameraPosition += panOffset;
         
         // Reset panning offsets after applying them
         panOffsetX = 0.0f;
         panOffsetY = 0.0f;
         
+        // Recalculate view matrix with new positions
         viewMatrix.setToIdentity();
         viewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
     }
+}
+
+// Override wheelEvent to disable zooming
+void Free_OpenGLWidget::wheelEvent(QWheelEvent *event)
+{
+    // Do nothing - zooming is disabled
+    event->accept(); // Accept the event to prevent it from being passed to parent
 }
 
 QVector3D Free_OpenGLWidget::screenToWorld(int x, int y)
@@ -246,7 +257,8 @@ void Free_OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
     } else if (isPanning) {
         QPoint delta = event->pos() - lastPanPosition;
         
-        float sensitivity = 1.0f / zoomLevel;
+        // Scale sensitivity for better control
+        float sensitivity = 1.0f;
         panOffsetX += delta.x() * sensitivity;
         panOffsetY -= delta.y() * sensitivity;
         
