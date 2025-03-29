@@ -76,11 +76,18 @@ void mainWindow::setFreeView() {
   QVector3D cameraPosition = view->getCameraPosition();
   QVector3D cameraTarget = view->getCameraTarget();
   QVector3D cameraUp = view->getCameraUp();
+  qDebug() << "Camera Position old view: " << cameraPosition;
+  qDebug() << "Camera Target old view: " << cameraTarget;
+  qDebug() << "Camera Up old view: " << cameraUp;
 
   view = freeView;
   view->setCameraPosition(cameraPosition);
   view->setCameraTarget(cameraTarget);
   view->setCameraUp(cameraUp);
+
+  qDebug() << "Camera Position new view: " << view->getCameraPosition();
+  qDebug() << "Camera Target new view: " << view->getCameraTarget();
+  qDebug() << "Camera Up new view: " << view->getCameraUp();
 
   controller->setView(view);
   controller->setHiddenAxis('0');

@@ -246,10 +246,6 @@ void Free_OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
         yaw += delta.x() * sensitivity;
         pitch -= delta.y() * sensitivity;
         
-        // Constrain pitch to avoid gimbal lock
-        if (pitch > 89.0f) pitch = 89.0f;
-        if (pitch < -89.0f) pitch = -89.0f;
-        
         lastPanPosition = event->pos();
         
         UpdateMatrices();
