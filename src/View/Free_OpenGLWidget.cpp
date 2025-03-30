@@ -29,7 +29,7 @@ void Free_OpenGLWidget::UpdateMatrices()
     float fov = 45.0f; // Fixed FOV for more natural perspective
     
     projectionMatrix.setToIdentity();
-    projectionMatrix.perspective(fov, aspectRatio, 0.1f, 1000.0f);
+    projectionMatrix.perspective(fov, aspectRatio, 0.1f, 10000.0f);
     
     // Calculate direction vectors for camera orientation
     float yawRad = qDegreesToRadians(yaw);
@@ -104,117 +104,7 @@ void Free_OpenGLWidget::updateBuffers()
 {
     View_OpenGLWidget::updateBuffers();
     
-    // Create a 3D grid for the free camera view
-    float gridExtent = 10.0f * gridSize;
-    int gridLines = 21;  // Center line + 10 on each side
-    float step = gridExtent / (gridLines - 1);
-    
-    std::vector<float> newGridData;
-    
-    // XY plane grid
-    for (int i = 0; i < gridLines; i++) {
-        float pos = -gridExtent / 2.0f + i * step;
-        
-        // X axis line (along X, constant Y)
-        newGridData.push_back(-gridExtent / 2.0f);
-        newGridData.push_back(pos);
-        newGridData.push_back(0.0f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(1.0f);
-        newGridData.push_back(0.5f);
-        
-        newGridData.push_back(gridExtent / 2.0f);
-        newGridData.push_back(pos);
-        newGridData.push_back(0.0f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(1.0f);
-        newGridData.push_back(0.5f);
-        
-        // Y axis line (constant X, along Y)
-        newGridData.push_back(pos);
-        newGridData.push_back(-gridExtent / 2.0f);
-        newGridData.push_back(0.0f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(1.0f);
-        newGridData.push_back(0.5f);
-        
-        newGridData.push_back(pos);
-        newGridData.push_back(gridExtent / 2.0f);
-        newGridData.push_back(0.0f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(0.5f);
-        newGridData.push_back(1.0f);
-        newGridData.push_back(0.5f);
-    }
-    
-    // Add coordinate axes (thicker lines)
-    // X-axis (red)
-    newGridData.push_back(-gridExtent / 2.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f); // Red
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(2.0f); // Thicker
-    
-    newGridData.push_back(gridExtent / 2.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(2.0f);
-    
-    // Y-axis (green)
-    newGridData.push_back(0.0f);
-    newGridData.push_back(-gridExtent / 2.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f); // Green
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(2.0f);
-    
-    newGridData.push_back(0.0f);
-    newGridData.push_back(gridExtent / 2.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(2.0f);
-    
-    // Z-axis (blue)
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(-gridExtent / 2.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f); // Blue
-    newGridData.push_back(1.0f);
-    newGridData.push_back(2.0f);
-    
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(gridExtent / 2.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(0.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(1.0f);
-    newGridData.push_back(2.0f);
-    
-    gridData = newGridData;
-    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
-    glBufferData(GL_ARRAY_BUFFER, gridData.size() * sizeof(float), gridData.data(), GL_DYNAMIC_DRAW);
+    GridData(horizonAxis, horizon, gridSize, width(), height(), gridWidth, gridColor);
 }
 
 void Free_OpenGLWidget::mousePressEvent(QMouseEvent *event)

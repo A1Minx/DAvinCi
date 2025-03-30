@@ -36,10 +36,12 @@ public:
 
     inline virtual void setHorizon(float horizon) {
         this->horizon = horizon;
+        update();
     }
 
     inline virtual void setGridSize(float gridSize) {
         this->gridSize = gridSize;
+        update();
     }
 
     inline virtual float getHorizon() {
@@ -48,6 +50,14 @@ public:
 
     inline virtual float getGridSize() {
         return gridSize;
+    }
+
+    inline virtual void setHorizonAxis(char axis) {
+        this->horizonAxis = axis;
+        update();
+    }
+    inline virtual char getHorizonAxis() const {
+        return horizonAxis;
     }
 
     ~View_OpenGLWidget() {
@@ -302,10 +312,10 @@ protected:
         }
     }
 
-    
     float gridColor[4] = {0.5f, 0.5f, 0.5f, 1.0f};
-    float gridWidth = 0.5f;
-    float gridExtend = 10000.0f;
+    float gridWidth = 1.0f;
+    float gridExtend = 100000.0f;
+    char horizonAxis = 'z'; 
     // TODO: make horizonAxis a variable that can be set in GUI to be able to change the grid in free view
     // parametric Version of grid
     inline virtual void GridData(char horizonAxis, float horizon, float gridSize, float width, float height, float gridWidth, float* color) {
@@ -378,7 +388,7 @@ protected:
                 }
 
                 // axis data TODO: check if necessary
-
+                gridWidth *= 4; // larger width for axis
                 // position
                 newGridData.push_back(horizon);
                 newGridData.push_back(left);
@@ -389,7 +399,7 @@ protected:
                 newGridData.push_back(color[2]);
                 newGridData.push_back(color[3]);
                 // width
-                newGridData.push_back(gridWidth*3);
+                newGridData.push_back(gridWidth);
                 // position
                 newGridData.push_back(horizon);
                 newGridData.push_back(right);
@@ -400,7 +410,7 @@ protected:
                 newGridData.push_back(color[2]);
                 newGridData.push_back(color[3]);
                 // width
-                newGridData.push_back(gridWidth*3);
+                newGridData.push_back(gridWidth);
                 // position
                 newGridData.push_back(horizon);
                 newGridData.push_back(0.0f);
@@ -411,7 +421,7 @@ protected:
                 newGridData.push_back(color[2]);
                 newGridData.push_back(color[3]);
                 // width
-                newGridData.push_back(gridWidth*3);   
+                newGridData.push_back(gridWidth);   
                 // position
                 newGridData.push_back(horizon);
                 newGridData.push_back(0.0f);
@@ -422,7 +432,7 @@ protected:
                 newGridData.push_back(color[2]);
                 newGridData.push_back(color[3]);
                 // width
-                newGridData.push_back(gridWidth*3);
+                newGridData.push_back(gridWidth);
 
                 //if( newGridData != gridData) {
                     gridData = newGridData;
@@ -483,6 +493,8 @@ protected:
                 }
 
                 // axis data TODO: check if necessary
+                gridWidth *= 4; // larger width for axis
+                //TODO: implement shader for lines that implements line width (convert to triangle strips)
 
                 // position
                 newGridData.push_back(left);

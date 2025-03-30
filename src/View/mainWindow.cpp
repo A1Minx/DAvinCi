@@ -84,6 +84,8 @@ void mainWindow::setFreeView() {
   view->setCameraPosition(cameraPosition);
   view->setCameraTarget(cameraTarget);
   view->setCameraUp(cameraUp);
+  
+  updateAxisButtonStyles();
 
   qDebug() << "Camera Position new view: " << view->getCameraPosition();
   qDebug() << "Camera Target new view: " << view->getCameraTarget();
@@ -167,6 +169,46 @@ void mainWindow::createTopButtonBar() {
  buttonLayout->addWidget(readSQLPoints);
 }
 
+void mainWindow::updateAxisButtonStyles() {
+    // Reset styles
+    axisButtonX->setStyleSheet("");
+    axisButtonY->setStyleSheet("");
+    axisButtonZ->setStyleSheet("");
+    
+    // Set active button style
+    QString activeStyle = "background-color: #3498db; color: white; font-weight: bold;";
+    
+    switch (currentHorizonAxis) {
+        case 'x':
+            axisButtonX->setStyleSheet(activeStyle);
+            break;
+        case 'y':
+            axisButtonY->setStyleSheet(activeStyle);
+            break;
+        case 'z':
+            axisButtonZ->setStyleSheet(activeStyle);
+            break;
+    }
+}
+
+void mainWindow::setHorizonAxisX() {
+    currentHorizonAxis = 'x';
+    view->setHorizonAxis('x');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::setHorizonAxisY() {
+    currentHorizonAxis = 'y';
+    view->setHorizonAxis('y');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::setHorizonAxisZ() {
+    currentHorizonAxis = 'z';
+    view->setHorizonAxis('z');
+    updateAxisButtonStyles();
+}
+
 void mainWindow::createBottomButtonBar() {
  QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
  buttonLayoutBottom->setAlignment(Qt::AlignLeft);
@@ -177,6 +219,8 @@ void mainWindow::createBottomButtonBar() {
  XYView->setText("XY View");
  XYView->setToolTip("XY View");
  XYView->show();
+ XYView->setFixedWidth(100);
+ XYView->setFixedHeight(30);
 
  QObject::connect(XYView, SIGNAL(clicked()), this, SLOT(setXYView()));
 
@@ -186,6 +230,8 @@ void mainWindow::createBottomButtonBar() {
  XZView->setText("XZ View");
  XZView->setToolTip("XZ View");
  XZView->show();
+ XZView->setFixedWidth(100);
+ XZView->setFixedHeight(30);
 
  QObject::connect(XZView, SIGNAL(clicked()), this, SLOT(setXZView()));
 
@@ -195,25 +241,81 @@ void mainWindow::createBottomButtonBar() {
  YZView->setText("YZ View");
  YZView->setToolTip("YZ View");
  YZView->show();
+ YZView->setFixedWidth(100);
+ YZView->setFixedHeight(30);
 
  QObject::connect(YZView, SIGNAL(clicked()), this, SLOT(setYZView()));
 
  buttonLayoutBottom->addWidget(YZView);
 
- QPushButton *FreeView = new QPushButton("Free View", this);
- FreeView->setText("Free View");
- FreeView->setToolTip("Free View (Ctrl+Middle Mouse to tilt camera)");
- FreeView->show();
 
- QObject::connect(FreeView, SIGNAL(clicked()), this, SLOT(setFreeView()));
-
- buttonLayoutBottom->addWidget(FreeView);
+//TODO: When not in free view, changing the axis button does only change the animation in GUI, not the Grid.
+ // Create a container for the FreeView button and axis buttons
+ QWidget *freeViewContainer = new QWidget(this);
+ freeViewContainer->setFixedWidth(100);
+ freeViewContainer->setFixedHeight(30);
+ QVBoxLayout *freeViewLayout = new QVBoxLayout(freeViewContainer);
+ freeViewLayout->setContentsMargins(0, 0, 0, 0);
+ freeViewLayout->setSpacing(1);
+ 
+ // Create Free View button
+ freeViewButton = new QPushButton("Free View", this);
+ freeViewButton->setText("Free View");
+ freeViewButton->setToolTip("Free View (Ctrl+Middle Mouse to tilt camera)");
+ freeViewButton->show();
+ QObject::connect(freeViewButton, SIGNAL(clicked()), this, SLOT(setFreeView()));
+ 
+ // Add the main button to the layout
+ freeViewLayout->addWidget(freeViewButton);
+ 
+ // Create a container for the axis buttons
+ QWidget *axisButtonsContainer = new QWidget(freeViewContainer);
+ QHBoxLayout *axisLayout = new QHBoxLayout(axisButtonsContainer);
+ axisLayout->setContentsMargins(0, 0, 0, 0);
+ axisLayout->setSpacing(0);
+ 
+ // Create the three axis buttons
+ axisButtonX = new QPushButton("X", axisButtonsContainer);
+ axisButtonY = new QPushButton("Y", axisButtonsContainer);
+ axisButtonZ = new QPushButton("Z", axisButtonsContainer);
+ 
+ // Set tooltips
+ axisButtonX->setToolTip("Use X as horizon axis (YZ plane grid)");
+ axisButtonY->setToolTip("Use Y as horizon axis (XZ plane grid)");
+ axisButtonZ->setToolTip("Use Z as horizon axis (XY plane grid)");
+ 
+ // Make the buttons expand to fill the width
+ axisButtonX->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ axisButtonY->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ axisButtonZ->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ 
+ // Set height for the axis buttons (smaller than the main button)
+ axisButtonX->setFixedHeight(10);
+ axisButtonY->setFixedHeight(10);
+ axisButtonZ->setFixedHeight(10);
+ 
+ // Connect signals
+ QObject::connect(axisButtonX, SIGNAL(clicked()), this, SLOT(setHorizonAxisX()));
+ QObject::connect(axisButtonY, SIGNAL(clicked()), this, SLOT(setHorizonAxisY()));
+ QObject::connect(axisButtonZ, SIGNAL(clicked()), this, SLOT(setHorizonAxisZ()));
+ 
+ // Add buttons to the layout
+ axisLayout->addWidget(axisButtonX);
+ axisLayout->addWidget(axisButtonY);
+ axisLayout->addWidget(axisButtonZ);
+ 
+ // Add the axis buttons container to the main layout
+ freeViewLayout->addWidget(axisButtonsContainer);
+ 
+ // Add the freeview container to the bottom button bar
+ buttonLayoutBottom->addWidget(freeViewContainer);
 
  QLabel *horizonLabel = new QLabel("Horizon:", this);
  buttonLayoutBottom->addWidget(horizonLabel);
  
  horizonLineEdit = new QLineEdit(this);
  horizonLineEdit->setFixedWidth(100);
+ horizonLineEdit->setFixedHeight(30);
  horizonLineEdit->setText("100");
  horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
  QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
@@ -223,9 +325,11 @@ void mainWindow::createBottomButtonBar() {
  buttonLayoutBottom->addWidget(gridPrecisionLabel);
  
  gridPrecisionLineEdit = new QLineEdit(this);
- gridPrecisionLineEdit->setFixedWidth(100);
  gridPrecisionLineEdit->setText("100");
  gridPrecisionLineEdit->setToolTip("Grid Precision");
+ gridPrecisionLineEdit->setFixedWidth(100);
+ gridPrecisionLineEdit->setFixedHeight(30);
+
  QObject::connect(gridPrecisionLineEdit, SIGNAL(editingFinished()), this, SLOT(setGridPrecision()));
  buttonLayoutBottom->addWidget(gridPrecisionLineEdit);
 
@@ -237,6 +341,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  model = new Model();
  controller = new Controller(model, nullptr);
+ currentHorizonAxis = 'z';
 
   // ----- Layout -----
  QWidget *centralWidget = new QWidget(this);
@@ -279,8 +384,6 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  view = nullptr;
 
  setXYView();
-
-
 
  // ----- Layers Widget -----
  QWidget *emptyContainer = new QWidget(this);

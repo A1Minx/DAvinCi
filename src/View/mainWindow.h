@@ -8,6 +8,8 @@
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QLabel>
+#include <QPushButton>
+
 class Model;
 class Controller;
 class View_OpenGLWidget;
@@ -37,7 +39,15 @@ private:
     QGridLayout *mainLayout;
     QLineEdit *horizonLineEdit;
     QLineEdit *gridPrecisionLineEdit;
-
+    
+    // Buttons for free view axis control
+    QPushButton *freeViewButton;
+    QPushButton *axisButtonX;
+    QPushButton *axisButtonY;
+    QPushButton *axisButtonZ;
+    char currentHorizonAxis;
+    
+    void updateAxisButtonStyles();
     void createMenus();
     void createTopButtonBar();
     void createBottomButtonBar();
@@ -49,6 +59,9 @@ public slots:
     void setFreeView();
     void setHorizon();
     void setGridPrecision();
+    void setHorizonAxisX();
+    void setHorizonAxisY();
+    void setHorizonAxisZ();
 };
 
 #endif // WINDOW_H
