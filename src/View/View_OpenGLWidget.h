@@ -434,6 +434,31 @@ protected:
                 // width
                 newGridData.push_back(gridWidth);
 
+
+                // Horizon Axis for free view
+                // position
+                newGridData.push_back(100000.0f);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);   
+                // position
+                newGridData.push_back(-100000.0f);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
                 //if( newGridData != gridData) {
                     gridData = newGridData;
                     glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
@@ -544,6 +569,31 @@ protected:
                 // width
                 newGridData.push_back(gridWidth);
 
+
+                // Horizon Axis for free view
+                // position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(100000.0f);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                // position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(-100000.0f);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                
                 //if( newGridData != gridData) {
                     gridData = newGridData;
                     glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
@@ -652,6 +702,31 @@ protected:
                 newGridData.push_back(gridWidth);
 
 
+                // Horizon Axis for free view
+                // position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(100000.0f);
+                // color    
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                // position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(-100000.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                              
                 //if( newGridData != gridData) {
                     gridData = newGridData;
                     glBindBuffer(GL_ARRAY_BUFFER, gridVBO);

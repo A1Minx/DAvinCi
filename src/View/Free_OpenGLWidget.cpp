@@ -104,7 +104,10 @@ void Free_OpenGLWidget::updateBuffers()
 {
     View_OpenGLWidget::updateBuffers();
     
-    GridData(horizonAxis, horizon, gridSize, width(), height(), gridWidth, gridColor);
+    GridData(horizonAxis, horizon, gridSize, gridExtend, gridExtend, gridWidth, gridColor);
+
+    // TODO: add "hiddenAxis" that is not so hidden in this case
+
 }
 
 void Free_OpenGLWidget::mousePressEvent(QMouseEvent *event)
