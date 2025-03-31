@@ -10,6 +10,7 @@ LIBS *= -lpq
 SOURCES += \
     main.cpp \
     ./View/mainWindow.cpp \
+    ./View/Free_OpenGLWidget.cpp \
     ./View/View_OpenGLWidget.cpp \
     ./View/Orth_XY_OpenGLWidget.cpp \
     ./View/Orth_XZ_OpenGLWidget.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
 HEADERS += \
     ./View/mainWindow.h \
     ./View/View_OpenGLWidget.h \
+    ./View/Free_OpenGLWidget.h \
     ./View/Orth_XY_OpenGLWidget.h \
     ./View/Orth_XZ_OpenGLWidget.h \
     ./View/Orth_YZ_OpenGLWidget.h \
@@ -46,6 +48,18 @@ HEADERS += \
     ./Model/Line.h \
     ./Model/Spec.h
 
-INCLUDEPATH +=  ./Controller ./View ./Model /usr/include /usr/lib/x86_64-linux-gnu
+INCLUDEPATH += \
+    . \
+    ./Controller \
+    ./View \
+    ./Model \
+    /usr/include \
+    /usr/include/x86_64-linux-gnu \
+    /usr/include/x86_64-linux-gnu/qt5 \
+    /usr/include/x86_64-linux-gnu/qt5/QtCore \
+    /usr/include/x86_64-linux-gnu/qt5/QtGui \
+    /usr/include/x86_64-linux-gnu/qt5/QtWidgets \
+    /usr/include/x86_64-linux-gnu/qt5/QtOpenGL \
+    /usr/include/GL
 
 CONFIG += c++17

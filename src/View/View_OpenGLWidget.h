@@ -15,6 +15,7 @@
 #include <errno.h>  
 #include <string.h> 
 #include <sys/stat.h> 
+#include <cmath>
 
 class Controller;
 
@@ -26,17 +27,37 @@ public:
     : QOpenGLWidget(parent), model(model), controller(controller),
       zoomLevel(1.0f), 
       pointVBO(0), tempPointVBO(0), lineVBO(0), tempLineVBO(0), gridVBO(0),
-      gridSize(100.0f), horizon(100.0f)
+      gridSize(100.0f), horizon(100.0f),
+      isPanning(false), panOffsetX(0.0f), panOffsetY(0.0f),
+      ctrlPressed(false)
     {
         setFocusPolicy(Qt::StrongFocus);
     }
 
     inline virtual void setHorizon(float horizon) {
         this->horizon = horizon;
+        update();
     }
 
     inline virtual void setGridSize(float gridSize) {
         this->gridSize = gridSize;
+        update();
+    }
+
+    inline virtual float getHorizon() {
+        return horizon;
+    }
+
+    inline virtual float getGridSize() {
+        return gridSize;
+    }
+
+    inline virtual void setHorizonAxis(char axis) {
+        this->horizonAxis = axis;
+        update();
+    }
+    inline virtual char getHorizonAxis() const {
+        return horizonAxis;
     }
 
     ~View_OpenGLWidget() {
@@ -54,6 +75,28 @@ public:
     }; 
 
     virtual QVector3D screenToWorld(int x, int y) = 0;
+
+        virtual QVector3D getCameraPosition() {
+        return cameraPosition;
+    }
+
+    // ----- Camera Position -----
+    virtual QVector3D getCameraTarget() {
+        return cameraTarget;
+    }
+    virtual QVector3D getCameraUp() {
+        return cameraUp;
+    }
+    virtual void setCameraPosition(QVector3D position) {
+        cameraPosition = position;
+    }
+    virtual void setCameraTarget(QVector3D target) {
+        cameraTarget = target;
+    }
+    virtual void setCameraUp(QVector3D up) {
+        cameraUp = up;
+    }
+
 
 protected:
 
@@ -136,6 +179,17 @@ protected:
     // ----- Events -----
 
     float zoomLevel; 
+    bool isPanning;
+    QPoint lastPanPosition;
+    float panOffsetX;
+    float panOffsetY;
+    bool ctrlPressed;
+
+    virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
 
     virtual inline void wheelEvent(QWheelEvent *event) {
         float delta = event->angleDelta().y() / 120.0f;
@@ -144,12 +198,7 @@ protected:
         
         UpdateMatrices();
         update();
-    } 
-    // TODO: Move logic to controller? Think about if this should ever be view independent and managed by modes.
-    // TODO: If it stays in view only, keep this implementation.
-
-    virtual void mousePressEvent(QMouseEvent *event);
-    virtual void mouseMoveEvent(QMouseEvent *event); 
+    }
 
     // ----- Buffers -----
 
@@ -214,6 +263,12 @@ protected:
             newLineData.push_back(line->getP1()->getX());
             newLineData.push_back(line->getP1()->getY());
             newLineData.push_back(line->getP1()->getZ());
+            newLineData.push_back(line->getColor()[0]);
+            newLineData.push_back(line->getColor()[1]);
+            newLineData.push_back(line->getColor()[2]);
+            newLineData.push_back(line->getColor()[3]);
+            newLineData.push_back(line->getWidth());
+            
             newLineData.push_back(line->getP2()->getX());
             newLineData.push_back(line->getP2()->getY());
             newLineData.push_back(line->getP2()->getZ());
@@ -235,6 +290,12 @@ protected:
             newTempLineData.push_back(line.x1);
             newTempLineData.push_back(line.y1);
             newTempLineData.push_back(line.z1);
+            newTempLineData.push_back(line.color[0]);
+            newTempLineData.push_back(line.color[1]);
+            newTempLineData.push_back(line.color[2]);
+            newTempLineData.push_back(line.color[3]);
+            newTempLineData.push_back(line.width);
+            
             newTempLineData.push_back(line.x2);
             newTempLineData.push_back(line.y2);
             newTempLineData.push_back(line.z2);
@@ -249,6 +310,362 @@ protected:
             glBindBuffer(GL_ARRAY_BUFFER, tempLineVBO);
             glBufferData(GL_ARRAY_BUFFER, tempLineData.size() * sizeof(float), tempLineData.data(), GL_DYNAMIC_DRAW);
         }
+    }
+
+    float gridColor[4] = {0.5f, 0.5f, 0.5f, 1.0f};
+    float gridWidth = 1.0f;
+    float gridExtend = 100000.0f;
+    char horizonAxis = 'z'; 
+    // TODO: make horizonAxis a variable that can be set in GUI to be able to change the grid in free view
+    // parametric Version of grid
+    inline virtual void GridData(char horizonAxis, float horizon, float gridSize, float width, float height, float gridWidth, float* color) {
+
+        // keep a bit larger to prevent weird glitches on the edge of the view
+        float left = -width;
+        float right = width;
+        float bottom = -height;
+        float top = height;
+
+        // rounding TODO: Check if necessary
+        left = floor(left / gridSize) * gridSize;
+        right = ceil(right / gridSize) * gridSize;
+        bottom = floor(bottom / gridSize) * gridSize;
+        top = ceil(top / gridSize) * gridSize;
+
+        // grid data
+        std::vector<float> newGridData;
+
+        switch (horizonAxis) {
+            case 'x': 
+                for (float y = bottom; y <= top; y += gridSize) {
+                    // position
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(y);
+                    newGridData.push_back(left);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                    // position
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(y);
+                    newGridData.push_back(right);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                }
+
+                for (float z = bottom; z <= top; z += gridSize) {
+                    // position
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(left);
+                    newGridData.push_back(z);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                    // position
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(right);
+                    newGridData.push_back(z);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                }
+
+                // axis data TODO: check if necessary
+                gridWidth *= 4; // larger width for axis
+                // position
+                newGridData.push_back(horizon);
+                newGridData.push_back(left);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                // position
+                newGridData.push_back(horizon);
+                newGridData.push_back(right);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                // position
+                newGridData.push_back(horizon);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(top);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);   
+                // position
+                newGridData.push_back(horizon);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(bottom);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                //if( newGridData != gridData) {
+                    gridData = newGridData;
+                    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+                    glBufferData(GL_ARRAY_BUFFER, gridData.size() * sizeof(float), gridData.data(), GL_DYNAMIC_DRAW);
+                //}
+
+                break;
+            case 'y':
+                for (float x = left; x <= right; x += gridSize) {
+                    // position
+                    newGridData.push_back(x);
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(bottom);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                    // position
+                    newGridData.push_back(x);
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(top);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                }
+
+                for (float z = bottom; z <= top; z += gridSize) {
+                    // position
+                    newGridData.push_back(left);
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(z);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                    // position
+                    newGridData.push_back(right);
+                    newGridData.push_back(horizon);
+                    newGridData.push_back(z);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                }
+
+                // axis data TODO: check if necessary
+                gridWidth *= 4; // larger width for axis
+                //TODO: implement shader for lines that implements line width (convert to triangle strips)
+
+                // position
+                newGridData.push_back(left);
+                newGridData.push_back(horizon);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                //position
+                newGridData.push_back(right);
+                newGridData.push_back(horizon);
+                newGridData.push_back(0.0f);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                
+                //position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(horizon);
+                newGridData.push_back(top);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                //position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(horizon);
+                newGridData.push_back(bottom);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                //if( newGridData != gridData) {
+                    gridData = newGridData;
+                    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+                    glBufferData(GL_ARRAY_BUFFER, gridData.size() * sizeof(float), gridData.data(), GL_DYNAMIC_DRAW);
+                //}
+                
+                break;
+            case 'z':               
+                for (float x = left; x <= right; x += gridSize) {
+                    // position
+                    newGridData.push_back(x);
+                    newGridData.push_back(bottom);
+                    newGridData.push_back(horizon);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                    
+                    newGridData.push_back(x);
+                    newGridData.push_back(top);
+                    newGridData.push_back(horizon);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                }
+
+                for (float y = bottom; y <= top; y += gridSize) {
+                    // position
+                    newGridData.push_back(left);
+                    newGridData.push_back(y);
+                    newGridData.push_back(horizon);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                    
+                    newGridData.push_back(right);
+                    newGridData.push_back(y);
+                    newGridData.push_back(horizon);
+                    // color
+                    newGridData.push_back(color[0]);
+                    newGridData.push_back(color[1]);
+                    newGridData.push_back(color[2]);
+                    newGridData.push_back(color[3]);
+                    // width
+                    newGridData.push_back(gridWidth);
+                }
+
+                // axis data TODO: check if necessary
+                // position
+                newGridData.push_back(left);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(horizon);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                //position
+                newGridData.push_back(right);
+                newGridData.push_back(0.0f);
+                newGridData.push_back(horizon);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+                //position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(bottom);
+                newGridData.push_back(horizon);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+                
+                //position
+                newGridData.push_back(0.0f);
+                newGridData.push_back(top);
+                newGridData.push_back(horizon);
+                // color
+                newGridData.push_back(color[0]);
+                newGridData.push_back(color[1]);
+                newGridData.push_back(color[2]);
+                newGridData.push_back(color[3]);
+                // width
+                newGridData.push_back(gridWidth);
+
+
+                //if( newGridData != gridData) {
+                    gridData = newGridData;
+                    glBindBuffer(GL_ARRAY_BUFFER, gridVBO);
+                    glBufferData(GL_ARRAY_BUFFER, gridData.size() * sizeof(float), gridData.data(), GL_DYNAMIC_DRAW);
+                //}
+                break;
+
+            default:
+                qDebug() << "Invalid horizon axis for Grid";
+                return;
+        }
+        
+        
+
     }
 
     // ----- Drawing -----
@@ -304,14 +721,14 @@ protected:
         
         glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)0);  
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 6));
-        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 10));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);  
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
+        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 7));
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        glDrawArrays(GL_LINES, 0, lineData.size() / 11);
+        glDrawArrays(GL_LINES, 0, lineData.size() / 8);
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
@@ -348,14 +765,14 @@ protected:
 
         glBindBuffer(GL_ARRAY_BUFFER, tempLineVBO);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)0);  
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 6));
-        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 10));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);  
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
+        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 7));
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        glDrawArrays(GL_LINES, 0, tempLineData.size() / 11);
+        glDrawArrays(GL_LINES, 0, tempLineData.size() / 8);
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
@@ -373,7 +790,12 @@ protected:
 
     float gridSize;
     float horizon;
-    
+
+    // ----- Camera Position -----
+    QVector3D cameraPosition;
+    QVector3D cameraTarget;
+    QVector3D cameraUp;
+
     // ----- Projection -----
     virtual void UpdateMatrices() = 0;
 

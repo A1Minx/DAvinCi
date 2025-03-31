@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++1z -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../../src -I. -I../Controller -I../View -I../Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I../../src -I. -I../../src -I../Controller -I../View -I../Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -54,6 +54,7 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../main.cpp \
 		../View/mainWindow.cpp \
+		../View/Free_OpenGLWidget.cpp \
 		../View/View_OpenGLWidget.cpp \
 		../View/Orth_XY_OpenGLWidget.cpp \
 		../View/Orth_XZ_OpenGLWidget.cpp \
@@ -70,12 +71,14 @@ SOURCES       = ../main.cpp \
 		../Model/Line.cpp \
 		../Model/Spec.cpp moc_mainWindow.cpp \
 		moc_View_OpenGLWidget.cpp \
+		moc_Free_OpenGLWidget.cpp \
 		moc_Orth_XY_OpenGLWidget.cpp \
 		moc_Orth_XZ_OpenGLWidget.cpp \
 		moc_Orth_YZ_OpenGLWidget.cpp \
 		moc_Controller.cpp
 OBJECTS       = main.o \
 		mainWindow.o \
+		Free_OpenGLWidget.o \
 		View_OpenGLWidget.o \
 		Orth_XY_OpenGLWidget.o \
 		Orth_XZ_OpenGLWidget.o \
@@ -93,6 +96,7 @@ OBJECTS       = main.o \
 		Spec.o \
 		moc_mainWindow.o \
 		moc_View_OpenGLWidget.o \
+		moc_Free_OpenGLWidget.o \
 		moc_Orth_XY_OpenGLWidget.o \
 		moc_Orth_XZ_OpenGLWidget.o \
 		moc_Orth_YZ_OpenGLWidget.o \
@@ -186,6 +190,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../../qt.pro ../View/mainWindow.h \
 		../View/View_OpenGLWidget.h \
+		../View/Free_OpenGLWidget.h \
 		../View/Orth_XY_OpenGLWidget.h \
 		../View/Orth_XZ_OpenGLWidget.h \
 		../View/Orth_YZ_OpenGLWidget.h \
@@ -203,6 +208,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../Model/Line.h \
 		../Model/Spec.h ../main.cpp \
 		../View/mainWindow.cpp \
+		../View/Free_OpenGLWidget.cpp \
 		../View/View_OpenGLWidget.cpp \
 		../View/Orth_XY_OpenGLWidget.cpp \
 		../View/Orth_XZ_OpenGLWidget.cpp \
@@ -421,8 +427,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../View/mainWindow.h ../View/View_OpenGLWidget.h ../View/Orth_XY_OpenGLWidget.h ../View/Orth_XZ_OpenGLWidget.h ../View/Orth_YZ_OpenGLWidget.h ../Controller/Controller.h ../Controller/M_DrawLine.h ../Controller/ModeController.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/Model.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/Line.h ../Model/Spec.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../View/View_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XZ_OpenGLWidget.cpp ../View/Orth_YZ_OpenGLWidget.cpp ../Controller/Controller.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/Model.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/Line.cpp ../Model/Spec.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../View/mainWindow.h ../View/View_OpenGLWidget.h ../View/Free_OpenGLWidget.h ../View/Orth_XY_OpenGLWidget.h ../View/Orth_XZ_OpenGLWidget.h ../View/Orth_YZ_OpenGLWidget.h ../Controller/Controller.h ../Controller/M_DrawLine.h ../Controller/ModeController.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/Model.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/Line.h ../Model/Spec.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../View/Free_OpenGLWidget.cpp ../View/View_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XZ_OpenGLWidget.cpp ../View/Orth_YZ_OpenGLWidget.cpp ../Controller/Controller.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/Model.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/Line.cpp ../Model/Spec.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -454,13 +460,13 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainWindow.cpp moc_View_OpenGLWidget.cpp moc_Orth_XY_OpenGLWidget.cpp moc_Orth_XZ_OpenGLWidget.cpp moc_Orth_YZ_OpenGLWidget.cpp moc_Controller.cpp
+compiler_moc_header_make_all: moc_mainWindow.cpp moc_View_OpenGLWidget.cpp moc_Free_OpenGLWidget.cpp moc_Orth_XY_OpenGLWidget.cpp moc_Orth_XZ_OpenGLWidget.cpp moc_Orth_YZ_OpenGLWidget.cpp moc_Controller.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainWindow.cpp moc_View_OpenGLWidget.cpp moc_Orth_XY_OpenGLWidget.cpp moc_Orth_XZ_OpenGLWidget.cpp moc_Orth_YZ_OpenGLWidget.cpp moc_Controller.cpp
+	-$(DEL_FILE) moc_mainWindow.cpp moc_View_OpenGLWidget.cpp moc_Free_OpenGLWidget.cpp moc_Orth_XY_OpenGLWidget.cpp moc_Orth_XZ_OpenGLWidget.cpp moc_Orth_YZ_OpenGLWidget.cpp moc_Controller.cpp
 moc_mainWindow.cpp: ../View/mainWindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/mainWindow.h -o moc_mainWindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/mainWindow.h -o moc_mainWindow.cpp
 
 moc_View_OpenGLWidget.cpp: ../View/View_OpenGLWidget.h \
 		../Model/Model.h \
@@ -472,7 +478,20 @@ moc_View_OpenGLWidget.cpp: ../View/View_OpenGLWidget.h \
 		../Model/Line.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/View_OpenGLWidget.h -o moc_View_OpenGLWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/View_OpenGLWidget.h -o moc_View_OpenGLWidget.cpp
+
+moc_Free_OpenGLWidget.cpp: ../View/Free_OpenGLWidget.h \
+		../View/View_OpenGLWidget.h \
+		../Model/Model.h \
+		../Model/SQLServer.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
+		../Model/Spec.h \
+		../Model/Line.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Free_OpenGLWidget.h -o moc_Free_OpenGLWidget.cpp
 
 moc_Orth_XY_OpenGLWidget.cpp: ../View/Orth_XY_OpenGLWidget.h \
 		../View/View_OpenGLWidget.h \
@@ -485,7 +504,7 @@ moc_Orth_XY_OpenGLWidget.cpp: ../View/Orth_XY_OpenGLWidget.h \
 		../Model/Line.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_XY_OpenGLWidget.h -o moc_Orth_XY_OpenGLWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_XY_OpenGLWidget.h -o moc_Orth_XY_OpenGLWidget.cpp
 
 moc_Orth_XZ_OpenGLWidget.cpp: ../View/Orth_XZ_OpenGLWidget.h \
 		../View/View_OpenGLWidget.h \
@@ -498,7 +517,7 @@ moc_Orth_XZ_OpenGLWidget.cpp: ../View/Orth_XZ_OpenGLWidget.h \
 		../Model/Line.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_XZ_OpenGLWidget.h -o moc_Orth_XZ_OpenGLWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_XZ_OpenGLWidget.h -o moc_Orth_XZ_OpenGLWidget.cpp
 
 moc_Orth_YZ_OpenGLWidget.cpp: ../View/Orth_YZ_OpenGLWidget.h \
 		../View/View_OpenGLWidget.h \
@@ -511,7 +530,7 @@ moc_Orth_YZ_OpenGLWidget.cpp: ../View/Orth_YZ_OpenGLWidget.h \
 		../Model/Line.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_YZ_OpenGLWidget.h -o moc_Orth_YZ_OpenGLWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_YZ_OpenGLWidget.h -o moc_Orth_YZ_OpenGLWidget.cpp
 
 moc_Controller.cpp: ../Controller/Controller.h \
 		../Model/Model.h \
@@ -524,7 +543,7 @@ moc_Controller.cpp: ../Controller/Controller.h \
 		../Controller/ModeController.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/lib/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Controller/Controller.h -o moc_Controller.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Controller/Controller.h -o moc_Controller.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -558,8 +577,22 @@ mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
 		../View/View_OpenGLWidget.h \
 		../View/Orth_XY_OpenGLWidget.h \
 		../View/Orth_XZ_OpenGLWidget.h \
-		../View/Orth_YZ_OpenGLWidget.h
+		../View/Orth_YZ_OpenGLWidget.h \
+		../View/Free_OpenGLWidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainWindow.o ../View/mainWindow.cpp
+
+Free_OpenGLWidget.o: ../View/Free_OpenGLWidget.cpp ../View/Free_OpenGLWidget.h \
+		../View/View_OpenGLWidget.h \
+		../Model/Model.h \
+		../Model/SQLServer.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Object3D.h \
+		../Model/Spec.h \
+		../Model/Line.h \
+		../Controller/Controller.h \
+		../Controller/ModeController.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Free_OpenGLWidget.o ../View/Free_OpenGLWidget.cpp
 
 View_OpenGLWidget.o: ../View/View_OpenGLWidget.cpp ../View/View_OpenGLWidget.h \
 		../Model/Model.h \
@@ -570,7 +603,8 @@ View_OpenGLWidget.o: ../View/View_OpenGLWidget.cpp ../View/View_OpenGLWidget.h \
 		../Model/Spec.h \
 		../Model/Line.h \
 		../Controller/Controller.h \
-		../Controller/ModeController.h
+		../Controller/ModeController.h \
+		../View/mainWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o View_OpenGLWidget.o ../View/View_OpenGLWidget.cpp
 
 Orth_XY_OpenGLWidget.o: ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.h \
@@ -717,6 +751,9 @@ moc_mainWindow.o: moc_mainWindow.cpp
 
 moc_View_OpenGLWidget.o: moc_View_OpenGLWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_View_OpenGLWidget.o moc_View_OpenGLWidget.cpp
+
+moc_Free_OpenGLWidget.o: moc_Free_OpenGLWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Free_OpenGLWidget.o moc_Free_OpenGLWidget.cpp
 
 moc_Orth_XY_OpenGLWidget.o: moc_Orth_XY_OpenGLWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Orth_XY_OpenGLWidget.o moc_Orth_XY_OpenGLWidget.cpp

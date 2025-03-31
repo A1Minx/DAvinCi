@@ -5,6 +5,7 @@
 #include "Orth_XY_OpenGLWidget.h"
 #include "Orth_XZ_OpenGLWidget.h"
 #include "Orth_YZ_OpenGLWidget.h"
+#include "Free_OpenGLWidget.h"
 #include <QPushButton>
 #include <QApplication>
 #include <QHBoxLayout>
@@ -17,32 +18,33 @@
 void mainWindow::setXYView() {
   if (view) {
     view->hide();
-    delete view;
   }
   
-  //TODO: Check if its reasonable to set up views once and change only pointer to current view
-  view = new Orth_XY_OpenGLWidget(model, controller);
+  view = xyView;
   controller->setView(view);
   controller->setHiddenAxis('z');
   
-  mainLayout->addWidget(view, 1, 0);
-  
   view->show();
-  
+
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
+
   controller->getModeController()->reConfigureView();
  };
 
 void mainWindow::setXZView() {
   if (view) {
     view->hide();
-    delete view;
   }
   
-  view = new Orth_XZ_OpenGLWidget(model, controller);
+  view = xzView;
   controller->setView(view);
   controller->setHiddenAxis('y');
-  mainLayout->addWidget(view, 1, 0);
+  
   view->show();
+
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
 
   controller->getModeController()->reConfigureView();
  };
@@ -50,23 +52,61 @@ void mainWindow::setXZView() {
 void mainWindow::setYZView() {
   if (view) {
     view->hide();
-    delete view;
   }
 
-  view = new Orth_YZ_OpenGLWidget(model, controller);
+  view = yzView;
   controller->setView(view);
   controller->setHiddenAxis('x');
-  mainLayout->addWidget(view, 1, 0);
+  
   view->show();
+
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
 
   controller->getModeController()->reConfigureView();
  };
+
+void mainWindow::setFreeView() {
+  if (view) {
+    view->hide();
+  }
+
+  //TODO: Make the switch more smooth, make sure the camera actuallie points the same way as the current view
+  //TODO: Right now it only switches when the middle mouse is clicked and mouse not moving, check this
+  QVector3D cameraPosition = view->getCameraPosition();
+  QVector3D cameraTarget = view->getCameraTarget();
+  QVector3D cameraUp = view->getCameraUp();
+  qDebug() << "Camera Position old view: " << cameraPosition;
+  qDebug() << "Camera Target old view: " << cameraTarget;
+  qDebug() << "Camera Up old view: " << cameraUp;
+
+  view = freeView;
+  view->setCameraPosition(cameraPosition);
+  view->setCameraTarget(cameraTarget);
+  view->setCameraUp(cameraUp);
+  
+  updateAxisButtonStyles();
+
+  qDebug() << "Camera Position new view: " << view->getCameraPosition();
+  qDebug() << "Camera Target new view: " << view->getCameraTarget();
+  qDebug() << "Camera Up new view: " << view->getCameraUp();
+
+  controller->setView(view);
+  controller->setHiddenAxis('0');
+  view->show();
+
+  // needed in free view to place grid position
+  gridPrecisionLineEdit->setText(QString::number(view->getGridSize()));
+  horizonLineEdit->setText(QString::number(view->getHorizon()));
+
+  controller->getModeController()->reConfigureView();
+}
 
 void mainWindow::setHorizon() {
   if (view && horizonLineEdit) {
     bool ok;
     float horizonValue = horizonLineEdit->text().toFloat(&ok);
-    if (ok && horizonValue > 0) {
+    if (ok) {
       view->setHorizon(horizonValue);
     }
   }
@@ -78,32 +118,11 @@ void mainWindow::setGridPrecision() {
     float precisionValue = gridPrecisionLineEdit->text().toFloat(&ok);
     if (ok && precisionValue > 0) {
       view->setGridSize(precisionValue);
-    }
+    } 
   }
 }
 
-mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
- showMaximized();
-
- model = new Model();
- controller = new Controller(model, nullptr);
- view = nullptr;
-
-  // ----- Layout -----
- QWidget *centralWidget = new QWidget(this);
- setCentralWidget(centralWidget);
-
-
- mainLayout = new QGridLayout(centralWidget);
- mainLayout->setContentsMargins(10, 10, 10, 10);
- mainLayout->setSpacing(5);
-
- setXYView();
- controller->setView(view);
-
-
- // ----- Menu -----
- // -- File
+void mainWindow::createMenus() {
  QMenuBar *menuBar = new QMenuBar(this);
  setMenuBar(menuBar);
  QMenu *fileMenu = menuBar->addMenu("File");
@@ -113,30 +132,224 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  QObject::connect(loadAction, SIGNAL(triggered()), controller, SLOT(load()));
  QObject::connect(saveAction, SIGNAL(triggered()), controller, SLOT(save()));
 
- // -- Tools
  QMenu *toolsMenu = menuBar->addMenu("Tools");
  QAction *drawLineAction = toolsMenu->addAction("Draw Line");
  QAction *drawPointAction = toolsMenu->addAction("Draw Point");
  QAction *clearShapesAction = toolsMenu->addAction("Clear Shapes");
- //TODO: Parametrizemode selection with argument? Enum?
  QObject::connect(drawLineAction, SIGNAL(triggered()), controller, SLOT(setModeDrawLine()));
  QObject::connect(drawPointAction, SIGNAL(triggered()), controller, SLOT(setModeDrawPoint()));
  QObject::connect(clearShapesAction, SIGNAL(triggered()), controller, SLOT(clearShapes()));
 
  QMenu *advancedMenu = toolsMenu->addMenu("Advanced");
  QAction *subOption = advancedMenu->addAction("Advanced Option");
+}
 
- // -- button row to
+void mainWindow::createTopButtonBar() {
  QHBoxLayout *buttonLayout = new QHBoxLayout();
  buttonLayout->setAlignment(Qt::AlignLeft);
 
  mainLayout->addLayout(buttonLayout, 0, 0);
 
- // -- button row bottom
+ QPushButton *readSQLLines = new QPushButton("Read SQL Lines", this);
+ readSQLLines->setText("Read SQL Lines");
+ readSQLLines->setToolTip("Read SQL Lines");
+ readSQLLines->show();
+
+ QObject::connect(readSQLLines, SIGNAL(clicked()), controller, SLOT(readSQLLines()));
+
+ buttonLayout->addWidget(readSQLLines);
+
+ QPushButton *readSQLPoints = new QPushButton("Read SQL Points", this);
+ readSQLPoints->setText("Read SQL Points");
+ readSQLPoints->setToolTip("Read SQL Points");
+ readSQLPoints->show();
+
+ QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
+
+ buttonLayout->addWidget(readSQLPoints);
+}
+
+void mainWindow::updateAxisButtonStyles() {
+    // Reset styles
+    axisButtonX->setStyleSheet("");
+    axisButtonY->setStyleSheet("");
+    axisButtonZ->setStyleSheet("");
+    
+    // Set active button style
+    QString activeStyle = "background-color: #3498db; color: white; font-weight: bold;";
+    
+    switch (currentHorizonAxis) {
+        case 'x':
+            axisButtonX->setStyleSheet(activeStyle);
+            break;
+        case 'y':
+            axisButtonY->setStyleSheet(activeStyle);
+            break;
+        case 'z':
+            axisButtonZ->setStyleSheet(activeStyle);
+            break;
+    }
+}
+
+void mainWindow::setHorizonAxisX() {
+    currentHorizonAxis = 'x';
+    view->setHorizonAxis('x');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::setHorizonAxisY() {
+    currentHorizonAxis = 'y';
+    view->setHorizonAxis('y');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::setHorizonAxisZ() {
+    currentHorizonAxis = 'z';
+    view->setHorizonAxis('z');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::createBottomButtonBar() {
  QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
  buttonLayoutBottom->setAlignment(Qt::AlignLeft);
 
  mainLayout->addLayout(buttonLayoutBottom, 2, 0);
+
+ QPushButton *XYView = new QPushButton("XY View", this);
+ XYView->setText("XY View");
+ XYView->setToolTip("XY View");
+ XYView->show();
+ XYView->setFixedWidth(100);
+ XYView->setFixedHeight(30);
+
+ QObject::connect(XYView, SIGNAL(clicked()), this, SLOT(setXYView()));
+
+ buttonLayoutBottom->addWidget(XYView);
+
+ QPushButton *XZView = new QPushButton("XZ View", this);
+ XZView->setText("XZ View");
+ XZView->setToolTip("XZ View");
+ XZView->show();
+ XZView->setFixedWidth(100);
+ XZView->setFixedHeight(30);
+
+ QObject::connect(XZView, SIGNAL(clicked()), this, SLOT(setXZView()));
+
+ buttonLayoutBottom->addWidget(XZView);
+
+ QPushButton *YZView = new QPushButton("YZ View", this);
+ YZView->setText("YZ View");
+ YZView->setToolTip("YZ View");
+ YZView->show();
+ YZView->setFixedWidth(100);
+ YZView->setFixedHeight(30);
+
+ QObject::connect(YZView, SIGNAL(clicked()), this, SLOT(setYZView()));
+
+ buttonLayoutBottom->addWidget(YZView);
+
+
+//TODO: When not in free view, changing the axis button does only change the animation in GUI, not the Grid.
+ // Create a container for the FreeView button and axis buttons
+ QWidget *freeViewContainer = new QWidget(this);
+ freeViewContainer->setFixedWidth(100);
+ freeViewContainer->setFixedHeight(30);
+ QVBoxLayout *freeViewLayout = new QVBoxLayout(freeViewContainer);
+ freeViewLayout->setContentsMargins(0, 0, 0, 0);
+ freeViewLayout->setSpacing(1);
+ 
+ // Create Free View button
+ freeViewButton = new QPushButton("Free View", this);
+ freeViewButton->setText("Free View");
+ freeViewButton->setToolTip("Free View (Ctrl+Middle Mouse to tilt camera)");
+ freeViewButton->show();
+ QObject::connect(freeViewButton, SIGNAL(clicked()), this, SLOT(setFreeView()));
+ 
+ // Add the main button to the layout
+ freeViewLayout->addWidget(freeViewButton);
+ 
+ // Create a container for the axis buttons
+ QWidget *axisButtonsContainer = new QWidget(freeViewContainer);
+ QHBoxLayout *axisLayout = new QHBoxLayout(axisButtonsContainer);
+ axisLayout->setContentsMargins(0, 0, 0, 0);
+ axisLayout->setSpacing(0);
+ 
+ // Create the three axis buttons
+ axisButtonX = new QPushButton("X", axisButtonsContainer);
+ axisButtonY = new QPushButton("Y", axisButtonsContainer);
+ axisButtonZ = new QPushButton("Z", axisButtonsContainer);
+ 
+ // Set tooltips
+ axisButtonX->setToolTip("Use X as horizon axis (YZ plane grid)");
+ axisButtonY->setToolTip("Use Y as horizon axis (XZ plane grid)");
+ axisButtonZ->setToolTip("Use Z as horizon axis (XY plane grid)");
+ 
+ // Make the buttons expand to fill the width
+ axisButtonX->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ axisButtonY->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ axisButtonZ->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ 
+ // Set height for the axis buttons (smaller than the main button)
+ axisButtonX->setFixedHeight(10);
+ axisButtonY->setFixedHeight(10);
+ axisButtonZ->setFixedHeight(10);
+ 
+ // Connect signals
+ QObject::connect(axisButtonX, SIGNAL(clicked()), this, SLOT(setHorizonAxisX()));
+ QObject::connect(axisButtonY, SIGNAL(clicked()), this, SLOT(setHorizonAxisY()));
+ QObject::connect(axisButtonZ, SIGNAL(clicked()), this, SLOT(setHorizonAxisZ()));
+ 
+ // Add buttons to the layout
+ axisLayout->addWidget(axisButtonX);
+ axisLayout->addWidget(axisButtonY);
+ axisLayout->addWidget(axisButtonZ);
+ 
+ // Add the axis buttons container to the main layout
+ freeViewLayout->addWidget(axisButtonsContainer);
+ 
+ // Add the freeview container to the bottom button bar
+ buttonLayoutBottom->addWidget(freeViewContainer);
+
+ QLabel *horizonLabel = new QLabel("Horizon:", this);
+ buttonLayoutBottom->addWidget(horizonLabel);
+ 
+ horizonLineEdit = new QLineEdit(this);
+ horizonLineEdit->setFixedWidth(100);
+ horizonLineEdit->setFixedHeight(30);
+ horizonLineEdit->setText("100");
+ horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
+ QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
+ buttonLayoutBottom->addWidget(horizonLineEdit);
+ 
+ QLabel *gridPrecisionLabel = new QLabel("Grid Precision:", this);
+ buttonLayoutBottom->addWidget(gridPrecisionLabel);
+ 
+ gridPrecisionLineEdit = new QLineEdit(this);
+ gridPrecisionLineEdit->setText("100");
+ gridPrecisionLineEdit->setToolTip("Grid Precision");
+ gridPrecisionLineEdit->setFixedWidth(100);
+ gridPrecisionLineEdit->setFixedHeight(30);
+
+ QObject::connect(gridPrecisionLineEdit, SIGNAL(editingFinished()), this, SLOT(setGridPrecision()));
+ buttonLayoutBottom->addWidget(gridPrecisionLineEdit);
+
+ buttonLayoutBottom->addStretch(1);
+}
+
+mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
+ showMaximized();
+
+ model = new Model();
+ controller = new Controller(model, nullptr);
+ currentHorizonAxis = 'z';
+
+  // ----- Layout -----
+ QWidget *centralWidget = new QWidget(this);
+ setCentralWidget(centralWidget);
+
+ mainLayout = new QGridLayout(centralWidget);
+ mainLayout->setContentsMargins(10, 10, 10, 10);
+ mainLayout->setSpacing(5);
 
  // -- vertical stretch
  mainLayout->setColumnStretch(0, 5); // View
@@ -147,92 +360,34 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  mainLayout->setRowStretch(1, 10);   // View
  mainLayout->setRowStretch(2, 0);    // Bottom Buttons
 
- // ----- Graphics Window -----
- mainLayout->addWidget(view, 1, 0);
+ qDebug() << "Creating UI";
+ createMenus();
+ createTopButtonBar();
+ createBottomButtonBar();
+
+ qDebug() << "Creating views";
+ xyView = new Orth_XY_OpenGLWidget(model, controller);
+ xzView = new Orth_XZ_OpenGLWidget(model, controller);
+ yzView = new Orth_YZ_OpenGLWidget(model, controller);
+ freeView = new Free_OpenGLWidget(model, controller);
+ 
+ xyView->hide();
+ xzView->hide();
+ yzView->hide();
+ freeView->hide();
+
+ mainLayout->addWidget(xyView, 1, 0);
+ mainLayout->addWidget(xzView, 1, 0);
+ mainLayout->addWidget(yzView, 1, 0);
+ mainLayout->addWidget(freeView, 1, 0);
+
+ view = nullptr;
+
+ setXYView();
 
  // ----- Layers Widget -----
  QWidget *emptyContainer = new QWidget(this);
  emptyContainer->setMinimumWidth(200);
  emptyContainer->setStyleSheet("border: 1px solid red;");
  mainLayout->addWidget(emptyContainer, 1, 1);
-
-
-
- //-----  buttons top -----
- //-- load
- QPushButton *readSQLLines = new QPushButton("Read SQL Lines",  this);
- readSQLLines->setText("Read SQL Lines");
- readSQLLines->setToolTip("Read SQL Lines");
- readSQLLines->show();
- //readSQLLines->setIcon(QIcon::fromTheme("face-smile"));
-
- QObject::connect(readSQLLines, SIGNAL(clicked()), controller, SLOT(readSQLLines()));
-
- buttonLayout->addWidget(readSQLLines);
-
- //-- save
-  QPushButton *readSQLPoints = new QPushButton("Read SQL Points",  this);
- readSQLPoints->setText("Read SQL Points");
- readSQLPoints->setToolTip("Read SQL Points");
- readSQLPoints->show();
- //readSQLPoints->setIcon(QIcon::fromTheme("face-smile"));
-
- QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
-
- buttonLayout->addWidget(readSQLPoints);
-
-
- //-----  buttons bottom -----
-
- QPushButton *XYView = new QPushButton("XY View",  this);
- XYView->setText("XY View");
- XYView->setToolTip("XY View");
- XYView->show();
-
- QObject::connect(XYView, SIGNAL(clicked()), this, SLOT(setXYView()));
-
- buttonLayoutBottom->addWidget(XYView);
-
- QPushButton *XZView = new QPushButton("XZ View",  this);
- XZView->setText("XZ View");
- XZView->setToolTip("XZ View");
- XZView->show();
-
- QObject::connect(XZView, SIGNAL(clicked()), this, SLOT(setXZView()));
-
- buttonLayoutBottom->addWidget(XZView);
-
- QPushButton *YZView = new QPushButton("YZ View",  this);
- YZView->setText("YZ View");
- YZView->setToolTip("YZ View");
- YZView->show();
-
- QObject::connect(YZView, SIGNAL(clicked()), this, SLOT(setYZView()));
-
- buttonLayoutBottom->addWidget(YZView);
-
-
- 
-// inputs for horizon and grid    
- QLabel *horizonLabel = new QLabel("Horizon:", this);
- buttonLayoutBottom->addWidget(horizonLabel);
- 
- horizonLineEdit = new QLineEdit(this);
- horizonLineEdit->setFixedWidth(100);
- horizonLineEdit->setText("100");
- horizonLineEdit->setToolTip("Standard Value for not visible Dimension");
- QObject::connect(horizonLineEdit, SIGNAL(editingFinished()), this, SLOT(setHorizon()));
- buttonLayoutBottom->addWidget(horizonLineEdit);
- 
- QLabel *gridPrecisionLabel = new QLabel("Grid Precision:", this);
- buttonLayoutBottom->addWidget(gridPrecisionLabel);
- 
- gridPrecisionLineEdit = new QLineEdit(this);
- gridPrecisionLineEdit->setFixedWidth(100);
- gridPrecisionLineEdit->setText("100");
- gridPrecisionLineEdit->setToolTip("Grid Precision");
- QObject::connect(gridPrecisionLineEdit, SIGNAL(editingFinished()), this, SLOT(setGridPrecision()));
- buttonLayoutBottom->addWidget(gridPrecisionLineEdit);
-
-  buttonLayoutBottom->addStretch(1);
 }

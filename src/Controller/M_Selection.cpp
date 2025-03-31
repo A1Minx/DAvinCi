@@ -15,7 +15,13 @@ void M_Selection::onMouseClick(QMouseEvent *event, const QVector3D& worldPos) {
 }
 
 void M_Selection::onMouseMove(QMouseEvent *event, const QVector3D& worldPos) {
-
+    nearestPoint = nearestPointSelection(event, worldPos, controller->getHiddenAxis());
+    if (nearestPoint) {
+        controller->removeTempPoints();
+        controller->addTempPoint(nearestPoint->getX(), nearestPoint->getY(), nearestPoint->getZ(), tempColor, tempSize);
+    } else {
+        controller->removeTempPoints();
+    }
 }
 
 

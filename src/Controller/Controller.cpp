@@ -12,7 +12,9 @@ Controller::Controller(Model *model, View_OpenGLWidget *view)
 {
     this->modeController = new ModeController(this);
     this->currPointSpec = model->getPointSpec(1);
+    qDebug() << "currPointSpec: " << currPointSpec->getColor();
     this->currLineSpec = model->getLineSpec(2);
+    qDebug() << "currLineSpec: " << currLineSpec->getColor();
 }
 
 void Controller::setView(View_OpenGLWidget *view)
@@ -111,36 +113,64 @@ std::shared_ptr<Point> Controller::getNearestPoint(float x, float y, float z)
 
 std::shared_ptr<Point> Controller::getNearestPoint(float a, float b, char hiddenAxis) 
 {
-    qDebug() << "getNearestPoint for hidden axis: " << hiddenAxis << " with a: " << a << " and b: " << b;
 // overload to get nearest points that are further away on the hidden axis
 // TODO: Implement a function to get the point that is closest on the invisible axis after the check of the visible axes
     static const float MAX_DISTANCE = 20.0f;
-    std::shared_ptr<Point> candidate = nullptr;
+    std::vector<std::pair<float, std::shared_ptr<Point>>> candidates; //float value = distance to current horizon in the hidden axis
     float minDistance = MAX_DISTANCE;
 
     for (const std::shared_ptr<Point>& point : model->getPoints()) {
         float distance;
+        float distanceToHorizon;
         switch (hiddenAxis) {
             case 'x':
                 distance = point->distanceTo(point->getX(), a, b);
+                distanceToHorizon = point->distanceToHorizon(view->getHorizon(), point->getX());
                 break;
             case 'y':
                 distance = point->distanceTo(a, point->getY(), b);
+                distanceToHorizon = point->distanceToHorizon(view->getHorizon(), point->getY());
                 break;
             case 'z':
                 distance = point->distanceTo(a, b, point->getZ());
+                distanceToHorizon = point->distanceToHorizon(view->getHorizon(), point->getZ());
                 break;
             default:
                 qDebug() << "Invalid hidden axis";
                 break;
         }
-        qDebug() << "distance: " << distance;
-        if (distance < minDistance) {
+        if ((distance < minDistance) or (distance == minDistance)) {
             minDistance = distance;
-            candidate = point;
+            candidates.push_back(std::make_pair(distanceToHorizon, point));
         }
     }
-    return candidate;
+
+    // if multiple points in a,b proximity are return candidates, return the one closest to the current horizon
+    // TODO: test behaviour with changing horizons in View overlapping drawing
+    if (candidates.size() == 1) { 
+        qDebug() << "One candidate found: " << candidates[0].second->getX() << ", " << candidates[0].second->getY() << ", " << candidates[0].second->getZ();
+        return candidates[0].second;
+    } 
+    else if (candidates.size() > 1) {
+        qDebug() << "Multiple candidates found:";
+        for (const auto& cand_pair : candidates) {
+            qDebug() << "Candidate: " << cand_pair.first << " | " << cand_pair.second->getX() << ", " << cand_pair.second->getY() << ", " << cand_pair.second->getZ();
+        }
+        std::shared_ptr<Point> candidate = candidates[0].second;
+        float smallestDistanceToHorizon = candidates[0].first;
+        for (const auto& cand_pair : candidates) {
+            if (cand_pair.first < smallestDistanceToHorizon) {
+                smallestDistanceToHorizon = cand_pair.first;
+                candidate = cand_pair.second;
+            }
+        }
+        return candidate;
+        //TODO: check if its faster to keep only the smallest distanceToHorizon Point in the loop above
+    }
+    else {
+        qDebug() << "No candidates found";
+        return nullptr;
+    }
 }
 
 
