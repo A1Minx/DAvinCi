@@ -190,9 +190,28 @@ void Controller::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, s
 
 std::shared_ptr<Point> Controller::addPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec)
 {
-    std::shared_ptr<Point> point = model->addPoint(x,y,z, spec);
-    view->update();
-    return point;
+    std::shared_ptr<Point> point;
+
+    switch (hiddenAxis) {
+        case 'x':
+            point = model->addPoint(view->getHorizon(),y,z, spec);
+            view->update();
+            return point;
+        case 'y':
+            point = model->addPoint(x,view->getHorizon(),z, spec);
+            view->update();
+            return point;
+        case 'z':
+            point = model->addPoint(x,y,view->getHorizon(), spec);
+            view->update();
+            return point;
+        case '0':
+            qDebug() << "not implemented";
+            return nullptr;
+        default:
+            qDebug() << "Invalid hidden axis";
+            return nullptr;
+    }
 }
 
 

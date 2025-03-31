@@ -14,7 +14,10 @@
 #include <QPainter>
 #include <QLineEdit>
 #include <QLabel>
+#include <QDebug>
 
+// ----- Setter -----
+// -- Set View --
 void mainWindow::setXYView() {
   if (view) {
     view->hide();
@@ -102,6 +105,26 @@ void mainWindow::setFreeView() {
   controller->getModeController()->reConfigureView();
 }
 
+// -- Set Horizon Axis --
+void mainWindow::setHorizonAxisX() {
+    currentHorizonAxis = 'x';
+    view->setHorizonAxis('x');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::setHorizonAxisY() {
+    currentHorizonAxis = 'y';
+    view->setHorizonAxis('y');
+    updateAxisButtonStyles();
+}
+
+void mainWindow::setHorizonAxisZ() {
+    currentHorizonAxis = 'z';
+    view->setHorizonAxis('z');
+    updateAxisButtonStyles();
+}
+
+// -- Set Horizon --
 void mainWindow::setHorizon() {
   if (view && horizonLineEdit) {
     bool ok;
@@ -122,6 +145,8 @@ void mainWindow::setGridPrecision() {
   }
 }
 
+
+// ----- Menu -----
 void mainWindow::createMenus() {
  QMenuBar *menuBar = new QMenuBar(this);
  setMenuBar(menuBar);
@@ -144,6 +169,7 @@ void mainWindow::createMenus() {
  QAction *subOption = advancedMenu->addAction("Advanced Option");
 }
 
+// ----- Top Buttons ----- (so far only for Debug)
 void mainWindow::createTopButtonBar() {
  QHBoxLayout *buttonLayout = new QHBoxLayout();
  buttonLayout->setAlignment(Qt::AlignLeft);
@@ -169,6 +195,7 @@ void mainWindow::createTopButtonBar() {
  buttonLayout->addWidget(readSQLPoints);
 }
 
+// ----- Button Interactivity -----
 void mainWindow::updateAxisButtonStyles() {
     // Reset styles
     axisButtonX->setStyleSheet("");
@@ -191,30 +218,15 @@ void mainWindow::updateAxisButtonStyles() {
     }
 }
 
-void mainWindow::setHorizonAxisX() {
-    currentHorizonAxis = 'x';
-    view->setHorizonAxis('x');
-    updateAxisButtonStyles();
-}
-
-void mainWindow::setHorizonAxisY() {
-    currentHorizonAxis = 'y';
-    view->setHorizonAxis('y');
-    updateAxisButtonStyles();
-}
-
-void mainWindow::setHorizonAxisZ() {
-    currentHorizonAxis = 'z';
-    view->setHorizonAxis('z');
-    updateAxisButtonStyles();
-}
-
+// ----- Bottom Button Bar -----
 void mainWindow::createBottomButtonBar() {
  QHBoxLayout *buttonLayoutBottom = new QHBoxLayout();
  buttonLayoutBottom->setAlignment(Qt::AlignLeft);
 
  mainLayout->addLayout(buttonLayoutBottom, 2, 0);
 
+// ----- Views -----
+// -- XY View --
  QPushButton *XYView = new QPushButton("XY View", this);
  XYView->setText("XY View");
  XYView->setToolTip("XY View");
@@ -226,6 +238,7 @@ void mainWindow::createBottomButtonBar() {
 
  buttonLayoutBottom->addWidget(XYView);
 
+// -- XZ View --
  QPushButton *XZView = new QPushButton("XZ View", this);
  XZView->setText("XZ View");
  XZView->setToolTip("XZ View");
@@ -237,6 +250,7 @@ void mainWindow::createBottomButtonBar() {
 
  buttonLayoutBottom->addWidget(XZView);
 
+// -- YZ View --
  QPushButton *YZView = new QPushButton("YZ View", this);
  YZView->setText("YZ View");
  YZView->setToolTip("YZ View");
@@ -249,8 +263,8 @@ void mainWindow::createBottomButtonBar() {
  buttonLayoutBottom->addWidget(YZView);
 
 
+// -- Free View --
 //TODO: When not in free view, changing the axis button does only change the animation in GUI, not the Grid.
- // Create a container for the FreeView button and axis buttons
  QWidget *freeViewContainer = new QWidget(this);
  freeViewContainer->setFixedWidth(100);
  freeViewContainer->setFixedHeight(30);
@@ -258,58 +272,49 @@ void mainWindow::createBottomButtonBar() {
  freeViewLayout->setContentsMargins(0, 0, 0, 0);
  freeViewLayout->setSpacing(1);
  
- // Create Free View button
  freeViewButton = new QPushButton("Free View", this);
  freeViewButton->setText("Free View");
  freeViewButton->setToolTip("Free View (Ctrl+Middle Mouse to tilt camera)");
  freeViewButton->show();
  QObject::connect(freeViewButton, SIGNAL(clicked()), this, SLOT(setFreeView()));
  
- // Add the main button to the layout
  freeViewLayout->addWidget(freeViewButton);
  
- // Create a container for the axis buttons
  QWidget *axisButtonsContainer = new QWidget(freeViewContainer);
  QHBoxLayout *axisLayout = new QHBoxLayout(axisButtonsContainer);
  axisLayout->setContentsMargins(0, 0, 0, 0);
  axisLayout->setSpacing(0);
  
- // Create the three axis buttons
  axisButtonX = new QPushButton("X", axisButtonsContainer);
  axisButtonY = new QPushButton("Y", axisButtonsContainer);
  axisButtonZ = new QPushButton("Z", axisButtonsContainer);
  
- // Set tooltips
  axisButtonX->setToolTip("Use X as horizon axis (YZ plane grid)");
  axisButtonY->setToolTip("Use Y as horizon axis (XZ plane grid)");
  axisButtonZ->setToolTip("Use Z as horizon axis (XY plane grid)");
  
- // Make the buttons expand to fill the width
  axisButtonX->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
  axisButtonY->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
  axisButtonZ->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
  
- // Set height for the axis buttons (smaller than the main button)
  axisButtonX->setFixedHeight(10);
  axisButtonY->setFixedHeight(10);
  axisButtonZ->setFixedHeight(10);
  
- // Connect signals
  QObject::connect(axisButtonX, SIGNAL(clicked()), this, SLOT(setHorizonAxisX()));
  QObject::connect(axisButtonY, SIGNAL(clicked()), this, SLOT(setHorizonAxisY()));
  QObject::connect(axisButtonZ, SIGNAL(clicked()), this, SLOT(setHorizonAxisZ()));
  
- // Add buttons to the layout
  axisLayout->addWidget(axisButtonX);
  axisLayout->addWidget(axisButtonY);
  axisLayout->addWidget(axisButtonZ);
  
- // Add the axis buttons container to the main layout
  freeViewLayout->addWidget(axisButtonsContainer);
  
- // Add the freeview container to the bottom button bar
  buttonLayoutBottom->addWidget(freeViewContainer);
 
+
+// ----- View Property edit -----
  QLabel *horizonLabel = new QLabel("Horizon:", this);
  buttonLayoutBottom->addWidget(horizonLabel);
  
@@ -336,6 +341,8 @@ void mainWindow::createBottomButtonBar() {
  buttonLayoutBottom->addStretch(1);
 }
 
+
+// ----- Main Window -----
 mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  showMaximized();
 
