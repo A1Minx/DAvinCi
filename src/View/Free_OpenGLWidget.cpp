@@ -74,7 +74,17 @@ void Free_OpenGLWidget::UpdateMatrices()
 void Free_OpenGLWidget::wheelEvent(QWheelEvent *event)
 {
     // Do nothing - zooming is disabled
-    event->accept(); // Accept the event to prevent it from being passed to parent
+
+    if (event->delta() < 0) {
+        cameraDistance *= 1.1f;
+    } else {
+        cameraDistance /= 1.1f;
+    }
+
+    UpdateMatrices();
+    update();
+
+    //event->accept(); // Accept the event to prevent it from being passed to parent
 }
 
 QVector3D Free_OpenGLWidget::screenToWorld(int x, int y)
@@ -93,9 +103,45 @@ QVector3D Free_OpenGLWidget::screenToWorld(int x, int y)
     QVector3D rayDirection(rayWorld.x(), rayWorld.y(), rayWorld.z());
     rayDirection.normalize();
     
-    // Compute intersection with XY plane (z = 0)
-    float t = -cameraPosition.z() / rayDirection.z();
-    QVector3D intersection = cameraPosition + rayDirection * t;
+    // Compute intersection with the appropriate plane based on horizonAxis
+    QVector3D intersection;
+    float t;
+    
+    switch (horizonAxis) {
+        case 'x':
+            // Intersection with YZ plane (x = horizon)
+            if (qAbs(rayDirection.x()) > 0.0001f) {
+                t = (horizon - cameraPosition.x()) / rayDirection.x();
+                intersection = cameraPosition + rayDirection * t;
+            } else {
+                // Ray is parallel to the plane, no intersection
+                intersection = QVector3D(horizon, 0, 0);
+            }
+            break;
+            
+        case 'y':
+            // Intersection with XZ plane (y = horizon)
+            if (qAbs(rayDirection.y()) > 0.0001f) {
+                t = (horizon - cameraPosition.y()) / rayDirection.y();
+                intersection = cameraPosition + rayDirection * t;
+            } else {
+                // Ray is parallel to the plane, no intersection
+                intersection = QVector3D(0, horizon, 0);
+            }
+            break;
+            
+        case 'z':
+        default:
+            // Intersection with XY plane (z = horizon)
+            if (qAbs(rayDirection.z()) > 0.0001f) {
+                t = (horizon - cameraPosition.z()) / rayDirection.z();
+                intersection = cameraPosition + rayDirection * t;
+            } else {
+                // Ray is parallel to the plane, no intersection
+                intersection = QVector3D(0, 0, horizon);
+            }
+            break;
+    }
     
     return intersection;
 }
@@ -105,9 +151,6 @@ void Free_OpenGLWidget::updateBuffers()
     View_OpenGLWidget::updateBuffers();
     
     GridData(horizonAxis, horizon, gridSize, gridExtend, gridExtend, gridWidth, gridColor);
-
-    // TODO: add "hiddenAxis" that is not so hidden in this case
-
 }
 
 void Free_OpenGLWidget::mousePressEvent(QMouseEvent *event)

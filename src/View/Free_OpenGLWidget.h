@@ -19,7 +19,7 @@ private:
     float yaw;      // Camera rotation around y-axis (in degrees)
     float pitch;    // Camera rotation around x-axis (in degrees)
 
-    const float cameraDistance = 200.0f; // Fixed camera distance
+    float cameraDistance = 200.0f; // Fixed camera distance
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

@@ -206,8 +206,22 @@ std::shared_ptr<Point> Controller::addPoint(float x, float y, float z, std::shar
             view->update();
             return point;
         case '0':
-            qDebug() << "not implemented";
-            return nullptr;
+            switch (view->getHorizonAxis()) {
+                case 'x':
+                    point = model->addPoint(view->getHorizon(),y,z, spec);
+                    break;
+                case 'y':
+                    point = model->addPoint(x,view->getHorizon(),z, spec);
+                    break;
+                case 'z':
+                    point = model->addPoint(x,y,view->getHorizon(), spec);
+                    break;
+                default:
+                    qDebug() << "Invalid horizon axis";
+                    break;
+            }
+            view->update();
+            return point;
         default:
             qDebug() << "Invalid hidden axis";
             return nullptr;
