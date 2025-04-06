@@ -24,6 +24,7 @@ SOURCES += \
     ./Model/SQLServer.cpp \
     ./Model/Point.cpp \
     ./Model/Object3D.cpp \
+    ./Model/ComposedObject.cpp \
     ./Model/Line.cpp \
     ./Model/Spec.cpp
 
@@ -45,6 +46,7 @@ HEADERS += \
     ./Model/BasicObject.h \
     ./Model/Point.h \
     ./Model/Object3D.h \
+    ./Model/ComposedObject.h \
     ./Model/Line.h \
     ./Model/Spec.h
 

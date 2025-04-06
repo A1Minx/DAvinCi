@@ -1,3 +1,6 @@
+#ifndef OBJECT3D_H
+#define OBJECT3D_H
+
 #include "Spec.h"
 #include <memory>
 
@@ -10,9 +13,6 @@ class Object3D {
 
     protected:
 
-        // add Parent and Child Objects and Layer
-
-
         int syncStatus;
         // syncStatus gets stored bitwise / Implement data exchange at parent level and set children locally
         // Exclusive - local data coherent with Database, no other read/write access
@@ -24,3 +24,5 @@ class Object3D {
         // SharedModified - local Data ahead of Database, Shared write access (show loading until synced, set others Invalid)
 
 };
+
+#endif // OBJECT3D_H

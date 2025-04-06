@@ -8,6 +8,7 @@
 #include "Point.h"
 #include "Line.h"
 #include "Spec.h"
+#include "ComposedObject.h"
 // Temporary lines dont have to be a (maybe in the future complex) Line object. Minimal Implementation:
 struct TempLine {
     float x1, y1, z1;
@@ -52,6 +53,7 @@ public:
 
     std::vector<std::shared_ptr<Point>> getPoints() const;
     std::vector<std::shared_ptr<Line>> getLines() const;
+    std::vector<std::shared_ptr<ComposedObject>> getComposedObjects() const;
     const std::vector<TempLine>& getTempLines() const { return tempLines; }
     const std::vector<TempPoint>& getTempPoints() const { return markedPoints; }
     SQLServer *sqlServer;
@@ -65,6 +67,7 @@ public:
 private:
     std::vector<std::shared_ptr<Point>> points;
     std::vector<std::shared_ptr<Line>> lines;
+    std::vector<std::shared_ptr<ComposedObject>> composedObjects;
     std::vector<TempLine> tempLines;
     std::vector<TempPoint> markedPoints;
 

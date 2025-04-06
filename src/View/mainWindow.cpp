@@ -200,6 +200,16 @@ void mainWindow::createTopButtonBar() {
  QObject::connect(readSQLPoints, SIGNAL(clicked()), controller, SLOT(readSQLPoints()));
 
  buttonLayout->addWidget(readSQLPoints);
+
+
+ QPushButton *readSQLcomposedObjects = new QPushButton("Read SQL Composed Objects", this);
+ readSQLcomposedObjects->setText("Read SQL Composed Objects");
+ readSQLcomposedObjects->setToolTip("Read SQL Composed Objects");
+ readSQLcomposedObjects->show();
+
+ QObject::connect(readSQLcomposedObjects, SIGNAL(clicked()), controller, SLOT(readSQLComposedObjects()));
+
+ buttonLayout->addWidget(readSQLcomposedObjects);
 }
 
 // ----- Button Interactivity -----

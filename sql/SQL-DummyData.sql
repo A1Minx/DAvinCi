@@ -45,6 +45,29 @@ INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values 
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (2, 7, 1);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (3, 8, 1);
 
+INSERT INTO composedObjects (Parent_ID, Name) Values (NULL, 'Quaxl das Quadratl');
+
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 1);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 2);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 3);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 4);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 5);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 6);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 7);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 8);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 9);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 10);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 11);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 12);
+
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 1);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 2);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 3);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 4);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 5);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 6);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 7);
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 8);
 
 
 

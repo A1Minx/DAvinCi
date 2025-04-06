@@ -61,6 +61,12 @@ SQLServer::SQLServer(Model *model)
     const char *readLineSpecQuery = "SELECT * FROM Line_spec LEFT JOIN Colors ON Colors.Color_ID = Line_spec.Color";
     PGresult *readLineSpec = PQprepare(connection, "readLineSpec", readLineSpecQuery, 0, NULL);
     checkResult(readLineSpec);
+
+
+    // -- readComposedObjects
+    const char *readComposedObjectsQuery = "SELECT * FROM composedObjects";
+    PGresult *readComposedObjects = PQprepare(connection, "readComposedObjects", readComposedObjectsQuery, 0, NULL);
+    checkResult(readComposedObjects);
 }
 
 SQLServer::~SQLServer()
@@ -213,6 +219,41 @@ std::vector<std::shared_ptr<Line>> SQLServer::readSQLLines()
     }
     return lines;
 }
+
+
+std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLComposedObjects()
+{
+    std::vector<std::shared_ptr<ComposedObject>> composedObjects;
+    try {
+            qDebug() << "reading SQL Composed Objects";
+
+            PGresult *result = PQexecPrepared(connection, "readComposedObjects", 0, NULL, NULL, NULL, 0);
+            checkResult(result);
+
+            int rows = PQntuples(result);
+            int cols = PQnfields(result);
+
+            for (int row = 0; row < rows; row++) {
+                int id = std::stoi(PQgetvalue(result, row, 0));
+                std::string name = PQgetvalue(result, row, 1);
+                std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(name, nullptr); //TODO: Actually get Parent from DB, only use Null if there is no Parent in DB
+                
+                composedObjects.push_back(composedObject);
+            }
+
+            for (const auto& composedObject : composedObjects) {
+                std::cout << "Composed Object: (" << composedObject->getName() << ")" << std::endl;
+            }
+            
+            PQclear(result);
+
+    } catch (const std::exception &e) {
+        qDebug() << "SQL read Error: Composed Object";
+    }
+    return composedObjects;
+}
+
+
 
 std::vector<std::shared_ptr<PointSpec>> SQLServer::readSQLPointSpec()
 {

@@ -241,6 +241,11 @@ void Controller::readSQLPoints()
     model->sqlServer->readSQLPoints();
 }
 
+void Controller::readSQLComposedObjects()
+{
+    model->sqlServer->readSQLComposedObjects();
+}
+
 
 // -- change View Options --
 void Controller::setMouseTracking(bool tracking)

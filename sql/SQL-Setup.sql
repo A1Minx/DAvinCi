@@ -1,5 +1,6 @@
 \connect DAvinCi;
 
+----- Specs -----
 CREATE TABLE Colors (
     Color_ID BIGSERIAL PRIMARY KEY,
     R DOUBLE PRECISION,
@@ -22,6 +23,8 @@ CREATE TABLE Line_spec (
     Name VARCHAR(100)
 );
 
+
+----- Basic Geometry -----
 CREATE TABLE Points (
     Points_ID BIGSERIAL PRIMARY KEY,
     Points_x DOUBLE PRECISION,
@@ -37,4 +40,24 @@ CREATE TABLE Lines (
     Lines_PointB_Points_ID INTEGER REFERENCES Points(Points_ID),
     Spec INTEGER REFERENCES Line_spec(Spec_ID),
     Lines_length DOUBLE PRECISION
+);
+
+
+----- Composed Geometry -----
+CREATE TABLE composedObjects (
+    composedObject_ID BIGSERIAL PRIMARY KEY,
+    Name VARCHAR(100),
+    Parent_ID INTEGER REFERENCES composedObjects(composedObject_ID)
+);
+
+CREATE TABLE Obj2Line (
+    ID BIGSERIAL PRIMARY KEY,
+    Object_ID INTEGER REFERENCES composedObjects(composedObject_ID),
+    Line_ID INTEGER REFERENCES Lines(Lines_ID)
+);
+
+CREATE TABLE Obj2Point (
+    ID BIGSERIAL PRIMARY KEY,
+    Object_ID INTEGER REFERENCES composedObjects(composedObject_ID),
+    Point_ID INTEGER REFERENCES Points(Points_ID)
 );

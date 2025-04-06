@@ -68,6 +68,7 @@ SOURCES       = ../main.cpp \
 		../Model/SQLServer.cpp \
 		../Model/Point.cpp \
 		../Model/Object3D.cpp \
+		../Model/ComposedObject.cpp \
 		../Model/Line.cpp \
 		../Model/Spec.cpp moc_mainWindow.cpp \
 		moc_View_OpenGLWidget.cpp \
@@ -92,6 +93,7 @@ OBJECTS       = main.o \
 		SQLServer.o \
 		Point.o \
 		Object3D.o \
+		ComposedObject.o \
 		Line.o \
 		Spec.o \
 		moc_mainWindow.o \
@@ -205,6 +207,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../Model/BasicObject.h \
 		../Model/Point.h \
 		../Model/Object3D.h \
+		../Model/ComposedObject.h \
 		../Model/Line.h \
 		../Model/Spec.h ../main.cpp \
 		../View/mainWindow.cpp \
@@ -222,6 +225,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../Model/SQLServer.cpp \
 		../Model/Point.cpp \
 		../Model/Object3D.cpp \
+		../Model/ComposedObject.cpp \
 		../Model/Line.cpp \
 		../Model/Spec.cpp
 QMAKE_TARGET  = DAvinCi
@@ -427,8 +431,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../View/mainWindow.h ../View/View_OpenGLWidget.h ../View/Free_OpenGLWidget.h ../View/Orth_XY_OpenGLWidget.h ../View/Orth_XZ_OpenGLWidget.h ../View/Orth_YZ_OpenGLWidget.h ../Controller/Controller.h ../Controller/M_DrawLine.h ../Controller/ModeController.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/Model.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/Line.h ../Model/Spec.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../View/Free_OpenGLWidget.cpp ../View/View_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XZ_OpenGLWidget.cpp ../View/Orth_YZ_OpenGLWidget.cpp ../Controller/Controller.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/Model.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/Line.cpp ../Model/Spec.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../View/mainWindow.h ../View/View_OpenGLWidget.h ../View/Free_OpenGLWidget.h ../View/Orth_XY_OpenGLWidget.h ../View/Orth_XZ_OpenGLWidget.h ../View/Orth_YZ_OpenGLWidget.h ../Controller/Controller.h ../Controller/M_DrawLine.h ../Controller/ModeController.h ../Controller/M_ModeInterface.h ../Controller/M_DrawPoint.h ../Controller/M_Selection.h ../Model/Model.h ../Model/SQLServer.h ../Model/BasicObject.h ../Model/Point.h ../Model/Object3D.h ../Model/ComposedObject.h ../Model/Line.h ../Model/Spec.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../View/mainWindow.cpp ../View/Free_OpenGLWidget.cpp ../View/View_OpenGLWidget.cpp ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XZ_OpenGLWidget.cpp ../View/Orth_YZ_OpenGLWidget.cpp ../Controller/Controller.cpp ../Controller/ModeController.cpp ../Controller/M_DrawLine.cpp ../Controller/M_DrawPoint.cpp ../Controller/M_Selection.cpp ../Model/Model.cpp ../Model/SQLServer.cpp ../Model/Point.cpp ../Model/Object3D.cpp ../Model/ComposedObject.cpp ../Model/Line.cpp ../Model/Spec.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -476,6 +480,7 @@ moc_View_OpenGLWidget.cpp: ../View/View_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/View_OpenGLWidget.h -o moc_View_OpenGLWidget.cpp
@@ -489,6 +494,7 @@ moc_Free_OpenGLWidget.cpp: ../View/Free_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Free_OpenGLWidget.h -o moc_Free_OpenGLWidget.cpp
@@ -502,6 +508,7 @@ moc_Orth_XY_OpenGLWidget.cpp: ../View/Orth_XY_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_XY_OpenGLWidget.h -o moc_Orth_XY_OpenGLWidget.cpp
@@ -515,6 +522,7 @@ moc_Orth_XZ_OpenGLWidget.cpp: ../View/Orth_XZ_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_XZ_OpenGLWidget.h -o moc_Orth_XZ_OpenGLWidget.cpp
@@ -528,6 +536,7 @@ moc_Orth_YZ_OpenGLWidget.cpp: ../View/Orth_YZ_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/Orth_YZ_OpenGLWidget.h -o moc_Orth_YZ_OpenGLWidget.cpp
@@ -540,6 +549,7 @@ moc_Controller.cpp: ../Controller/Controller.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/ModeController.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -573,6 +583,7 @@ mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/ModeController.h \
 		../View/View_OpenGLWidget.h \
 		../View/Orth_XY_OpenGLWidget.h \
@@ -590,6 +601,7 @@ Free_OpenGLWidget.o: ../View/Free_OpenGLWidget.cpp ../View/Free_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/Controller.h \
 		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Free_OpenGLWidget.o ../View/Free_OpenGLWidget.cpp
@@ -602,6 +614,7 @@ View_OpenGLWidget.o: ../View/View_OpenGLWidget.cpp ../View/View_OpenGLWidget.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/Controller.h \
 		../Controller/ModeController.h \
 		../View/mainWindow.h
@@ -615,7 +628,8 @@ Orth_XY_OpenGLWidget.o: ../View/Orth_XY_OpenGLWidget.cpp ../View/Orth_XY_OpenGLW
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
-		../Model/Line.h
+		../Model/Line.h \
+		../Model/ComposedObject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Orth_XY_OpenGLWidget.o ../View/Orth_XY_OpenGLWidget.cpp
 
 Orth_XZ_OpenGLWidget.o: ../View/Orth_XZ_OpenGLWidget.cpp ../View/Orth_XZ_OpenGLWidget.h \
@@ -626,7 +640,8 @@ Orth_XZ_OpenGLWidget.o: ../View/Orth_XZ_OpenGLWidget.cpp ../View/Orth_XZ_OpenGLW
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
-		../Model/Line.h
+		../Model/Line.h \
+		../Model/ComposedObject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Orth_XZ_OpenGLWidget.o ../View/Orth_XZ_OpenGLWidget.cpp
 
 Orth_YZ_OpenGLWidget.o: ../View/Orth_YZ_OpenGLWidget.cpp ../View/Orth_YZ_OpenGLWidget.h \
@@ -637,7 +652,8 @@ Orth_YZ_OpenGLWidget.o: ../View/Orth_YZ_OpenGLWidget.cpp ../View/Orth_YZ_OpenGLW
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
-		../Model/Line.h
+		../Model/Line.h \
+		../Model/ComposedObject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Orth_YZ_OpenGLWidget.o ../View/Orth_YZ_OpenGLWidget.cpp
 
 Controller.o: ../Controller/Controller.cpp ../Controller/Controller.h \
@@ -648,6 +664,7 @@ Controller.o: ../Controller/Controller.cpp ../Controller/Controller.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/ModeController.h \
 		../View/View_OpenGLWidget.h \
 		../View/Orth_XY_OpenGLWidget.h \
@@ -663,6 +680,7 @@ ModeController.o: ../Controller/ModeController.cpp ../Controller/ModeController.
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/M_ModeInterface.h \
 		../Controller/M_DrawLine.h \
 		../Controller/M_DrawPoint.h \
@@ -679,6 +697,7 @@ M_DrawLine.o: ../Controller/M_DrawLine.cpp ../Controller/M_DrawLine.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_DrawLine.o ../Controller/M_DrawLine.cpp
 
@@ -692,6 +711,7 @@ M_DrawPoint.o: ../Controller/M_DrawPoint.cpp ../Controller/M_DrawPoint.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_DrawPoint.o ../Controller/M_DrawPoint.cpp
 
@@ -705,6 +725,7 @@ M_Selection.o: ../Controller/M_Selection.cpp ../Controller/M_Selection.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Controller/ModeController.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o M_Selection.o ../Controller/M_Selection.cpp
 
@@ -714,7 +735,8 @@ Model.o: ../Model/Model.cpp ../Model/Model.h \
 		../Model/BasicObject.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
-		../Model/Line.h
+		../Model/Line.h \
+		../Model/ComposedObject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Model.o ../Model/Model.cpp
 
 SQLServer.o: ../Model/SQLServer.cpp ../Model/SQLServer.h \
@@ -723,6 +745,7 @@ SQLServer.o: ../Model/SQLServer.cpp ../Model/SQLServer.h \
 		../Model/Object3D.h \
 		../Model/Spec.h \
 		../Model/Line.h \
+		../Model/ComposedObject.h \
 		../Model/Model.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SQLServer.o ../Model/SQLServer.cpp
 
@@ -735,6 +758,14 @@ Point.o: ../Model/Point.cpp ../Model/Point.h \
 Object3D.o: ../Model/Object3D.cpp ../Model/Object3D.h \
 		../Model/Spec.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Object3D.o ../Model/Object3D.cpp
+
+ComposedObject.o: ../Model/ComposedObject.cpp ../Model/ComposedObject.h \
+		../Model/Object3D.h \
+		../Model/Spec.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Line.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ComposedObject.o ../Model/ComposedObject.cpp
 
 Line.o: ../Model/Line.cpp ../Model/Line.h \
 		../Model/BasicObject.h \

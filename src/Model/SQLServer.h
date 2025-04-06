@@ -4,6 +4,7 @@
 #include "postgresql/libpq-fe.h"
 #include "Point.h"
 #include "Line.h"
+#include "ComposedObject.h"
 #include <vector>
 #include <memory>
 
@@ -15,6 +16,7 @@ class SQLServer {
 
         std::vector<std::shared_ptr<Line>> readSQLLines();
         std::vector<std::shared_ptr<Point>> readSQLPoints();
+        std::vector<std::shared_ptr<ComposedObject>> readSQLComposedObjects();
         std::vector<std::shared_ptr<PointSpec>> readSQLPointSpec();
         std::vector<std::shared_ptr<LineSpec>> readSQLLineSpec();
 

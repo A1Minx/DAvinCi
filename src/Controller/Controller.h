@@ -8,6 +8,7 @@
 #include <memory>
 #include <Point.h>
 #include <Spec.h>
+#include <ComposedObject.h>
 
 class View_OpenGLWidget;
 class Model;
@@ -32,6 +33,7 @@ public slots:
     void setModeSelection();
     void readSQLLines();
     void readSQLPoints();
+    void readSQLComposedObjects();
     void handleMouseClick(QMouseEvent *event);
     void handleMouseMove(QMouseEvent *event);
 
