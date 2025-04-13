@@ -13,12 +13,11 @@ public:
     M_ModeInterface(Controller *controller) : controller(controller) {};
     virtual ~M_ModeInterface() = default;
     
-    // Mouse Events
+    // -- Mouse Events --
     virtual void onMouseClick(QMouseEvent *event, const QVector3D& worldPos) = 0;
     virtual void onMouseMove(QMouseEvent *event, const QVector3D& worldPos) = 0;
 
-
-    // Default Implementations 
+    // -- Default Implementations --
     virtual inline std::shared_ptr<Point> nearestPointSelection(QMouseEvent *event, const QVector3D& worldPos, char hiddenAxis) {
 
         // TODO: here is another switch in the controller, check if one of those is redundant
@@ -33,6 +32,10 @@ public:
                 nearestPoint = controller->getNearestPoint(worldPos.x(), worldPos.y(), 'z');
                 break;
             case '0':
+
+                //TODO: values are not correct since pints that are not directly on horizon dont get selected. Points on Horizon get selected,
+                    // so the horizon plane is correct (at least for points dicrectly on the horizon) 
+                    // Check how to properly ignore the hidden axis or get its real 3d value in screenToWorld
                 nearestPoint = controller->getNearestPoint(worldPos.x(), worldPos.y(), worldPos.z());
                 break;
             default:
