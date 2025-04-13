@@ -1,2 +1,3 @@
 libqpxx-dev
 qt
+running PostgreSQL Server (add credentials in env file)
