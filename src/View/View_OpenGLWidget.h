@@ -221,6 +221,13 @@ protected:
     inline virtual void updateBuffers() {
         //TODO: Check if for loops can be optimized for performance, think about adding temp elements to the VBOs for persistent elements
 
+        updatePoints();
+        updateTempPoints();
+        updateLines();
+        updateTempLines();
+    }
+
+    inline void updatePoints() {
         // Update points
         std::vector<float> newPointData;
         for (const std::shared_ptr<Point>& point : model->getPoints()) {
@@ -238,7 +245,9 @@ protected:
             glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
             glBufferData(GL_ARRAY_BUFFER, pointData.size() * sizeof(float), pointData.data(), GL_DYNAMIC_DRAW);
         }
+    }
 
+    inline void updateTempPoints() {
         // Update temporary points
         std::vector<float> newTempPointData;
         for (const TempPoint& point : model->getTempPoints()) {
@@ -256,7 +265,9 @@ protected:
             glBindBuffer(GL_ARRAY_BUFFER, tempPointVBO);
             glBufferData(GL_ARRAY_BUFFER, tempPointData.size() * sizeof(float), tempPointData.data(), GL_DYNAMIC_DRAW);
         }
+    }
 
+    inline void updateLines() {
         // Update lines
         std::vector<float> newLineData;
         for (const std::shared_ptr<Line>& line : model->getLines()) {
@@ -283,7 +294,9 @@ protected:
             glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
             glBufferData(GL_ARRAY_BUFFER, lineData.size() * sizeof(float), lineData.data(), GL_DYNAMIC_DRAW);
         }
+    }
 
+    inline void updateTempLines() {
         // Update temp lines
         std::vector<float> newTempLineData;
         for (const TempLine& line : model->getTempLines()) {
@@ -864,7 +877,9 @@ protected:
     std::vector<float> gridData;
 
     float gridSize;
-    float horizon;
+    float horizon; 
+    // TODO: Add specific Horizon for each Dimension and keep those consistent across views. 
+    // Add "Origin" Coordinate that gets calculated at the Intersection of the horizon planes.
 
     // ----- Camera Position -----
     QVector3D cameraPosition;
