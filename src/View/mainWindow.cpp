@@ -207,7 +207,7 @@ void mainWindow::createTopButtonBar() {
  readSQLcomposedObjects->setToolTip("Read SQL Composed Objects");
  readSQLcomposedObjects->show();
 
- QObject::connect(readSQLcomposedObjects, SIGNAL(clicked()), controller, SLOT(readSQLComposedObjects()));
+ QObject::connect(readSQLcomposedObjects, SIGNAL(clicked()), controller, SLOT(readSQLRootComposedObjects()));
 
  buttonLayout->addWidget(readSQLcomposedObjects);
 }
@@ -408,7 +408,7 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  setXYView();
  
- 
+
  QObject::connect(freeView, &Free_OpenGLWidget::horizonChanged, this, &mainWindow::updateHorizon);
 
  // ----- Layers Widget -----

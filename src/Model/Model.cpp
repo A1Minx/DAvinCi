@@ -80,6 +80,20 @@ std::vector<std::shared_ptr<Line>> Model::getLines() const
     return lines;
 }
 
+std::vector<std::shared_ptr<ComposedObject>> Model::getComposedObjects() const
+{
+    return composedObjects;
+}
+
+std::shared_ptr<ComposedObject> Model::getComposedObject(int id) const
+{
+    for (std::shared_ptr<ComposedObject> composedObject : composedObjects)
+    {
+        if (composedObject->getID() == id) return composedObject;
+    }
+    return nullptr;
+}
+
 std::shared_ptr<PointSpec> Model::getPointSpec(std::string name)
 {
     for (std::shared_ptr<PointSpec> spec : pointSpecs)

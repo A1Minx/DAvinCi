@@ -16,7 +16,8 @@ class SQLServer {
 
         std::vector<std::shared_ptr<Line>> readSQLLines();
         std::vector<std::shared_ptr<Point>> readSQLPoints();
-        std::vector<std::shared_ptr<ComposedObject>> readSQLComposedObjects();
+        std::vector<std::shared_ptr<ComposedObject>> readSQLRootComposedObjects();
+        std::vector<std::shared_ptr<ComposedObject>> readSQLChildrenComposedObjects(int parent_id);
         std::vector<std::shared_ptr<PointSpec>> readSQLPointSpec();
         std::vector<std::shared_ptr<LineSpec>> readSQLLineSpec();
 

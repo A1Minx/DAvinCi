@@ -64,6 +64,7 @@ public:
     std::shared_ptr<LineSpec> getLineSpec(int id);
     std::shared_ptr<PointSpec> addPointSpec(std::string name, float color[4], float size, int id);
     std::shared_ptr<LineSpec> addLineSpec(std::string name, float color[4], float width, int id);   
+    std::shared_ptr<ComposedObject> getComposedObject(int id) const;
 private:
     std::vector<std::shared_ptr<Point>> points;
     std::vector<std::shared_ptr<Line>> lines;

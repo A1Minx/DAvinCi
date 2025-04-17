@@ -241,9 +241,12 @@ void Controller::readSQLPoints()
     model->sqlServer->readSQLPoints();
 }
 
-void Controller::readSQLComposedObjects()
+void Controller::readSQLRootComposedObjects()
 {
-    model->sqlServer->readSQLComposedObjects();
+    std::vector<std::shared_ptr<ComposedObject>> rootComposedObjects = model->sqlServer->readSQLRootComposedObjects();
+    for (const auto& composedObject : rootComposedObjects) {
+        model->sqlServer->readSQLChildrenComposedObjects(composedObject->getID());
+    }
 }
 
 

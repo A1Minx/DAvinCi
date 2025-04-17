@@ -63,10 +63,16 @@ SQLServer::SQLServer(Model *model)
     checkResult(readLineSpec);
 
 
-    // -- readComposedObjects
-    const char *readComposedObjectsQuery = "SELECT * FROM composedObjects";
-    PGresult *readComposedObjects = PQprepare(connection, "readComposedObjects", readComposedObjectsQuery, 0, NULL);
-    checkResult(readComposedObjects);
+    // -- readRootComposedObjects
+    const char *readRootComposedObjectsQuery = "SELECT * FROM composedObjects WHERE Parent_ID IS NULL";
+    PGresult *readRootComposedObjects = PQprepare(connection, "readRootComposedObjects", readRootComposedObjectsQuery, 0, NULL);
+    checkResult(readRootComposedObjects);
+
+    // -- readChildrenComposedObjects   
+    const char *readChildrenComposedObjectsQuery = "SELECT * FROM composedObjects WHERE Parent_ID = $1";
+    PGresult *readChildrenComposedObjects = PQprepare(connection, "readChildrenComposedObjects", readChildrenComposedObjectsQuery, 1, NULL);
+    checkResult(readChildrenComposedObjects);
+
 }
 
 SQLServer::~SQLServer()
@@ -220,14 +226,53 @@ std::vector<std::shared_ptr<Line>> SQLServer::readSQLLines()
     return lines;
 }
 
-
-std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLComposedObjects()
+std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLChildrenComposedObjects(int parent_id)
 {
-    std::vector<std::shared_ptr<ComposedObject>> composedObjects;
+    std::vector<std::shared_ptr<ComposedObject>> childrenComposedObjects;
+    try {
+        qDebug() << "reading SQL Children Composed Objects";
+
+        char parent_id_str[32];
+        snprintf(parent_id_str, sizeof(parent_id_str), "%d", parent_id);
+
+        const char *parVal[1] = {parent_id_str};
+
+        PGresult *result = PQexecPrepared(connection, "readChildrenComposedObjects", 1, parVal, NULL, NULL, 0);
+        checkResult(result);
+
+        int rows = PQntuples(result);
+        int cols = PQnfields(result);
+
+        for (int row = 0; row < rows; row++) {
+            int id = std::stoi(PQgetvalue(result, row, 0));
+            std::string name = PQgetvalue(result, row, 1);
+            std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(id, name, model->getComposedObject(parent_id), parent_id);
+            childrenComposedObjects.push_back(composedObject);
+        }
+
+        for (const auto& composedObject : childrenComposedObjects) {
+            std::cout << "Reading Children Composed Object: (" << composedObject->getName() << ")" << std::endl;
+        }
+
+        PQclear(result);
+
+    } catch (const std::exception &e) {
+        qDebug() << "SQL read Error: Children Composed Object";
+    }
+    return childrenComposedObjects;
+}
+
+        
+        
+
+
+std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLRootComposedObjects()
+{
+    std::vector<std::shared_ptr<ComposedObject>> RootComposedObjects;
     try {
             qDebug() << "reading SQL Composed Objects";
 
-            PGresult *result = PQexecPrepared(connection, "readComposedObjects", 0, NULL, NULL, NULL, 0);
+            PGresult *result = PQexecPrepared(connection, "readRootComposedObjects", 0, NULL, NULL, NULL, 0);
             checkResult(result);
 
             int rows = PQntuples(result);
@@ -236,21 +281,21 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLComposedObjects()
             for (int row = 0; row < rows; row++) {
                 int id = std::stoi(PQgetvalue(result, row, 0));
                 std::string name = PQgetvalue(result, row, 1);
-                std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(name, nullptr); //TODO: Actually get Parent from DB, only use Null if there is no Parent in DB
+                std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(id, name, nullptr, id);
                 
-                composedObjects.push_back(composedObject);
+                RootComposedObjects.push_back(composedObject);
             }
 
-            for (const auto& composedObject : composedObjects) {
-                std::cout << "Composed Object: (" << composedObject->getName() << ")" << std::endl;
+            for (const auto& composedObject : RootComposedObjects) {
+                std::cout << "Reading Composed Object: (" << composedObject->getName() << ")" << std::endl;
             }
             
             PQclear(result);
 
     } catch (const std::exception &e) {
-        qDebug() << "SQL read Error: Composed Object";
+        qDebug() << "SQL read Error: Root Composed Object";
     }
-    return composedObjects;
+    return RootComposedObjects;
 }
 
 

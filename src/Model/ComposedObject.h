@@ -16,38 +16,42 @@ class ComposedObject : public Object3D {
 
 public:
 
-    ComposedObject(std::string name, Object3D* parent);
+    ComposedObject(int id, std::string name, std::shared_ptr<ComposedObject> parent, int parent_id);
     ~ComposedObject();
 
-    void addChild(Object3D* child) { children.push_back(child); }
-    void removeChild(Object3D* child) { children.erase(::std::remove(children.begin(), children.end(), child), children.end()); }
-    std::vector<Object3D*> getChildren() const { return children; }
+    void addChild(std::shared_ptr<ComposedObject> child) { children.push_back(child); }
+    void removeChild(std::shared_ptr<ComposedObject> child) { children.erase(::std::remove(children.begin(), children.end(), child), children.end()); }
+    std::vector<std::shared_ptr<ComposedObject>> getChildren() const { return children; }
 
-    void addPoint(Point* point) { points.push_back(point); }
-    void removePoint(Point* point) { points.erase(::std::remove(points.begin(), points.end(), point), points.end()); }
-    std::vector<Point*> getPoints() const { return points; }
+    void addPoint(std::shared_ptr<Point> point) { points.push_back(point); }
+    void removePoint(std::shared_ptr<Point> point) { points.erase(::std::remove(points.begin(), points.end(), point), points.end()); }
+    std::vector<std::shared_ptr<Point>> getPoints() const { return points; }
 
-    void addLine(Line* line) { lines.push_back(line); }
-    void removeLine(Line* line) { lines.erase(::std::remove(lines.begin(), lines.end(), line), lines.end()); }
-    std::vector<Line*> getLines() const { return lines; }
+    void addLine(std::shared_ptr<Line> line) { lines.push_back(line); }
+    void removeLine(std::shared_ptr<Line> line) { lines.erase(::std::remove(lines.begin(), lines.end(), line), lines.end()); }
+    std::vector<std::shared_ptr<Line>> getLines() const { return lines; }
 
     void setName(std::string name) { this->name = name; }
     std::string getName() { return name; }
 
-    void setParent(Object3D* parent) { this->parent = parent; }
-    Object3D* getParent() { return parent; }
+    void setParent(std::shared_ptr<ComposedObject> parent) { this->parent = parent; }
+    std::shared_ptr<ComposedObject> getParent() { return parent; }
 
+    int getID() { return id; }
+    int getParentID() { return parent_id; }
 
 
 
 protected:
 
     std::string name;
+    int id;
+    int parent_id;
 
-    Object3D* parent;
-    std::vector<Object3D*> children;
-    std::vector<Point*> points;
-    std::vector<Line*> lines;
+    std::shared_ptr<ComposedObject> parent;
+    std::vector<std::shared_ptr<ComposedObject>> children;
+    std::vector<std::shared_ptr<Point>> points;
+    std::vector<std::shared_ptr<Line>> lines;
 
 };
 

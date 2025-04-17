@@ -47,6 +47,8 @@ INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values 
 
 INSERT INTO composedObjects (Parent_ID, Name) Values (NULL, 'Quaxl das Quadratl');
 
+INSERT INTO composedObjects (Parent_ID, Name) Values (1, 'Flora die Fläche');
+
 INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 1);
 INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 2);
 INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 3);
