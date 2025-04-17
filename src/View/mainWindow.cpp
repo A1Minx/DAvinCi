@@ -145,6 +145,13 @@ void mainWindow::setGridPrecision() {
   }
 }
 
+void mainWindow::updateHorizon(float horizon) {
+  if (view && horizonLineEdit) {
+    horizonLineEdit->setText(QString::number(horizon));
+    view->setHorizon(horizon);
+  }
+}
+
 
 // ----- Menu -----
 void mainWindow::createMenus() {
@@ -313,7 +320,6 @@ void mainWindow::createBottomButtonBar() {
  
  buttonLayoutBottom->addWidget(freeViewContainer);
 
-
 // ----- View Property edit -----
  QLabel *horizonLabel = new QLabel("Horizon:", this);
  buttonLayoutBottom->addWidget(horizonLabel);
@@ -391,10 +397,15 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
  view = nullptr;
 
  setXYView();
+ 
+ 
+ QObject::connect(freeView, &Free_OpenGLWidget::horizonChanged, this, &mainWindow::updateHorizon);
 
  // ----- Layers Widget -----
  QWidget *emptyContainer = new QWidget(this);
  emptyContainer->setMinimumWidth(200);
  emptyContainer->setStyleSheet("border: 1px solid red;");
  mainLayout->addWidget(emptyContainer, 1, 1);
+
+
 }

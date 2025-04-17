@@ -73,12 +73,23 @@ void Free_OpenGLWidget::UpdateMatrices()
 // Override wheelEvent to disable zooming
 void Free_OpenGLWidget::wheelEvent(QWheelEvent *event)
 {
-    // Do nothing - zooming is disabled
+    int delta = event->delta();
 
-    if (event->delta() < 0) {
-        cameraDistance *= 1.1f;
+    if (ctrlPressed) {
+        if (delta < 0) {
+            horizon -= 10;
+        } else {
+            horizon += 10;
+        }
+        
+        //TODO: add configurable step size
+        emit horizonChanged(horizon);
     } else {
-        cameraDistance /= 1.1f;
+        if (delta < 0) {
+            cameraDistance *= 1.1f;
+        } else {
+            cameraDistance /= 1.1f;
+        }
     }
 
     UpdateMatrices();

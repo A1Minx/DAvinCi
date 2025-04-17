@@ -24,6 +24,7 @@ class mainWindow : public QMainWindow
     
 public:
     explicit mainWindow(QWidget *parent = nullptr);
+    void updateHorizon(float horizon);
 
 private:
     Model *model;

@@ -13,6 +13,9 @@ public:
     void UpdateMatrices() override;
     QVector3D screenToWorld(int x, int y) override;
 
+signals:
+    void horizonChanged(float value);
+
 private:
     void updateBuffers() override;
 
