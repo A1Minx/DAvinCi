@@ -63,7 +63,6 @@ QVector3D Orth_YZ_OpenGLWidget::screenToWorld(int x, int y) {
 
 void Orth_YZ_OpenGLWidget::updateBuffers() {
     View_OpenGLWidget::updateBuffers();
-
     GridData('x', horizon, gridSize, gridExtend, gridExtend, gridWidth, gridColor);
 }
 

@@ -220,17 +220,60 @@ protected:
 
     inline virtual void updateBuffers() {
         //TODO: Check if for loops can be optimized for performance, think about adding temp elements to the VBOs for persistent elements
+        qDebug() << "Updating buffers";
+        updateComposedObjects(model->getRootComposedObjects());
+        updateTempPoints(model->getTempPoints());
+        updateTempLines(model->getTempLines());
 
-        updatePoints();
-        updateTempPoints();
-        updateLines();
-        updateTempLines();
+        
     }
 
-    inline void updatePoints() {
+    inline void updateComposedObjects(std::vector<std::shared_ptr<ComposedObject>> composedObjects) {
+        
+        std::vector<std::shared_ptr<Point>> points;
+        std::vector<std::shared_ptr<Line>> lines;
+        std::vector<std::shared_ptr<ComposedObject>> children;
+
+        for (const std::shared_ptr<ComposedObject>& composedObject : composedObjects) {
+            qDebug() << "Updating composed object";
+            if (composedObject) {
+                std::vector<std::shared_ptr<Point>> composedPoints = composedObject->getPoints();
+                if (!composedPoints.empty()) {
+                    qDebug() << "Inserting points";
+                    points.insert(points.end(), composedPoints.begin(), composedPoints.end());
+                }
+                std::vector<std::shared_ptr<Line>> composedLines = composedObject->getLines();
+                if (!composedLines.empty()) {
+                    qDebug() << "Inserting lines";
+                    lines.insert(lines.end(), composedLines.begin(), composedLines.end());
+                }
+                std::vector<std::shared_ptr<ComposedObject>> composedChildren = composedObject->getChildren();
+                if (!composedChildren.empty()) {
+                    qDebug() << "Inserting children";
+                    children.insert(children.end(), composedChildren.begin(), composedChildren.end());
+                }
+            }
+        }
+
+        qDebug() << "Updating points";
+        if (!points.empty()) {
+            updatePoints(points);
+        }
+        qDebug() << "Updating lines";
+        if (!lines.empty()) {
+            updateLines(lines);
+        }
+        qDebug() << "Updating children";
+        if (!children.empty()) {
+            updateComposedObjects(children);
+        }
+
+    }
+
+    inline void updatePoints(std::vector<std::shared_ptr<Point>> points) {
         // Update points
         std::vector<float> newPointData;
-        for (const std::shared_ptr<Point>& point : model->getPoints()) {
+        for (const std::shared_ptr<Point>& point : points) {
             newPointData.push_back(point->getX());
             newPointData.push_back(point->getY());
             newPointData.push_back(point->getZ());
@@ -247,10 +290,10 @@ protected:
         }
     }
 
-    inline void updateTempPoints() {
+    inline void updateTempPoints(std::vector<TempPoint> tempPoints) {
         // Update temporary points
         std::vector<float> newTempPointData;
-        for (const TempPoint& point : model->getTempPoints()) {
+        for (const TempPoint& point : tempPoints) {
             newTempPointData.push_back(point.x);
             newTempPointData.push_back(point.y);
             newTempPointData.push_back(point.z);
@@ -267,10 +310,10 @@ protected:
         }
     }
 
-    inline void updateLines() {
+    inline void updateLines(std::vector<std::shared_ptr<Line>> lines) {
         // Update lines
         std::vector<float> newLineData;
-        for (const std::shared_ptr<Line>& line : model->getLines()) {
+        for (const std::shared_ptr<Line>& line : lines) {
             newLineData.push_back(line->getP1()->getX());
             newLineData.push_back(line->getP1()->getY());
             newLineData.push_back(line->getP1()->getZ());
@@ -296,10 +339,10 @@ protected:
         }
     }
 
-    inline void updateTempLines() {
+    inline void updateTempLines(std::vector<TempLine> tempLines) {
         // Update temp lines
         std::vector<float> newTempLineData;
-        for (const TempLine& line : model->getTempLines()) {
+        for (const TempLine& line : tempLines) {
             newTempLineData.push_back(line.x1);
             newTempLineData.push_back(line.y1);
             newTempLineData.push_back(line.z1);

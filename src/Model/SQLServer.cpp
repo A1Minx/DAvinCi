@@ -48,10 +48,20 @@ SQLServer::SQLServer(Model *model)
     PGresult *readPointByID = PQprepare(connection, "readPointByID", readPointByIDQuery, 1, NULL);
     checkResult(readPointByID);
 
+    // -- read point by parent
+    const char *readPointByParentQuery = "SELECT Points.* FROM Points RIGHT JOIN Obj2Point ON Points.Points_ID = Obj2Point.Point_ID WHERE Obj2Point.Object_ID = $1";
+    PGresult *readPointByParent = PQprepare(connection, "readPointByParent", readPointByParentQuery, 1, NULL);
+    checkResult(readPointByParent);
+
     // -- readLines
     const char *readLinesQuery = "SELECT * FROM Lines";
     PGresult *readLines = PQprepare(connection, "readLines", readLinesQuery, 0, NULL);
     checkResult(readLines);
+
+    // -- readLinesByParent
+    const char *readLinesByParentQuery = "SELECT * FROM Lines RIGHT JOIN Obj2Line ON Lines.Lines_ID = Obj2Line.Line_ID WHERE Obj2Line.Object_ID = $1";
+    PGresult *readLinesByParent = PQprepare(connection, "readLinesByParent", readLinesByParentQuery, 1, NULL);
+    checkResult(readLinesByParent);
 
     // -- readSpec
     const char *readPointSpecQuery = "SELECT * FROM Point_spec LEFT JOIN Colors ON Colors.Color_ID = Point_spec.Color";
@@ -99,6 +109,48 @@ void SQLServer::checkResult(PGresult *result)
 
 // ----- Actions -----
 // -- read --
+
+std::vector<std::shared_ptr<Point>> SQLServer::readPointByParent(int parent_id)
+{
+    std::vector<std::shared_ptr<Point>> points;
+    try {
+        qDebug() << "reading SQL Points by parent";
+
+        char parent_id_str[32];
+        snprintf(parent_id_str, sizeof(parent_id_str), "%d", parent_id);
+        
+        const char *parVal[1] = {parent_id_str};
+
+        PGresult *result = PQexecPrepared(connection, "readPointByParent", 1, parVal, NULL, NULL, 0);
+        checkResult(result);
+
+        int rows = PQntuples(result);
+        int cols = PQnfields(result);
+
+        for (int row = 0; row < rows; row++) {
+            int id = std::stoi(PQgetvalue(result, row, 0));
+            float x = std::stof(PQgetvalue(result, row, 1));
+            float y = std::stof(PQgetvalue(result, row, 2));
+            float z = std::stof(PQgetvalue(result, row, 3));
+            int spec_id = std::stoi(PQgetvalue(result, row, 4));
+
+            std::shared_ptr<PointSpec> spec = model->getPointSpec(spec_id);
+            std::shared_ptr<Point> point = std::make_shared<Point>(x, y, z, spec, id);
+            points.push_back(point);
+        }
+
+        for (const auto& point : points) {
+            std::cout << "ID: " << point->getID() << "\t" << point->getX() << "\t" << point->getY() << "\t" << point->getZ() << std::endl;
+        }
+
+        PQclear(result);
+        
+    } catch (const std::exception &e) {
+        qDebug() << "SQL read Error: Point by parent";
+    }
+    return points;
+}
+
 
 std::shared_ptr<Point> SQLServer::readPointByID(int id)
 {
@@ -184,6 +236,54 @@ std::vector<std::shared_ptr<Point>> SQLServer::readSQLPoints()
     return points;
 }
 
+std::vector<std::shared_ptr<Line>> SQLServer::readLineByParent(int parent_id)
+{
+    std::vector<std::shared_ptr<Line>> lines;
+    try {
+        qDebug() << "reading SQL Lines by parent";
+
+        char parent_id_str[32];
+        snprintf(parent_id_str, sizeof(parent_id_str), "%d", parent_id);
+
+        const char *parVal[1] = {parent_id_str};
+
+        PGresult *result = PQexecPrepared(connection, "readLinesByParent", 1, parVal, NULL, NULL, 0);
+        checkResult(result);
+
+        std::shared_ptr<LineSpec> spec;
+
+        int rows = PQntuples(result);
+        int cols = PQnfields(result);
+
+        for (int row = 0; row < rows; row++) {
+            int p1_ID = std::stoi(PQgetvalue(result, row, 1));
+            int p2_ID = std::stoi(PQgetvalue(result, row, 2));
+            std::shared_ptr<Point> p1 = readPointByID(p1_ID);
+            std::shared_ptr<Point> p2 = readPointByID(p2_ID);
+            int spec_id = std::stoi(PQgetvalue(result, row, 3));
+            if (spec = model->getLineSpec(spec_id)) {
+                lines.push_back(std::make_shared<Line>(p1, p2, spec));
+            } else {
+                readSQLLineSpec();
+                spec = model->getLineSpec(spec_id);
+                lines.push_back(std::make_shared<Line>(p1, p2, spec));
+            }
+        }
+
+        for (const auto& line : lines) {
+            std::cout << "Line: (" << line->getP1()->getID() << ", " << line->getP1()->getX() << ", " << line->getP1()->getY() << ", " << line->getP1()->getZ() << ") -> (" 
+                                   << line->getP2()->getID() << ", " << line->getP2()->getX() << ", " << line->getP2()->getY() << ", " << line->getP2()->getZ() << ")" << std::endl;
+        }
+
+        PQclear(result);
+
+    } catch (const std::exception &e) {
+        qDebug() << "SQL read Error: Line";
+    }
+    return lines;
+}
+
+
 std::vector<std::shared_ptr<Line>> SQLServer::readSQLLines()
 {
     std::vector<std::shared_ptr<Line>> lines;
@@ -246,7 +346,7 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLChildrenComposedO
         for (int row = 0; row < rows; row++) {
             int id = std::stoi(PQgetvalue(result, row, 0));
             std::string name = PQgetvalue(result, row, 1);
-            std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(id, name, model->getComposedObject(parent_id), parent_id);
+            std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(id, name, model->getRootComposedObject(parent_id), parent_id);
             childrenComposedObjects.push_back(composedObject);
         }
 
@@ -288,6 +388,16 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLRootComposedObjec
 
             for (const auto& composedObject : RootComposedObjects) {
                 std::cout << "Reading Composed Object: (" << composedObject->getName() << ")" << std::endl;
+                for (const auto& child : readSQLChildrenComposedObjects(composedObject->getID())) {
+                    composedObject->addChild(child);
+                }
+                for (const auto& point : readPointByParent(composedObject->getID())) {
+                    composedObject->addPoint(point);
+                }
+                for (const auto& line : readLineByParent(composedObject->getID())) {
+                    composedObject->addLine(line);
+                }
+
             }
             
             PQclear(result);

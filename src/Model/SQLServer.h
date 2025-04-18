@@ -22,7 +22,8 @@ class SQLServer {
         std::vector<std::shared_ptr<LineSpec>> readSQLLineSpec();
 
         std::shared_ptr<Point> readPointByID(int id);
-
+        std::vector<std::shared_ptr<Point>> readPointByParent(int parent_id);
+        std::vector<std::shared_ptr<Line>> readLineByParent(int parent_id);
         int newPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec);
         void newLine(int p1_ID, int p2_ID, std::shared_ptr<LineSpec> spec);
 

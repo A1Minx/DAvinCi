@@ -6,10 +6,13 @@ Model::Model()
 {
     this->sqlServer = new SQLServer(this);
 
+    //TODO: Update Local Model when SQL Server is updated from different client
+    
     pointSpecs = sqlServer->readSQLPointSpec();
     lineSpecs = sqlServer->readSQLLineSpec();
-    points = sqlServer->readSQLPoints();
-    lines = sqlServer->readSQLLines();
+    RootComposedObjects = sqlServer->readSQLRootComposedObjects();
+    //points = sqlServer->readSQLPoints();
+    //lines = sqlServer->readSQLLines();
     
 }
 
@@ -80,14 +83,14 @@ std::vector<std::shared_ptr<Line>> Model::getLines() const
     return lines;
 }
 
-std::vector<std::shared_ptr<ComposedObject>> Model::getComposedObjects() const
+std::vector<std::shared_ptr<ComposedObject>> Model::getRootComposedObjects() const
 {
-    return composedObjects;
+    return RootComposedObjects;
 }
 
-std::shared_ptr<ComposedObject> Model::getComposedObject(int id) const
+std::shared_ptr<ComposedObject> Model::getRootComposedObject(int id) const
 {
-    for (std::shared_ptr<ComposedObject> composedObject : composedObjects)
+    for (std::shared_ptr<ComposedObject> composedObject : RootComposedObjects)
     {
         if (composedObject->getID() == id) return composedObject;
     }
