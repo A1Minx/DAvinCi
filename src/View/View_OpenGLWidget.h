@@ -235,40 +235,68 @@ protected:
         std::vector<std::shared_ptr<ComposedObject>> children;
 
         for (const std::shared_ptr<ComposedObject>& composedObject : composedObjects) {
-            qDebug() << "Updating composed object";
             if (composedObject) {
                 std::vector<std::shared_ptr<Point>> composedPoints = composedObject->getPoints();
                 if (!composedPoints.empty()) {
-                    qDebug() << "Inserting points";
                     points.insert(points.end(), composedPoints.begin(), composedPoints.end());
                 }
                 std::vector<std::shared_ptr<Line>> composedLines = composedObject->getLines();
                 if (!composedLines.empty()) {
-                    qDebug() << "Inserting lines";
                     lines.insert(lines.end(), composedLines.begin(), composedLines.end());
                 }
                 std::vector<std::shared_ptr<ComposedObject>> composedChildren = composedObject->getChildren();
                 if (!composedChildren.empty()) {
-                    qDebug() << "Inserting children";
                     children.insert(children.end(), composedChildren.begin(), composedChildren.end());
                 }
             }
         }
 
-        qDebug() << "Updating points";
+        if (!children.empty()) {
+            appendComposedObjects(children, points, lines);
+        }
+
         if (!points.empty()) {
             updatePoints(points);
         }
-        qDebug() << "Updating lines";
+
         if (!lines.empty()) {
             updateLines(lines);
         }
-        qDebug() << "Updating children";
-        if (!children.empty()) {
-            //TODO: this overwrites the parent, fix that
-            updateComposedObjects(children);
+    }
+
+    inline void appendComposedObjects(
+        const std::vector<std::shared_ptr<ComposedObject>>& objects,
+        std::vector<std::shared_ptr<Point>>& pointsAccumulator,
+        std::vector<std::shared_ptr<Line>>& linesAccumulator) {
+        
+        std::vector<std::shared_ptr<ComposedObject>> nextLevelChildren;
+
+        for (const std::shared_ptr<ComposedObject>& obj : objects) {
+            if (obj) {
+                
+                std::vector<std::shared_ptr<Point>> childPoints = obj->getPoints();
+                if (!childPoints.empty()) {
+                    pointsAccumulator.insert(pointsAccumulator.end(), childPoints.begin(), childPoints.end());
+                }
+                
+                
+                std::vector<std::shared_ptr<Line>> childLines = obj->getLines();
+                if (!childLines.empty()) {
+                    linesAccumulator.insert(linesAccumulator.end(), childLines.begin(), childLines.end());
+                }
+                
+                
+                std::vector<std::shared_ptr<ComposedObject>> grandchildren = obj->getChildren();
+                if (!grandchildren.empty()) {
+                    nextLevelChildren.insert(nextLevelChildren.end(), grandchildren.begin(), grandchildren.end());
+                }
+            }
         }
 
+        
+        if (!nextLevelChildren.empty()) {
+            appendComposedObjects(nextLevelChildren, pointsAccumulator, linesAccumulator);
+        }
     }
 
     inline void updatePoints(std::vector<std::shared_ptr<Point>> points) {
