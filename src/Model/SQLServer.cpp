@@ -354,6 +354,22 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLChildrenComposedO
             std::cout << "Reading Children Composed Object: (" << composedObject->getName() << ")" << std::endl;
         }
 
+
+            // -- read children
+        for (const auto& composedObject : childrenComposedObjects) {
+            std::cout << "Reading Children Composed Object: (" << composedObject->getName() << ")" << std::endl;
+            for (const auto& child : readSQLChildrenComposedObjects(composedObject->getID())) {
+                composedObject->addChild(child);
+            }
+            for (const auto& point : readPointByParent(composedObject->getID())) {
+                composedObject->addPoint(point);
+            }
+            for (const auto& line : readLineByParent(composedObject->getID())) {
+                composedObject->addLine(line);
+            }
+        }
+
+
         PQclear(result);
 
     } catch (const std::exception &e) {
@@ -386,6 +402,7 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLRootComposedObjec
                 RootComposedObjects.push_back(composedObject);
             }
 
+            // -- read children
             for (const auto& composedObject : RootComposedObjects) {
                 std::cout << "Reading Composed Object: (" << composedObject->getName() << ")" << std::endl;
                 for (const auto& child : readSQLChildrenComposedObjects(composedObject->getID())) {
@@ -397,7 +414,6 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLRootComposedObjec
                 for (const auto& line : readLineByParent(composedObject->getID())) {
                     composedObject->addLine(line);
                 }
-
             }
             
             PQclear(result);

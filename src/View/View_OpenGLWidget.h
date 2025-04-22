@@ -265,6 +265,7 @@ protected:
         }
         qDebug() << "Updating children";
         if (!children.empty()) {
+            //TODO: this overwrites the parent, fix that
             updateComposedObjects(children);
         }
 

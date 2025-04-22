@@ -21,6 +21,8 @@ INSERT INTO Line_spec (Spec_ID, Color, Width, Name) Values (4, 6, 5.0, 'thic gre
 INSERT INTO Line_spec (Spec_ID, Color, Width, Name) Values (5, 2, 0.5, 'faded green');
 
 
+INSERT INTO composedObjects (Parent_ID, Name) Values (NULL, 'Quaxl das Quadratl');
+
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (100, 100, 100, 1);
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (100, 200, 100, 1);
 INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (400, 100, 100, 1);
@@ -45,10 +47,6 @@ INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values 
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (2, 7, 1);
 INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (3, 8, 1);
 
-INSERT INTO composedObjects (Parent_ID, Name) Values (NULL, 'Quaxl das Quadratl');
-
-INSERT INTO composedObjects (Parent_ID, Name) Values (1, 'Flora die Fläche');
-
 INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 1);
 INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 2);
 INSERT INTO Obj2Line (Object_ID, Line_ID) Values (1, 3);
@@ -72,6 +70,19 @@ INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 7);
 INSERT INTO Obj2Point (Object_ID, Point_ID) Values (1, 8);
 
 
+
+
+INSERT INTO composedObjects (Parent_ID, Name) Values (1, 'Flora die Fläche');
+
+INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values (250, 150, 100, 1);
+
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (9, 1, 1);
+INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values (9, 2, 1);
+
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (2, 13);
+INSERT INTO Obj2Line (Object_ID, Line_ID) Values (2, 14);
+
+INSERT INTO Obj2Point (Object_ID, Point_ID) Values (2, 9);
 
 
 
