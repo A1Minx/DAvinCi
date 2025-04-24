@@ -29,14 +29,26 @@ SQLServer::SQLServer(Model *model)
     // -- InsertPoint
 
     //3D
-    const char *InsertPoint3DQuery = "INSERT INTO Points (Points_x, Points_y, Points_z, Spec) Values ($1, $2, $3, $4)";
+    const char *InsertPoint3DQuery = 
+        "INSERT INTO Points (Points_x, Points_y, Points_z, Spec) VALUES ($1, $2, $3, $4) RETURNING Points_ID";
     PGresult *insertPoint3D = PQprepare(connection, "insertPoint3D", InsertPoint3DQuery, 4, NULL);
     checkResult(insertPoint3D);
 
+    const char *InsertObj2PointQuery = 
+        "INSERT INTO Obj2Point (Object_ID, Point_ID) VALUES ($1, $2)";
+    PGresult *insertObj2Point = PQprepare(connection, "insertObj2Point", InsertObj2PointQuery, 2, NULL);
+    checkResult(insertObj2Point);
+
     // -- insertLine
-    const char *InsertLineQuery = "INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) Values ($1, $2, $3)";
+    const char *InsertLineQuery = 
+        "INSERT INTO Lines (LINES_PointA_Points_ID, Lines_PointB_Points_ID, Spec) VALUES ($1, $2, $3) RETURNING Lines_ID";
     PGresult *insertLine = PQprepare(connection, "insertLine", InsertLineQuery, 3, NULL);
     checkResult(insertLine);
+
+    const char *InsertObj2LineQuery = 
+        "INSERT INTO Obj2Line (Object_ID, Line_ID) VALUES ($1, $2)";
+    PGresult *insertObj2Line = PQprepare(connection, "insertObj2Line", InsertObj2LineQuery, 2, NULL);
+    checkResult(insertObj2Line);
 
     // -- readPoints
     const char *readPointsQuery = "SELECT * FROM Points";
@@ -505,58 +517,81 @@ std::vector<std::shared_ptr<LineSpec>> SQLServer::readSQLLineSpec()
 
 // -- write --
 
-int SQLServer::newPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec)
+int SQLServer::newPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec, int parent_id)
 {
-    char xS[32], yS[32], zS[32], specS[32];
+    int newID = -1;
+    char xS[32], yS[32], zS[32], specS[32], parent_idS[32];
 
     snprintf(xS, sizeof(xS), "%.6g", x);
     snprintf(yS, sizeof(yS), "%.6g", y);
     snprintf(zS, sizeof(zS), "%.6g", z);
     snprintf(specS, sizeof(specS), "%d", spec->getID());
+    snprintf(parent_idS, sizeof(parent_idS), "%d", parent_id);
 
-    const char *parVal[4] = {xS, yS, zS, specS};
+    const char *pointParVal[4] = {xS, yS, zS, specS};
 
     qDebug() << "Point: " << x << " " << y << " " << z << " " << spec->getID();
 
-
     try {
-            qDebug() << "writing Point in SQL";
+        qDebug() << "writing Point in SQL";
 
-            PGresult *result = PQexecPrepared(connection, "insertPoint3D", 4, parVal, NULL, NULL, 0);
-            checkResult(result);
+        PGresult *pointResult = PQexecPrepared(connection, "insertPoint3D", 4, pointParVal, NULL, NULL, 0);
+        checkResult(pointResult);
 
-            PQclear(result);
-
-        } catch (const std::exception &e) {
-            qDebug() << "SQL write Error";
-            qDebug() << e.what();
+        if (PQntuples(pointResult) > 0) {
+            newID = atoi(PQgetvalue(pointResult, 0, 0));
+            
+            char pointIdS[32];
+            snprintf(pointIdS, sizeof(pointIdS), "%d", newID);
+            const char *obj2pointParVal[2] = {parent_idS, pointIdS};
+            
+            PGresult *obj2pointResult = PQexecPrepared(connection, "insertObj2Point", 2, obj2pointParVal, NULL, NULL, 0);
+            checkResult(obj2pointResult);
+            PQclear(obj2pointResult);
         }
 
-        PGresult *idResult = PQexec(connection, "SELECT lastval()");
-        int newID = atoi(PQgetvalue(idResult, 0, 0));
-        PQclear(idResult);
-       
-        return newID;
+        PQclear(pointResult);
+
+    } catch (const std::exception &e) {
+        qDebug() << "SQL write Error";
+        qDebug() << e.what();
+    }
+    
+    return newID;
 }
 
-void SQLServer::newLine(int p1_ID, int p2_ID, std::shared_ptr<LineSpec> spec)
+void SQLServer::newLine(int p1_ID, int p2_ID, std::shared_ptr<LineSpec> spec, int parent_id)
 {
     try {
         qDebug() << "writing Line in SQL";
 
-        char p1_ID_str[32], p2_ID_str[32], specS[32];
+        char p1_ID_str[32], p2_ID_str[32], specS[32], parent_idS[32];
         snprintf(p1_ID_str, sizeof(p1_ID_str), "%d", p1_ID);
         snprintf(p2_ID_str, sizeof(p2_ID_str), "%d", p2_ID);
         snprintf(specS, sizeof(specS), "%d", spec->getID());
+        snprintf(parent_idS, sizeof(parent_idS), "%d", parent_id);
         
-        const char *parVal[3] = {p1_ID_str, p2_ID_str, specS};
-        PGresult *result = PQexecPrepared(connection, "insertLine", 3, parVal, NULL, NULL, 0);
-        checkResult(result);
+        const char *lineParVal[3] = {p1_ID_str, p2_ID_str, specS};
+        PGresult *lineResult = PQexecPrepared(connection, "insertLine", 3, lineParVal, NULL, NULL, 0);
+        checkResult(lineResult);
+        
+        if (PQntuples(lineResult) > 0) {
+            int lineId = atoi(PQgetvalue(lineResult, 0, 0));
+            
+            char lineIdS[32];
+            snprintf(lineIdS, sizeof(lineIdS), "%d", lineId);
+            const char *obj2lineParVal[2] = {parent_idS, lineIdS};
+            
+            PGresult *obj2lineResult = PQexecPrepared(connection, "insertObj2Line", 2, obj2lineParVal, NULL, NULL, 0);
+            checkResult(obj2lineResult);
+            PQclear(obj2lineResult);
+        }
 
-        PQclear(result);
+        PQclear(lineResult);
 
     } catch (const std::exception &e) {
         qDebug() << "SQL write Error";
+        qDebug() << e.what();
     }
 }
 

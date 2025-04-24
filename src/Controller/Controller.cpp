@@ -15,6 +15,8 @@ Controller::Controller(Model *model, View_OpenGLWidget *view)
     qDebug() << "currPointSpec: " << currPointSpec->getColor();
     this->currLineSpec = model->getLineSpec(2);
     qDebug() << "currLineSpec: " << currLineSpec->getColor();
+    //TODO: if no RootComposedObject is found, create one
+    this->currParentID = model->sqlServer->readSQLRootComposedObjects()[0]->getID();
 }
 
 void Controller::setView(View_OpenGLWidget *view)
@@ -175,16 +177,11 @@ std::shared_ptr<Point> Controller::getNearestPoint(float a, float b, char hidden
 
 
 
-void Controller::addShape()
-{
-    //TODO: Check if this can be used for all types of Shapes (Polymorphism)
-    model->addShape();
-    view->update();
-}
+
 
 void Controller::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec)
 {
-    model->addLine(p1, p2, spec);
+    model->addLine(p1, p2, spec, currParentID);
     view->update();
 }
 
@@ -194,27 +191,27 @@ std::shared_ptr<Point> Controller::addPoint(float x, float y, float z, std::shar
 
     switch (hiddenAxis) {
         case 'x':
-            point = model->addPoint(view->getHorizon(),y,z, spec);
+            point = model->addPoint(view->getHorizon(),y,z, spec, currParentID);
             view->update();
             return point;
         case 'y':
-            point = model->addPoint(x,view->getHorizon(),z, spec);
+            point = model->addPoint(x,view->getHorizon(),z, spec, currParentID);
             view->update();
             return point;
         case 'z':
-            point = model->addPoint(x,y,view->getHorizon(), spec);
+            point = model->addPoint(x,y,view->getHorizon(), spec, currParentID);
             view->update();
             return point;
         case '0':
             switch (view->getHorizonAxis()) {
                 case 'x':
-                    point = model->addPoint(view->getHorizon(),y,z, spec);
+                    point = model->addPoint(view->getHorizon(),y,z, spec, currParentID);
                     break;
                 case 'y':
-                    point = model->addPoint(x,view->getHorizon(),z, spec);
+                    point = model->addPoint(x,view->getHorizon(),z, spec, currParentID);
                     break;
                 case 'z':
-                    point = model->addPoint(x,y,view->getHorizon(), spec);
+                    point = model->addPoint(x,y,view->getHorizon(), spec, currParentID);
                     break;
                 default:
                     qDebug() << "Invalid horizon axis";
@@ -320,4 +317,16 @@ std::shared_ptr<PointSpec> Controller::getCurrPointSpec()
 std::shared_ptr<LineSpec> Controller::getCurrLineSpec()
 {
     return currLineSpec;
+}
+
+
+// ----- Parent ID Management -----
+void Controller::setCurrParentID(int id)
+{
+    currParentID = id;
+}
+
+int Controller::getCurrParentID()
+{
+    return currParentID;
 }

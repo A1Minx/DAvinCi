@@ -37,18 +37,18 @@ std::shared_ptr<LineSpec> Model::addLineSpec(std::string name, float color[4], f
     return spec;
 }
 
-std::shared_ptr<Point> Model::addPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec)
+std::shared_ptr<Point> Model::addPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec, int parent_id)
 {
-    int id = sqlServer->newPoint(x,y,z, spec);
+    int id = sqlServer->newPoint(x,y,z, spec, parent_id);
     std::shared_ptr<Point> point = std::make_shared<Point>(x,y,z, spec, id);
     points.push_back(point);
     return point;
 }
 
-void Model::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec)
+void Model::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec, int parent_id)
 {
     lines.push_back(std::make_shared<Line>(p1, p2, spec));
-    sqlServer->newLine(p1->getID(), p2->getID(), spec);
+    sqlServer->newLine(p1->getID(), p2->getID(), spec, parent_id);
 }
 
 // ----- Interactions with temporary Data -----

@@ -39,7 +39,6 @@ public slots:
 
 public:
     void addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec);
-    void addShape();
     std::shared_ptr<Point> addPoint(float x, float y, float z, std::shared_ptr<PointSpec> spec);
 
     void addTempLine(float x1, float y1, float z1, float x2, float y2, float z2, float color[4], float width);
@@ -59,6 +58,9 @@ public:
     void setCurrPointSpec(std::shared_ptr<PointSpec> spec);
     void setCurrLineSpec(std::shared_ptr<LineSpec> spec);
 
+    void setCurrParentID(int id);
+    int getCurrParentID();
+
     void setHiddenAxis(char axis);
     char getHiddenAxis() {return hiddenAxis;};
 
@@ -70,6 +72,7 @@ private:
 
     std::shared_ptr<PointSpec> currPointSpec;
     std::shared_ptr<LineSpec> currLineSpec;
+    int currParentID;
 };
 
 #endif
