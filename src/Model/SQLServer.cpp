@@ -358,7 +358,7 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLChildrenComposedO
         for (int row = 0; row < rows; row++) {
             int id = std::stoi(PQgetvalue(result, row, 0));
             std::string name = PQgetvalue(result, row, 1);
-            std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(id, name, model->getRootComposedObject(parent_id), parent_id);
+            std::shared_ptr<ComposedObject> composedObject = std::make_shared<ComposedObject>(id, name, model->getComposedObject(parent_id), parent_id);
             childrenComposedObjects.push_back(composedObject);
         }
 
@@ -562,6 +562,7 @@ int SQLServer::newPoint(float x, float y, float z, std::shared_ptr<PointSpec> sp
 
 void SQLServer::newLine(int p1_ID, int p2_ID, std::shared_ptr<LineSpec> spec, int parent_id)
 {
+    int newID = -1;
     try {
         qDebug() << "writing Line in SQL";
 

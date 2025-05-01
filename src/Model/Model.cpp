@@ -10,9 +10,7 @@ Model::Model()
     
     pointSpecs = sqlServer->readSQLPointSpec();
     lineSpecs = sqlServer->readSQLLineSpec();
-    RootComposedObjects = sqlServer->readSQLRootComposedObjects();
-    //points = sqlServer->readSQLPoints();
-    //lines = sqlServer->readSQLLines();
+    composedObjects = sqlServer->readSQLRootComposedObjects();
     
 }
 
@@ -41,14 +39,25 @@ std::shared_ptr<Point> Model::addPoint(float x, float y, float z, std::shared_pt
 {
     int id = sqlServer->newPoint(x,y,z, spec, parent_id);
     std::shared_ptr<Point> point = std::make_shared<Point>(x,y,z, spec, id);
-    points.push_back(point);
+    for (std::shared_ptr<ComposedObject> composedObject : composedObjects) {
+        if (composedObject->getID() == parent_id) {
+            composedObject->addPoint(point);
+            break;
+        }
+    }
     return point;
 }
 
 void Model::addLine(std::shared_ptr<Point> p1, std::shared_ptr<Point> p2, std::shared_ptr<LineSpec> spec, int parent_id)
 {
-    lines.push_back(std::make_shared<Line>(p1, p2, spec));
     sqlServer->newLine(p1->getID(), p2->getID(), spec, parent_id);
+    std::shared_ptr<Line> line = std::make_shared<Line>(p1, p2, spec);
+    for (std::shared_ptr<ComposedObject> composedObject : composedObjects) {
+        if (composedObject->getID() == parent_id) {
+            composedObject->addLine(line);
+            break;
+        }
+    }
 }
 
 // ----- Interactions with temporary Data -----
@@ -73,24 +82,28 @@ void Model::removeTempPoints()
 }
 
 // ----- Getters -----
+//TODO: Only do a full SQL read if necessary. implement update protocol
 std::vector<std::shared_ptr<Point>> Model::getPoints() const
 {
+    std::vector<std::shared_ptr<Point>> points = sqlServer->readSQLPoints();
     return points;
 }
 
 std::vector<std::shared_ptr<Line>> Model::getLines() const
 {
+    std::vector<std::shared_ptr<Line>> lines = sqlServer->readSQLLines();
     return lines;
 }
 
-std::vector<std::shared_ptr<ComposedObject>> Model::getRootComposedObjects() const
+std::vector<std::shared_ptr<ComposedObject>> Model::getComposedObjects() const
 {
-    return RootComposedObjects;
+    std::vector<std::shared_ptr<ComposedObject>> composedObjects = sqlServer->readSQLRootComposedObjects();
+    return composedObjects;
 }
 
-std::shared_ptr<ComposedObject> Model::getRootComposedObject(int id) const
+std::shared_ptr<ComposedObject> Model::getComposedObject(int id) const
 {
-    for (std::shared_ptr<ComposedObject> composedObject : RootComposedObjects)
+    for (std::shared_ptr<ComposedObject> composedObject : composedObjects)
     {
         if (composedObject->getID() == id) return composedObject;
     }

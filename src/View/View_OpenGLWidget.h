@@ -221,7 +221,7 @@ protected:
     inline virtual void updateBuffers() {
         //TODO: Check if for loops can be optimized for performance, think about adding temp elements to the VBOs for persistent elements
         qDebug() << "Updating buffers";
-        updateComposedObjects(model->getRootComposedObjects());
+        updateComposedObjects(model->getComposedObjects());
         updateTempPoints(model->getTempPoints());
         updateTempLines(model->getTempLines());
 
