@@ -33,9 +33,10 @@ public:
                 break;
             case '0':
 
-                //TODO: values are not correct since pints that are not directly on horizon dont get selected. Points on Horizon get selected,
+                //TODO: values are not correct since points that are not directly on horizon dont get selected. Points on Horizon get selected,
                     // so the horizon plane is correct (at least for points dicrectly on the horizon) 
                     // Check how to properly ignore the hidden axis or get its real 3d value in screenToWorld
+                qDebug() << "free view";
                 nearestPoint = controller->getNearestPoint(worldPos.x(), worldPos.y(), worldPos.z());
                 break;
             default:

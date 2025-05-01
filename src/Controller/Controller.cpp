@@ -259,14 +259,17 @@ void Controller::setMouseTracking(bool tracking)
 void Controller::handleMouseClick(QMouseEvent *event)
 {
     // Bildschirmkoordinaten in Weltkoordinaten konvertieren. Notwendig, da ansonsten nicht an der Mausposition gezeichnet wird. 
-    // TODO: Prüfen ob es ein Problem ist, dass Screen Koordinaten int und Weltkoordinaten float sind. Genauigkeitsverlust? 
+
     QVector3D worldPos = view->screenToWorld(event->x(), event->y());
+    
     modeController->getCurrentMode()->onMouseClick(event, worldPos);
 }
 
 void Controller::handleMouseMove(QMouseEvent *event)
 {
+
     QVector3D worldPos = view->screenToWorld(event->x(), event->y());
+    
     modeController->getCurrentMode()->onMouseMove(event, worldPos);
 }
 

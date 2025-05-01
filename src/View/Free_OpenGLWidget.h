@@ -12,6 +12,7 @@ public:
 
     void UpdateMatrices() override;
     QVector3D screenToWorld(int x, int y) override;
+    QVector3D orthogonalScreenToWorld(int x, int y);
 
 signals:
     void horizonChanged(float value);

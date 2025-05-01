@@ -100,6 +100,11 @@ void Free_OpenGLWidget::wheelEvent(QWheelEvent *event)
 
 QVector3D Free_OpenGLWidget::screenToWorld(int x, int y)
 {
+
+    // if (controller->getHiddenAxis() == '0') {
+    //     return orthogonalScreenToWorld(x, y);
+    // } //TODO: doesnt work
+
     // Convert screen coordinates to normalized device coordinates
     float normalizedX = (2.0f * x / width()) - 1.0f;
     float normalizedY = 1.0f - (2.0f * y / height());
@@ -155,6 +160,27 @@ QVector3D Free_OpenGLWidget::screenToWorld(int x, int y)
     }
     
     return intersection;
+}
+
+QVector3D Free_OpenGLWidget::orthogonalScreenToWorld(int x, int y)
+{
+    // Convert screen coordinates to normalized device coordinates
+    float normalizedX = (2.0f * x / width()) - 1.0f;
+    float normalizedY = 1.0f - (2.0f * y / height());
+    
+    // Create a position in clip space at the near plane
+    QVector4D clipPos(normalizedX, normalizedY, -1.0f, 1.0f);
+    
+    // Transform to eye space
+    QVector4D eyePos = projectionMatrix.inverted() * clipPos;
+    eyePos = QVector4D(eyePos.x(), eyePos.y(), -1.0f, 1.0f);
+    
+    // Transform to world space
+    QVector4D worldPos = viewMatrix.inverted() * eyePos;
+    worldPos /= worldPos.w();
+    
+    // Return the world position directly - this is perpendicular to the view plane
+    return QVector3D(worldPos.x(), worldPos.y(), worldPos.z());
 }
 
 void Free_OpenGLWidget::updateBuffers()
