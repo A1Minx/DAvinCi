@@ -15,6 +15,9 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QDebug>
+#include <QTreeWidget>
+#include <QHeaderView>
+#include <vector>
 
 // ----- Setter -----
 // -- Set View --
@@ -357,6 +360,75 @@ void mainWindow::createBottomButtonBar() {
  buttonLayoutBottom->addStretch(1);
 }
 
+// ----- Object Hierarchy Tree -----
+void mainWindow::setupObjectHierarchyTree() {
+  objectHierarchyTree = new QTreeWidget(this);
+  objectHierarchyTree->setHeaderLabel("Objects");
+  objectHierarchyTree->setMinimumWidth(200);
+  objectHierarchyTree->setColumnCount(1);
+  objectHierarchyTree->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  objectHierarchyTree->setSelectionMode(QAbstractItemView::SingleSelection);
+  objectHierarchyTree->setDragEnabled(true);
+  objectHierarchyTree->setToolTip("Hierarchy of composed objects");
+  
+  // Connect to model's data change signals if available
+  QObject::connect(controller, SIGNAL(composedObjectsChanged()), this, SLOT(updateObjectHierarchy()));
+  
+  // Setup item selection handling
+  QObject::connect(objectHierarchyTree, &QTreeWidget::itemClicked, 
+                  [this](QTreeWidgetItem* item, int column) {
+                    // Handle selection - e.g., highlight the selected object in the view
+                    // controller->selectObject(item->text(0));
+                    qDebug() << "Selected object:" << item->text(0);
+                  });
+  
+  mainLayout->addWidget(objectHierarchyTree, 1, 1);
+  
+  updateObjectHierarchy();
+}
+
+void mainWindow::addObjectToTree(std::shared_ptr<ComposedObject> obj, QTreeWidgetItem* parent) {
+  if (!obj) {
+    qDebug() << "Warning: Trying to add a null object to tree";
+    return;
+  }
+  
+  QString name = obj->getName().c_str();
+  qDebug() << "Adding object to tree:" << name << (parent ? "with parent" : "as root");
+  
+  QTreeWidgetItem* item;
+  
+  if (parent == nullptr) {
+    // For root level items, add directly to the tree widget
+    item = new QTreeWidgetItem(objectHierarchyTree);
+  } else {
+    // For child items, add to the parent item
+    item = new QTreeWidgetItem(parent);
+  }
+  
+  // Set the name and make it expanded by default
+  item->setText(0, name);
+  item->setExpanded(true);
+
+  std::vector<std::shared_ptr<ComposedObject>> children = obj->getChildren();
+  qDebug() << "  Object has" << children.size() << "children";
+  
+  for (std::shared_ptr<ComposedObject> child : children) {
+    addObjectToTree(child, item);
+  }
+}
+
+void mainWindow::updateObjectHierarchy() {
+  objectHierarchyTree->clear();
+
+  std::vector<std::shared_ptr<ComposedObject>> rootObjects = model->getComposedObjects();
+  
+  qDebug() << "Object hierarchy updated: found" << rootObjects.size() << "root objects";
+
+  for (std::shared_ptr<ComposedObject> obj : rootObjects) {
+    addObjectToTree(obj, nullptr);
+  }
+}
 
 // ----- Main Window -----
 mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -408,14 +480,8 @@ mainWindow::mainWindow(QWidget *parent) : QMainWindow(parent) {
 
  setXYView();
  
-
  QObject::connect(freeView, &Free_OpenGLWidget::horizonChanged, this, &mainWindow::updateHorizon);
 
- // ----- Layers Widget -----
- QWidget *emptyContainer = new QWidget(this);
- emptyContainer->setMinimumWidth(200);
- emptyContainer->setStyleSheet("border: 1px solid red;");
- mainLayout->addWidget(emptyContainer, 1, 1);
-
-
+ // ----- Object Hierarchy Widget -----
+ setupObjectHierarchyTree();
 }

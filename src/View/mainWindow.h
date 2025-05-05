@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QWidget>
@@ -9,6 +9,8 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
+#include <QTreeWidget>
+#include "ComposedObject.h"
 
 class Model;
 class Controller;
@@ -23,7 +25,7 @@ class mainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit mainWindow(QWidget *parent = nullptr);
+    mainWindow(QWidget *parent = nullptr);
     void updateHorizon(float horizon);
 
 private:
@@ -48,10 +50,14 @@ private:
     QPushButton *axisButtonZ;
     char currentHorizonAxis;
     
+    // Tree widget for object hierarchy
+    QTreeWidget *objectHierarchyTree;
+    
     void updateAxisButtonStyles();
     void createMenus();
     void createTopButtonBar();
     void createBottomButtonBar();
+    void setupObjectHierarchyTree();
 
 public slots:
     void setXYView();
@@ -63,6 +69,9 @@ public slots:
     void setHorizonAxisX();
     void setHorizonAxisY();
     void setHorizonAxisZ();
+    
+    void addObjectToTree(std::shared_ptr<ComposedObject> obj, QTreeWidgetItem* parent);
+    void updateObjectHierarchy();
 };
 
-#endif // WINDOW_H
+#endif // MAINWINDOW_H

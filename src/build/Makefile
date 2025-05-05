@@ -468,6 +468,12 @@ compiler_moc_header_make_all: moc_mainWindow.cpp moc_View_OpenGLWidget.cpp moc_F
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_mainWindow.cpp moc_View_OpenGLWidget.cpp moc_Free_OpenGLWidget.cpp moc_Orth_XY_OpenGLWidget.cpp moc_Orth_XZ_OpenGLWidget.cpp moc_Orth_YZ_OpenGLWidget.cpp moc_Controller.cpp
 moc_mainWindow.cpp: ../View/mainWindow.h \
+		../Model/ComposedObject.h \
+		../Model/Object3D.h \
+		../Model/Spec.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Line.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/build/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Controller -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/View -I/home/alex/Dokumente/cpp/DAvinCi/DAvinCi/src/Model -I/usr/include -I/usr/include/x86_64-linux-gnu -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/GL -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../View/mainWindow.h -o moc_mainWindow.cpp
@@ -571,19 +577,25 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 
 ####### Compile
 
-main.o: ../main.cpp ../View/mainWindow.h
+main.o: ../main.cpp ../View/mainWindow.h \
+		../Model/ComposedObject.h \
+		../Model/Object3D.h \
+		../Model/Spec.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Line.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../main.cpp
 
 mainWindow.o: ../View/mainWindow.cpp ../View/mainWindow.h \
+		../Model/ComposedObject.h \
+		../Model/Object3D.h \
+		../Model/Spec.h \
+		../Model/Point.h \
+		../Model/BasicObject.h \
+		../Model/Line.h \
 		../Controller/Controller.h \
 		../Model/Model.h \
 		../Model/SQLServer.h \
-		../Model/Point.h \
-		../Model/BasicObject.h \
-		../Model/Object3D.h \
-		../Model/Spec.h \
-		../Model/Line.h \
-		../Model/ComposedObject.h \
 		../Controller/ModeController.h \
 		../View/View_OpenGLWidget.h \
 		../View/Orth_XY_OpenGLWidget.h \

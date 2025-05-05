@@ -362,9 +362,6 @@ std::vector<std::shared_ptr<ComposedObject>> SQLServer::readSQLChildrenComposedO
             childrenComposedObjects.push_back(composedObject);
         }
 
-        for (const auto& composedObject : childrenComposedObjects) {
-            std::cout << "Reading Children Composed Object: (" << composedObject->getName() << ")" << std::endl;
-        }
 
 
             // -- read children
@@ -463,9 +460,6 @@ std::vector<std::shared_ptr<PointSpec>> SQLServer::readSQLPointSpec()
             pointSpecs.push_back(spec);
         }
 
-        for (const auto& spec : pointSpecs) {
-            std::cout << spec->getName() << " " << spec->getColor() << " " << spec->getSize() << " " << spec->getID() << std::endl;
-        }
 
         PQclear(result);
 
@@ -498,10 +492,6 @@ std::vector<std::shared_ptr<LineSpec>> SQLServer::readSQLLineSpec()
             color[3] = std::stof(PQgetvalue(result, row, 8));
             std::shared_ptr<LineSpec> spec = std::make_shared<LineSpec>(name, color, width, id);
             lineSpecs.push_back(spec);
-        }
-
-        for (const auto& spec : lineSpecs) {
-            std::cout << spec->getName() << " " << spec->getColor() << " " << spec->getWidth() << " " << spec->getID() << std::endl;
         }
 
         PQclear(result);
